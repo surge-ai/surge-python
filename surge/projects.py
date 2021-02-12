@@ -16,11 +16,15 @@ class Projects(APIResource):
             fields_template = None,
             num_workers_per_task = 1):
 
+        # Convert list of question objects into dicts in valid json format
+        # TODO: arg error handling
+        questions_json = [q.to_dict() for q in questions]
+
         params = {
             "name": name,
             "payment_per_response": payment_per_response,
             "instructions": instructions,
-            "questions": questions,
+            "questions": questions_json,
             "callback_url": callback_url,
             "field_template": fields_template,
             "num_workers_per_task": num_workers_per_task
