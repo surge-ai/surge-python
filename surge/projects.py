@@ -1,10 +1,8 @@
-from surge.api_resource import APIResource
-
-ENDPOINT = "projects"
+from surge.api_resource import PROJECTS_ENDPOINT, APIResource
 
 class Projects(APIResource):
     def __init__(self):
-        self.id = None
+        super().__init__()
 
     @classmethod
     def create(cls,
@@ -29,29 +27,29 @@ class Projects(APIResource):
             "field_template": fields_template,
             "num_workers_per_task": num_workers_per_task
         }
-        return cls.post(ENDPOINT, params)
+        return cls.post(PROJECTS_ENDPOINT, params)
 
     @classmethod
     def list(cls, page_num=1):
         params = {"page_num": page_num}
-        return cls.get(ENDPOINT, params)
+        return cls.get(PROJECTS_ENDPOINT, params)
     
     @classmethod
     def retrieve(cls, project_id):
-        endpoint = f"{ENDPOINT}/{project_id}"
+        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}"
         return cls.get(endpoint)
 
     @classmethod
     def pause(cls, project_id):
-        endpoint = f"{ENDPOINT}/{project_id}/pause"
+        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/pause"
         return cls.put(endpoint)
     
     @classmethod
     def resume(cls, project_id):
-        endpoint = f"{ENDPOINT}/{project_id}/resume"
+        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/resume"
         return cls.put(endpoint)
     
     @classmethod
     def cancel(cls, project_id):
-        endpoint = f"{ENDPOINT}/{project_id}/cancel"
+        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/cancel"
         return cls.put(endpoint)

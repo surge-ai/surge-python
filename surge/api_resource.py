@@ -3,6 +3,8 @@ import requests
 import surge
 
 BASE_URL = "https://app.surgehq.ai/api"
+PROJECTS_ENDPOINT = "projects"
+TASKS_ENDPOINT = "tasks"
 
 class APIResource(object):
     def __init__(self):
