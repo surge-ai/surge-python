@@ -1,4 +1,6 @@
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
+from surge.questions import Question
+from surge.errors import SurgeProjectQuestionError
 
 class Projects(APIResource):
     def __init__(self):
@@ -15,7 +17,10 @@ class Projects(APIResource):
             num_workers_per_task = 1):
 
         # Convert list of question objects into dicts in valid json format
-        # TODO: arg error handling
+        # If this isn't a list of Question objects, throw an exception
+        if not all(isinstance(q, Question) for q in questions):
+            raise SurgeProjectQuestionError
+
         questions_json = [q.to_dict() for q in questions]
 
         params = {

@@ -1,6 +1,7 @@
 import requests
 
 import surge
+from surge.errors import SurgeAuthError
 
 BASE_URL = "https://app.surgehq.ai/api"
 PROJECTS_ENDPOINT = "projects"
@@ -14,33 +15,42 @@ class APIResource(object):
     def get(cls, api_endpoint, params = None):
         url = f"{BASE_URL}/{api_endpoint}"
 
-        response_json = requests.get(
+        response = requests.get(
             url,
             auth = (surge.api_key, ""),
             data = params
-        ).json()
+        )
 
-        return response_json
+        if response.status_code == 401:
+            raise SurgeAuthError
+
+        return response.json()
 
     @classmethod
     def post(cls, api_endpoint, params = None):
         url = f"{BASE_URL}/{api_endpoint}"
 
-        response_json = requests.post(
+        response = requests.post(
             url,
             auth = (surge.api_key, ""),
             json = params
-        ).json()
+        )
 
-        return response_json
+        if response.status_code == 401:
+            raise SurgeAuthError
+
+        return response.json()
     
     @classmethod
     def put(cls, api_endpoint):
         url = f"{BASE_URL}/{api_endpoint}"
 
-        response_json = requests.put(
+        response = requests.put(
             url,
             auth = (surge.api_key, "")
-        ).json()
+        )
 
-        return response_json
+        if response.status_code == 401:
+            raise SurgeAuthError
+
+        return response.json()
