@@ -13,5 +13,4 @@ setup(name='surge',
       url='https://github.com/surge-ai/surge-python',
       license="MIT",
       packages=find_packages(exclude=["tests", "tests.*"]),
-      install_requires=requirements
-     )
+      install_requires=requirements)

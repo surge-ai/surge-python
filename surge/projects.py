@@ -2,24 +2,25 @@ from surge.api_resource import PROJECTS_ENDPOINT, APIResource
 from surge.questions import Question
 from surge.errors import SurgeProjectQuestionError
 
+
 class Project(APIResource):
     def __init__(self, **kwargs):
         super().__init__()
         self.__dict__.update(kwargs)
         assert self.id is not None
-    
-    def __str__(self): 
-       return f"SurgeProject_{self.id}"
+
+    def __str__(self):
+        return f"SurgeProject_{self.id}"
 
     @classmethod
     def create(cls,
-            name,
-            payment_per_response,
-            instructions = None,
-            questions = None,
-            callback_url = None,
-            fields_template = None,
-            num_workers_per_task = 1):
+               name,
+               payment_per_response,
+               instructions=None,
+               questions=None,
+               callback_url=None,
+               fields_template=None,
+               num_workers_per_task=1):
 
         # Convert list of question objects into dicts in valid json format
         # If this isn't a list of Question objects, throw an exception
@@ -46,7 +47,7 @@ class Project(APIResource):
         response_json = cls.get(PROJECTS_ENDPOINT, params)
         projects = [cls(**project_json) for project_json in response_json]
         return projects
-    
+
     @classmethod
     def retrieve(cls, project_id):
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}"
@@ -56,11 +57,11 @@ class Project(APIResource):
     def pause(self):
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/pause"
         return self.put(endpoint)
-    
+
     def resume(self):
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/resume"
         return self.put(endpoint)
-    
+
     def cancel(self):
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/cancel"
         return self.put(endpoint)
