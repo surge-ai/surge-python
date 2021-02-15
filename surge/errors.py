@@ -1,6 +1,6 @@
-class SurgeAuthError(Exception):
+class SurgeRequestError(Exception):
     """Raise for exceptions that occur during authentication"""
-    def __init__(self, message="Error during authentication. Are you using the correct Surge API key?"):
+    def __init__(self, message="Something went wrong with the API request."):
         self.message = message
         super().__init__(self.message)
 
