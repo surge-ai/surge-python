@@ -1,4 +1,4 @@
-from surge.projects import Projects
-from surge.tasks import Tasks
+from surge.projects import Project
+from surge.tasks import Task
 
 api_key = None

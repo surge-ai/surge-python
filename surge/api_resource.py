@@ -8,8 +8,8 @@ PROJECTS_ENDPOINT = "projects"
 TASKS_ENDPOINT = "tasks"
 
 class APIResource(object):
-    def __init__(self):
-        self.api_key = surge.api_key
+    def __init__(self, id=None):
+        self.id = id
 
     @classmethod
     def get(cls, api_endpoint, params = None):

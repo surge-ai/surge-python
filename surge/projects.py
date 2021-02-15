@@ -2,9 +2,14 @@ from surge.api_resource import PROJECTS_ENDPOINT, APIResource
 from surge.questions import Question
 from surge.errors import SurgeProjectQuestionError
 
-class Projects(APIResource):
-    def __init__(self):
+class Project(APIResource):
+    def __init__(self, **kwargs):
         super().__init__()
+        self.__dict__.update(kwargs)
+        assert self.id is not None
+    
+    def __str__(self): 
+       return f"SurgeProject_{self.id}"
 
     @classmethod
     def create(cls,
@@ -32,29 +37,30 @@ class Projects(APIResource):
             "field_template": fields_template,
             "num_workers_per_task": num_workers_per_task
         }
-        return cls.post(PROJECTS_ENDPOINT, params)
+        response_json = cls.post(PROJECTS_ENDPOINT, params)
+        return cls(**response_json)
 
     @classmethod
     def list(cls, page_num=1):
         params = {"page_num": page_num}
-        return cls.get(PROJECTS_ENDPOINT, params)
+        response_json = cls.get(PROJECTS_ENDPOINT, params)
+        projects = [cls(**project_json) for project_json in response_json]
+        return projects
     
     @classmethod
     def retrieve(cls, project_id):
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}"
-        return cls.get(endpoint)
+        response_json = cls.get(endpoint)
+        return cls(**response_json)
 
-    @classmethod
-    def pause(cls, project_id):
-        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/pause"
-        return cls.put(endpoint)
+    def pause(self):
+        endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/pause"
+        return self.put(endpoint)
     
-    @classmethod
-    def resume(cls, project_id):
-        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/resume"
-        return cls.put(endpoint)
+    def resume(self):
+        endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/resume"
+        return self.put(endpoint)
     
-    @classmethod
-    def cancel(cls, project_id):
-        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/cancel"
-        return cls.put(endpoint)
+    def cancel(self):
+        endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/cancel"
+        return self.put(endpoint)

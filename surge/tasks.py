@@ -1,6 +1,6 @@
 from surge.api_resource import PROJECTS_ENDPOINT, TASKS_ENDPOINT, APIResource
 
-class Tasks(APIResource):
+class Task(APIResource):
     def __init__(self):
         super().__init__()
 
