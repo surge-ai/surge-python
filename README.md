@@ -20,8 +20,17 @@ The library needs to be configured with your account's API key which is availabl
 
 ```python
 import surge
-surge.api_key = "..."
+surge.api_key = "your api key"
+```
+Or set the API key as an environment variable:
 
+```bash
+export SURGE_API_KEY=<your api key>
+```
+
+Once the API key has been set, you can list all of the Projects under your Surge account or retrieve a specific Project by its ID.
+
+```python
 # List your Projects
 projects = surge.Project.list()
 
@@ -59,8 +68,14 @@ You can list all of the Tasks for a given project, or retrieve a specific Task g
 
 ```python
 # List all Tasks in a Project
-surge.Task.list(project_id = "076d207b-c207-41ca-b73a-5822fe2248ab")
+tasks = surge.Task.list(project_id = "076d207b-c207-41ca-b73a-5822fe2248ab")
+
+# Print the project_id of the first Task
+print(tasks[0].project_id)
 
 # Retrieve a specific Task
-surge.Task.retrieve(task_id = "eaa44610-c8f6-4480-b746-28b6c8defd4d")
+task = surge.Task.retrieve(task_id = "eaa44610-c8f6-4480-b746-28b6c8defd4d")
+
+# Print the fields of that Task
+print(task.fields)
 ```

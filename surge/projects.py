@@ -1,13 +1,15 @@
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
 from surge.questions import Question
-from surge.errors import SurgeProjectQuestionError
+from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError
 
 
 class Project(APIResource):
     def __init__(self, **kwargs):
         super().__init__()
         self.__dict__.update(kwargs)
-        assert self.id is not None
+
+        if self.id is None:
+            raise SurgeMissingIDError
 
     def __str__(self):
         return f"SurgeProject_{self.id}"
