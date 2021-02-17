@@ -36,6 +36,9 @@ class APIResource(object):
             elif method == "put":
                 response = requests.put(url, auth=(surge.api_key, ""))
 
+            else:
+                raise SurgeRequestError("Invalid HTTP method.")
+
             # Raise exception if there is an http error
             response.raise_for_status()
 
