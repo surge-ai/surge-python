@@ -14,6 +14,15 @@ class Task(APIResource):
         return f"SurgeTask_{self.id}"
 
     @classmethod
+    def create(cls, project_id, **params):
+        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}"
+        data = {
+            "fields": params
+        }
+        response_json = cls.post(endpoint, data)
+        return cls(**response_json)
+
+    @classmethod
     def list(cls, project_id, page_num=1):
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}"
         params = {"page": page_num}
