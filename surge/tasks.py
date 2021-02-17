@@ -16,9 +16,7 @@ class Task(APIResource):
     @classmethod
     def create(cls, project_id, **params):
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}"
-        data = {
-            "fields": params
-        }
+        data = {"fields": params}
         response_json = cls.post(endpoint, data)
         return cls(**response_json)
 

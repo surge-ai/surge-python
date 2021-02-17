@@ -54,12 +54,17 @@ free_response_q = FreeResponseQuestion(text = "What is the name of the company a
 multiple_choice_q = MultipleChoiceQuestion(text = "What category does this company belong to?", options = ["Tech", "Sports", "Gaming"])
 checkbox_q = CheckboxQuestion(text = "Check all the social media accounts this company has", options = ["Facebook", "Twitter", "Pinterest", "Google+"])
 
-surge.Project.create(
+fields_template_text = '''
+    <p>website: {{website}}</p>
+'''
+
+project = surge.Project.create(
     name = "Categorize this website", 
     payment_per_response = 0.1,
     instructions = "You will be asked to categorize a company.", 
     questions = [free_response_q, multiple_choice_q, checkbox_q],
     callback_url = "https://customer-callback-url/",
+    fields_template = fields_template_text,
     num_workers_per_task = 3
 )
 ```
@@ -67,14 +72,12 @@ surge.Project.create(
 You can create new Tasks for a project, list all of the Tasks in a given project, or retrieve a specific Task given its ID.
 
 ```python
-project_id = "076d207b-c207-41ca-b73a-5822fe2248ab"
-
-# Create Tasks for the project
-task1 = surge.Task.create(project_id, website="https://www.surgehq.ai")
-task2 = surge.Task.create(project_id, website="https://www.twitch.tv")
+# Create Tasks for the new Project
+tasks_data = [{"website": "surgehq.ai"}, {"website":"twitch.tv"}]
+tasks = project.create_tasks(tasks_data)
 
 # List all Tasks in the Project
-all_tasks = surge.Task.list(project_id)
+all_tasks = surge.Task.list(project.id)
 
 # Retrieve a specific Task
 task = surge.Task.retrieve(task_id = "eaa44610-c8f6-4480-b746-28b6c8defd4d")

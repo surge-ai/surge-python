@@ -1,6 +1,7 @@
+from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
 from surge.questions import Question
-from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError
+from surge.tasks import Task
 
 
 class Project(APIResource):
@@ -16,13 +17,13 @@ class Project(APIResource):
 
     @classmethod
     def create(cls,
-               name,
-               payment_per_response,
-               instructions=None,
-               questions=None,
-               callback_url=None,
-               fields_template=None,
-               num_workers_per_task=1):
+               name: str,
+               payment_per_response: float,
+               instructions: str = None,
+               questions: list = None,
+               callback_url: str = None,
+               fields_template: str = None,
+               num_workers_per_task: int = 1):
 
         # Convert list of question objects into dicts in valid json format
         # If this isn't a list of Question objects, throw an exception
@@ -44,14 +45,14 @@ class Project(APIResource):
         return cls(**response_json)
 
     @classmethod
-    def list(cls, page_num=1):
+    def list(cls, page_num: int = 1):
         params = {"page_num": page_num}
         response_json = cls.get(PROJECTS_ENDPOINT, params)
         projects = [cls(**project_json) for project_json in response_json]
         return projects
 
     @classmethod
-    def retrieve(cls, project_id):
+    def retrieve(cls, project_id: str):
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}"
         response_json = cls.get(endpoint)
         return cls(**response_json)
@@ -67,3 +68,20 @@ class Project(APIResource):
     def cancel(self):
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/cancel"
         return self.put(endpoint)
+
+    def list_tasks(self, page_num: int = 1):
+        return Task.list(self.id, page_num=page_num)
+
+    def create_tasks(self, tasks_data: list):
+        '''
+        Creates new Task objects for the current Project.
+
+            Parameters:
+                tasks_data (list): list of dicts that map each task field to its value
+                    e.g. [{"website": "surgehq.ai"}, {"website":"twitch.tv"}]
+
+            Returns:
+                tasks (list): list of Task objects
+        '''
+        tasks = [Task.create(self.id, **t) for t in tasks_data]
+        return tasks
