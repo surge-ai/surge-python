@@ -7,7 +7,7 @@ The Surge Python SDK provides convenient access to the Surge API from applicatio
 Install this package by using pip:
 
 ```bash
-pip install git+ssh://git@github.com/surge-ai/surge-python.git
+pip install surge-api
 ```
 
 ### Requirements
