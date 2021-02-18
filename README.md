@@ -50,23 +50,29 @@ When creating a new Project, you can create a list of Questions and include them
 from surge.questions import FreeResponseQuestion, MultipleChoiceQuestion, CheckboxQuestion
 
 # Create a new Project
-free_response_q = FreeResponseQuestion(text = "What is the name of the company at this website?")
-multiple_choice_q = MultipleChoiceQuestion(text = "What category does this company belong to?", options = ["Tech", "Sports", "Gaming"])
-checkbox_q = CheckboxQuestion(text = "Check all the social media accounts this company has", options = ["Facebook", "Twitter", "Pinterest", "Google+"])
+free_response_q = FreeResponseQuestion(
+    text="What is the name of the company at this website?")
+
+multiple_choice_q = MultipleChoiceQuestion(
+    text="What category does this company belong to?",
+    options=["Tech", "Sports", "Gaming"])
+
+checkbox_q = CheckboxQuestion(
+    text="Check all the social media accounts this company has",
+    options=["Facebook", "Twitter", "Pinterest", "Google+"])
 
 fields_template_text = '''
     <p>website: {{website}}</p>
 '''
 
 project = surge.Project.create(
-    name = "Categorize this website", 
-    payment_per_response = 0.1,
-    instructions = "You will be asked to categorize a company.", 
-    questions = [free_response_q, multiple_choice_q, checkbox_q],
-    callback_url = "https://customer-callback-url/",
-    fields_template = fields_template_text,
-    num_workers_per_task = 3
-)
+    name="Categorize this website",
+    payment_per_response=0.1,
+    instructions="You will be asked to categorize a company.",
+    questions=[free_response_q, multiple_choice_q, checkbox_q],
+    callback_url="https://customer-callback-url/",
+    fields_template=fields_template_text,
+    num_workers_per_task=3)
 ```
 
 You can create new Tasks for a project, list all of the Tasks in a given project, or retrieve a specific Task given its ID.

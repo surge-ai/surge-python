@@ -45,8 +45,8 @@ class Project(APIResource):
         return cls(**response_json)
 
     @classmethod
-    def list(cls, page_num: int = 1):
-        params = {"page_num": page_num}
+    def list(cls, page: int = 1):
+        params = {"page": page}
         response_json = cls.get(PROJECTS_ENDPOINT, params)
         projects = [cls(**project_json) for project_json in response_json]
         return projects
@@ -69,8 +69,8 @@ class Project(APIResource):
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/cancel"
         return self.put(endpoint)
 
-    def list_tasks(self, page_num: int = 1):
-        return Task.list(self.id, page_num=page_num)
+    def list_tasks(self, page: int = 1):
+        return Task.list(self.id, page=page)
 
     def create_tasks(self, tasks_data: list):
         '''

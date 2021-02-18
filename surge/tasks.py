@@ -31,9 +31,9 @@ class Task(APIResource):
         return cls(**response_json)
 
     @classmethod
-    def list(cls, project_id: str, page_num: int = 1):
+    def list(cls, project_id: str, page: int = 1):
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}"
-        params = {"page": page_num}
+        params = {"page": page}
         response_json = cls.get(endpoint, params)
         tasks = [cls(**task_json) for task_json in response_json]
         return tasks
