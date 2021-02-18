@@ -5,13 +5,13 @@ VERSION = '1.0'
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-setup(name='surge',
+setup(name='surge-api',
       version=VERSION,
       description='Surge Python SDK',
       author='Surge',
       author_email='team@surgehq.ai',
       url='https://github.com/surge-ai/surge-python',
-      license="MIT",
-      packages=find_packages(exclude=["tests", "tests.*"]),
+      license='MIT',
+      packages=find_packages(exclude=['tests', 'tests.*']),
       install_requires=requirements,
-      tests_require=["pytest >= 6.0.0"])
+      tests_require=['pytest >= 6.0.0'])
