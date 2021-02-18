@@ -2,6 +2,7 @@ from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
 from surge.questions import Question
 from surge.tasks import Task
+from surge import utils
 
 
 class Project(APIResource):
@@ -83,5 +84,8 @@ class Project(APIResource):
             Returns:
                 tasks (list): list of Task objects
         '''
-        tasks = [Task.create(self.id, **t) for t in tasks_data]
-        return tasks
+        return Task.create_many(self.id, tasks_data)
+
+    def create_tasks_from_csv(self, file_path: str):
+        tasks_data = utils.load_tasks_data_from_csv(file_path)
+        return self.create_tasks(tasks_data)

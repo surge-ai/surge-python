@@ -27,3 +27,13 @@ class SurgeProjectQuestionError(Exception):
     ):
         self.message = message
         super().__init__(self.message)
+
+
+class SurgeTaskDataError(Exception):
+    """Raise for exceptions that occur when creating Task objects"""
+    def __init__(
+        self,
+        message="Invalid argument: task_data must be a non-empty list of dicts."
+    ):
+        self.message = message
+        super().__init__(self.message)
