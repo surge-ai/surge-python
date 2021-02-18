@@ -31,6 +31,14 @@ class Task(APIResource):
         return cls(**response_json)
 
     @classmethod
+    def create_many(cls, project_id: str, tasks_data: list):
+        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}/create_tasks"
+        data = {"tasks": tasks_data}
+        response_json = cls.post(endpoint, data)
+        tasks = [cls(**task_json) for task_json in response_json]
+        return tasks
+
+    @classmethod
     def list(cls, project_id: str, page: int = 1):
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}"
         params = {"page": page}

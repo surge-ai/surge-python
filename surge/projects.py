@@ -83,5 +83,5 @@ class Project(APIResource):
             Returns:
                 tasks (list): list of Task objects
         '''
-        tasks = [Task.create(self.id, **t) for t in tasks_data]
+        tasks = Task.create_many(self.id, tasks_data)
         return tasks
