@@ -30,6 +30,7 @@ class CheckboxQuestion(Question):
         super().__init__(text, type_="checkbox", required=required)
         self.options = options
 
+
 class TextTaggingQuestion(Question):
     def __init__(self, text, options=[], required=True):
         super().__init__(text, type_="text_tagging", required=required)

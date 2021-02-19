@@ -7,7 +7,7 @@ The Surge Python SDK provides convenient access to the Surge API from applicatio
 Install this package by using pip:
 
 ```bash
-pip install surge-api
+pip install --upgrade surge-api
 ```
 
 ### Requirements

@@ -12,6 +12,12 @@ class APIResource(object):
     def __init__(self, id=None):
         self.id = id
 
+    def print_attrs(self, forbid_list: list = []):
+        return " ".join([
+            f"{k}=\"{v}\"" for k, v in self.__dict__.items()
+            if not k in forbid_list
+        ])
+
     @classmethod
     def _base_request(cls, method, api_endpoint, params=None):
         if surge.api_key is None:
