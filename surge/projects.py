@@ -28,7 +28,7 @@ class Project(APIResource):
                payment_per_response: float = None,
                private_workforce: bool = False,
                instructions: str = None,
-               questions: list = None,
+               questions: list = [],
                callback_url: str = None,
                fields_template: str = None,
                num_workers_per_task: int = 1):
