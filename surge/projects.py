@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
 from surge.questions import Question
@@ -12,6 +14,10 @@ class Project(APIResource):
 
         if self.id is None:
             raise SurgeMissingIDError
+
+        if self.created_at:
+            # Convert timestamp str into datetime
+            self.created_at = dateutil.parser.parse(self.created_at)
 
     def __str__(self):
         return f"<surge.Project#{self.id} name=\"{self.name}\">"

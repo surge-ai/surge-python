@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from surge.errors import SurgeMissingIDError, SurgeTaskDataError
 from surge.api_resource import PROJECTS_ENDPOINT, TASKS_ENDPOINT, APIResource
 from surge.responses import TaskResponse
@@ -11,12 +13,16 @@ class Task(APIResource):
         if self.id is None or self.project_id is None:
             raise SurgeMissingIDError
 
+        if self.created_at:
+            # Convert timestamp str into datetime
+            self.created_at = dateutil.parser.parse(self.created_at)
+
         # If Task has responses, convert each into a TaskResponse object
         if hasattr(self, "responses"):
             task_responses = [
                 TaskResponse(r["id"], r["data"], r["time_spent_in_secs"],
-                             r["completed_at"], r["worker_id"])
-                for r in self.responses
+                             dateutil.parser.parse(r["completed_at"]),
+                             r["worker_id"]) for r in self.responses
             ]
             self.responses = task_responses
 
