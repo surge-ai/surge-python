@@ -16,6 +16,8 @@ pip install surge-api
 
 ## Usage
 
+Documentation and and examples are available [here](https://app.surgehq.ai/docs/api#).
+
 ### Authentication
 
 The library needs to be configured with your account's API key which is available in your Surge Profile. Set `surge.api_key` to its value:
@@ -55,7 +57,7 @@ from surge.questions import FreeResponseQuestion, MultipleChoiceQuestion, Checkb
 
 # Create a new Project
 free_response_q = FreeResponseQuestion(
-    text="What is the name of the company at this website?")
+    text="What is this company's website?")
 
 multiple_choice_q = MultipleChoiceQuestion(
     text="What category does this company belong to?",
@@ -70,7 +72,7 @@ fields_template_text = '''
 '''
 
 project = surge.Project.create(
-    name="Categorize this website",
+    name="Categorize this company",
     payment_per_response=0.1,
     instructions="You will be asked to categorize a company.",
     questions=[free_response_q, multiple_choice_q, checkbox_q],
@@ -85,7 +87,7 @@ You can create new Tasks for a project, list all of the Tasks in a given project
 
 ```python
 # Create Tasks for the new Project
-tasks_data = [{"id": 1, "website": "https://surgehq.ai"}, {"id": 2, "website":"https://twitch.tv"}]
+tasks_data = [{"id": 1, "company": Surge AI"}, {"id": 2, "company":"Twitch TV"}]
 tasks = project.create_tasks(tasks_data)
 
 # List all Tasks in the Project
@@ -100,14 +102,13 @@ print(task.fields)
 
 You can also create Tasks in bulk by uploading a local CSV file. The header of the CSV file must specify the fields that are used in your Tasks.
 
-| id    |   website             |
+| id    |   company             |
 | :---  |   :----:              |
-| 3     |   https://yelp.com    |
-| 4     |   https://reddit.com  |
-| 5     |   https://github.com  |
+| 3     |   Surge AI    |
+| 4     |   Twitch TV  |
 
 ```python
 # Create Tasks in bulk via CSV file
-file_path = './popular-websites.csv'
+file_path = './companies_to_classify.csv'
 tasks = project.create_tasks_from_csv(file_path)
 ```
