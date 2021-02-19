@@ -20,8 +20,23 @@ class Task(APIResource):
             ]
             self.responses = task_responses
 
-    def __str__(self):
-        return f"SurgeTask_{self.id}"
+    def __repr__(self):
+        return f"<surge.Task> {self.id}"
+
+    def set_gold_standard(self, gold_standard_answers=None, is_gold_standard=True):
+        '''Set gold standard answers for this task.
+
+        Arguements:
+        gold_standard_answers (List[string]): A list of the ground truth answers for this task, one for each question in the project.
+            If you don't want to set an answer for one of the questions, you can leave it blank by passing an empty string.
+        is_gold_standard (boolean): This indicates whether this task is a gold standard. You can toggle gold standards on or off by
+            setting this as true or false.
+        '''
+        if self.id is None or self.project_id is None:
+            raise SurgeMissingIDError
+        endpoint = f"{TASKS_ENDPOINT}/{self.id}/gold-standards"
+        data = {"is_gold_standard": is_gold_standard,  'answers': gold_standard_answers}
+        return self.post(endpoint, data)
 
     @classmethod
     def create(cls, project_id: str, **params):

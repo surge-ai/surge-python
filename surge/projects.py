@@ -13,8 +13,8 @@ class Project(APIResource):
         if self.id is None:
             raise SurgeMissingIDError
 
-    def __str__(self):
-        return f"SurgeProject_{self.id}"
+    def __repr__(self):
+        return f"<surge.Project> {self.name}"
 
     @classmethod
     def create(cls,
