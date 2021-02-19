@@ -19,7 +19,8 @@ class Project(APIResource):
     @classmethod
     def create(cls,
                name: str,
-               payment_per_response: float,
+               payment_per_response: float = None,
+               private_workforce: bool = False,
                instructions: str = None,
                questions: list = None,
                callback_url: str = None,
@@ -35,13 +36,15 @@ class Project(APIResource):
 
         params = {
             "name": name,
-            "payment_per_response": payment_per_response,
+            "private_workforce": private_workforce,
             "instructions": instructions,
             "questions": questions_json,
             "callback_url": callback_url,
             "field_template": fields_template,
             "num_workers_per_task": num_workers_per_task
         }
+        if payment_per_response is not None:
+            params["payment_per_response"] = payment_per_response
         response_json = cls.post(PROJECTS_ENDPOINT, params)
         return cls(**response_json)
 
