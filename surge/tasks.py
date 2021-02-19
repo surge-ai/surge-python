@@ -21,7 +21,10 @@ class Task(APIResource):
             self.responses = task_responses
 
     def __repr__(self):
-        return f"<surge.Task> {self.id}"
+        return f"<surge.Task#{self.id} {self.attrs_repr()}>"
+
+    def attrs_repr(self):
+        return self.print_attrs(forbid_list = ["id"])
 
     def set_gold_standard(self, gold_standard_answers=None, is_gold_standard=True):
         '''Set gold standard answers for this task.

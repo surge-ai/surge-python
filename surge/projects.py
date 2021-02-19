@@ -14,7 +14,10 @@ class Project(APIResource):
             raise SurgeMissingIDError
 
     def __repr__(self):
-        return f"<surge.Project> {self.name}"
+        return f"<surge.Project#{self.id} name=\"{self.name}\" {self.attrs_repr()}>"
+
+    def attrs_repr(self):
+        return self.print_attrs(forbid_list=["name", "id"])
 
     @classmethod
     def create(cls,
