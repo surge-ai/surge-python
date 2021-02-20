@@ -54,7 +54,7 @@ class APIResource(object):
         except requests.exceptions.HTTPError as err:
             message = err.args[0]
             message = f"{message}. {err.response.text}"
-            raise SurgeRequestError(message)
+            raise SurgeRequestError(message) from None
 
         except Exception:
             # Generic exception handling
