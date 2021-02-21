@@ -48,10 +48,13 @@ class APIResource(object):
             # Raise exception if there is an http error
             response.raise_for_status()
 
+            # If no errors, return response as json
             return response.json()
 
         except requests.exceptions.HTTPError as err:
-            raise SurgeRequestError(err)
+            message = err.args[0]
+            message = f"{message}. {err.response.text}"
+            raise SurgeRequestError(message) from None
 
         except Exception:
             # Generic exception handling
