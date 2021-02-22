@@ -73,7 +73,6 @@ fields_template_text = '''
 
 project = surge.Project.create(
     name="Categorize this company",
-    payment_per_response=0.1,
     instructions="You will be asked to categorize a company.",
     questions=[free_response_q, multiple_choice_q, checkbox_q],
     callback_url="https://customer-callback-url/",
@@ -104,8 +103,8 @@ You can also create Tasks in bulk by uploading a local CSV file. The header of t
 
 | id    |   company             |
 | :---  |   :----:              |
-| 3     |   Surge AI    |
-| 4     |   Twitch TV  |
+| 1     |   Surge AI    |
+| 2     |   Twitch TV  |
 
 ```python
 # Create Tasks in bulk via CSV file
