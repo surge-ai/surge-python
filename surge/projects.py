@@ -1,6 +1,6 @@
 import dateutil.parser
 
-from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError
+from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError, SurgeMissingAttributeError
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
 from surge.questions import Question
 from surge.tasks import Task
@@ -15,7 +15,10 @@ class Project(APIResource):
         if self.id is None:
             raise SurgeMissingIDError
 
-        if self.created_at:
+        if not (hasattr(self, "name") and self.name):
+            raise SurgeMissingAttributeError
+
+        if hasattr(self, "created_at") and self.created_at:
             # Convert timestamp str into datetime
             self.created_at = dateutil.parser.parse(self.created_at)
 
