@@ -10,7 +10,8 @@ class Task(APIResource):
         super().__init__()
         self.__dict__.update(kwargs)
 
-        if self.id is None or self.project_id is None:
+        if self.id is None or not hasattr(
+                self, "project_id") or self.project_id is None:
             raise SurgeMissingIDError
 
         if hasattr(self, "created_at") and self.created_at:

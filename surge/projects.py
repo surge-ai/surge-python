@@ -2,7 +2,7 @@ import dateutil.parser
 
 from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError, SurgeMissingAttributeError
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
-from surge.questions import Question
+from surge.questions import Question, FreeResponseQuestion, MultipleChoiceQuestion, CheckboxQuestion, TextTaggingQuestion
 from surge.tasks import Task
 from surge import utils
 
@@ -22,6 +22,10 @@ class Project(APIResource):
             # Convert timestamp str into datetime
             self.created_at = dateutil.parser.parse(self.created_at)
 
+        # If the Project has Questions, convert each into a Question object
+        if hasattr(self, "questions"):
+            self.questions = self._convert_questions_to_objects(self.questions)
+
     def __str__(self):
         return f"<surge.Project#{self.id} name=\"{self.name}\">"
 
@@ -30,6 +34,29 @@ class Project(APIResource):
 
     def attrs_repr(self):
         return self.print_attrs(forbid_list=["name", "id"])
+
+    def _convert_questions_to_objects(self, questions_data):
+        questions = []
+        for q in questions_data:
+            if q["type"] == "free_response":
+                questions.append(
+                    FreeResponseQuestion(q["text"], required=q["required"]))
+            elif q["type"] == "multiple_choice":
+                questions.append(
+                    MultipleChoiceQuestion(q["text"],
+                                           options=q["options"],
+                                           required=q["required"]))
+            elif q["type"] == "checkbox":
+                questions.append(
+                    CheckboxQuestion(q["text"],
+                                     options=q["options"],
+                                     required=q["required"]))
+            elif q["type"] == "text_tagging":
+                questions.append(
+                    TextTaggingQuestion(q["text"],
+                                        options=q["options"],
+                                        required=q["required"]))
+        return questions
 
     @classmethod
     def create(cls,
