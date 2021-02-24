@@ -115,14 +115,21 @@ tasks = project.create_tasks_from_csv(file_path)
 
 ## Development
 
-The test suite depends on `pytest` and `httpretty`, which you can install using pip:
+The test suite depends on `pytest`, which you can install using pip:
 
-```
+```bash
 pip install pytest
 ```
 
-To run all tests:
+To run tests from the command line:
 
-```
+```bash
+# Run all tests
 pytest
+
+# Run tests in a specific file
+pytest tests/test_projects.py
+
+# Run a specific test
+pytest tests/test_projects.py::test_init_complete
 ```
