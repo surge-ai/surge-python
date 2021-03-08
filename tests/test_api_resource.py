@@ -21,3 +21,8 @@ def test_raise_exception_if_invalid_api_key():
     with pytest.raises(SurgeRequestError) as e_info:
         surge.api_key = "api-key"
         APIResource._base_request("get", surge.api_resource.PROJECTS_ENDPOINT)
+
+
+def test_print_attrs():
+    a1 = APIResource(id="ABC1234").print_attrs()
+    assert a1 == 'id="ABC1234"'

@@ -19,6 +19,13 @@ class SurgeMissingIDError(Exception):
         super().__init__(self.message)
 
 
+class SurgeMissingAttributeError(Exception):
+    """Raise when a Surge object is missing a required attribute"""
+    def __init__(self, message="Object is missing a required attribute."):
+        self.message = message
+        super().__init__(self.message)
+
+
 class SurgeProjectQuestionError(Exception):
     """Raise for exceptions that occur when adding Questions to a new Project"""
     def __init__(

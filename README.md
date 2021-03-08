@@ -111,3 +111,25 @@ You can also create Tasks in bulk by uploading a local CSV file. The header of t
 file_path = './companies_to_classify.csv'
 tasks = project.create_tasks_from_csv(file_path)
 ```
+
+
+## Development
+
+The test suite depends on `pytest`, which you can install using pip:
+
+```bash
+pip install pytest
+```
+
+To run tests from the command line:
+
+```bash
+# Run all tests
+pytest
+
+# Run tests in a specific file
+pytest tests/test_projects.py
+
+# Run a specific test
+pytest tests/test_projects.py::test_init_complete
+```
