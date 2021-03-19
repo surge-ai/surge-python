@@ -86,7 +86,7 @@ You can create new Tasks for a project, list all of the Tasks in a given project
 
 ```python
 # Create Tasks for the new Project
-tasks_data = [{"id": 1, "company": Surge AI"}, {"id": 2, "company":"Twitch TV"}]
+tasks_data = [{"id": 1, "company": "Surge AI"}, {"id": 2, "company":"Twitch TV"}]
 tasks = project.create_tasks(tasks_data)
 
 # List all Tasks in the Project
@@ -108,7 +108,7 @@ You can also create Tasks in bulk by uploading a local CSV file. The header of t
 
 ```python
 # Create Tasks in bulk via CSV file
-file_path = './companies_to_classify.csv'
+file_path = "./companies_to_classify.csv"
 tasks = project.create_tasks_from_csv(file_path)
 ```
 
