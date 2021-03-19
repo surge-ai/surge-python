@@ -68,7 +68,7 @@ checkbox_q = CheckboxQuestion(
     options=["Facebook", "Twitter", "Pinterest", "Google+"])
 
 fields_template_text = '''
-    <p>website: {{website}}</p>
+    <p>Company: {{company}}</p>
 '''
 
 project = surge.Project.create(
