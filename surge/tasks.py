@@ -57,6 +57,23 @@ class Task(APIResource):
         }
         return self.post(endpoint, data)
 
+
+    def create_response(self, answers=None):
+        '''
+        Add a worker response for this task.
+
+        Arguments:
+            answer (List[string]): A list of the ground truth answers for this task, one for each question in the project.
+                If you don't want to set an answer for one of the questions, you can leave it blank by passing an empty string.
+        '''
+        if self.id is None or self.project_id is None:
+            raise SurgeMissingIDError
+        endpoint = f"{TASKS_ENDPOINT}/{self.id}/create-response"
+        data = {
+            'answers': answers
+        }
+        return self.post(endpoint, data)
+
     @classmethod
     def create(cls, project_id: str, **params):
         '''
