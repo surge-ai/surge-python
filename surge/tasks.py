@@ -21,7 +21,7 @@ class Task(APIResource):
         # If Task has responses, convert each into a TaskResponse object
         if hasattr(self, "responses"):
             task_responses = [
-                TaskResponse(r["id"], r["data"], r["time_spent_in_secs"],
+                TaskResponse(r["id"], r["data"],
                              dateutil.parser.parse(r["completed_at"]),
                              r["worker_id"]) for r in self.responses
             ]
