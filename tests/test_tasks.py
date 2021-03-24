@@ -68,7 +68,6 @@ def test_init_complete():
             'data': {
                 'What is the result of this pitch?': 'Foul Tip'
             },
-            'time_spent_in_secs': 22,
             'completed_at': '2021-01-22T20:57:13.273Z',
             'worker_id': 'J14X3BTCZX3M'
         }]
