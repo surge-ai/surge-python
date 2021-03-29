@@ -58,7 +58,7 @@ class Task(APIResource):
         return self.post(endpoint, data)
 
 
-    def create_response(self, answers=None):
+    def create_response(self, answers, worker_id=None):
         '''
         Add a worker response for this task.
 
@@ -70,7 +70,8 @@ class Task(APIResource):
             raise SurgeMissingIDError
         endpoint = f"{TASKS_ENDPOINT}/{self.id}/create-response"
         data = {
-            'answers': answers
+            'answers': answers,
+            'worker_id': worker_id
         }
         return self.post(endpoint, data)
 
