@@ -20,15 +20,16 @@ class FreeResponseQuestion(Question):
 
 
 class MultipleChoiceQuestion(Question):
-    def __init__(self, text, options=[], required=True):
+    def __init__(self, text, options=[], descriptions=[], required=True):
         super().__init__(text, type_="multiple_choice", required=required)
         self.options = options
-
+        self.descriptions = descriptions
 
 class CheckboxQuestion(Question):
-    def __init__(self, text, options=[], required=True):
+    def __init__(self, text, options=[], descriptions=[], required=True):
         super().__init__(text, type_="checkbox", required=required)
         self.options = options
+        self.descriptions = descriptions
 
 
 class TextTaggingQuestion(Question):

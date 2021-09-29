@@ -93,7 +93,7 @@ class Task(APIResource):
         return cls(**response_json)
 
     @classmethod
-    def create_many(cls, project_id: str, tasks_data: list):
+    def create_many(cls, project_id: str, tasks_data: list, launch: bool):
         '''
         Creates new Task objects for a given project.
 
@@ -112,7 +112,7 @@ class Task(APIResource):
             raise SurgeTaskDataError
 
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}/create_tasks"
-        data = {"tasks": tasks_data}
+        data = {"tasks": tasks_data, "launch": launch}
         response_json = cls.post(endpoint, data)
         tasks = [cls(**task_json) for task_json in response_json]
         return tasks

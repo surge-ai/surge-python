@@ -187,7 +187,7 @@ class Project(APIResource):
         '''
         return Task.list(self.id, page=page)
 
-    def create_tasks(self, tasks_data: list):
+    def create_tasks(self, tasks_data: list, launch=False):
         '''
         Creates new Task objects for this project.
 
@@ -198,7 +198,7 @@ class Project(APIResource):
         Returns:
             tasks (list): list of Task objects
         '''
-        return Task.create_many(self.id, tasks_data)
+        return Task.create_many(self.id, tasks_data, launch)
 
     def create_tasks_from_csv(self, file_path: str):
         '''
