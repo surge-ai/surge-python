@@ -40,7 +40,10 @@ class APIResource(object):
 
             # PUT request
             elif method == "put":
-                response = requests.put(url, auth=(surge.api_key, ""))
+                if params is not None and len(params):
+                    response = requests.put(url, auth=(surge.api_key, ""), data=params)
+                else:
+                    response = requests.put(url, auth=(surge.api_key, ""))
 
             else:
                 raise SurgeRequestError("Invalid HTTP method.")

@@ -35,6 +35,8 @@ class Project(APIResource):
     def attrs_repr(self):
         return self.print_attrs(forbid_list=["name", "id"])
 
+
+
     def _convert_questions_to_objects(self, questions_data):
         questions = []
         for q in questions_data:
@@ -58,6 +60,13 @@ class Project(APIResource):
                                         required=q["required"]))
         return questions
 
+    @staticmethod
+    def _validate_questions(questions):
+        # Convert list of question objects into dicts in valid json format
+        # If this isn't a list of Question objects, throw an exception
+        if not all(isinstance(q, Question) for q in questions):
+            raise SurgeProjectQuestionError
+
     @classmethod
     def create(cls,
                name: str,
@@ -65,6 +74,7 @@ class Project(APIResource):
                private_workforce: bool = False,
                instructions: str = None,
                questions: list = [],
+               qualifications_required: list = [],
                callback_url: str = None,
                fields_template: str = None,
                num_workers_per_task: int = 1):
@@ -88,10 +98,7 @@ class Project(APIResource):
             project: new Project object
         '''
 
-        # Convert list of question objects into dicts in valid json format
-        # If this isn't a list of Question objects, throw an exception
-        if not all(isinstance(q, Question) for q in questions):
-            raise SurgeProjectQuestionError
+        Project._validate_questions(questions)
 
         questions_json = [q.to_dict() for q in questions]
 
@@ -100,6 +107,7 @@ class Project(APIResource):
             "private_workforce": private_workforce,
             "instructions": instructions,
             "questions": questions_json,
+            "qualifications_required": qualifications_required,
             "callback_url": callback_url,
             "fields_template": fields_template,
             "num_workers_per_task": num_workers_per_task
@@ -213,3 +221,47 @@ class Project(APIResource):
         '''
         tasks_data = utils.load_tasks_data_from_csv(file_path)
         return self.create_tasks(tasks_data)
+
+    def update(self,
+               name: str = None,
+               payment_per_response: float = None,
+               instructions: str = None,
+               callback_url: str = None,
+               fields_template: str = None,
+               num_workers_per_task: int = 0):
+        '''
+        Update an existing project
+
+        Arguments:
+            name (str): Name of the project.
+            payment_per_response (float, optional):
+                How much a worker is paid (in US dollars) for an individual response.
+            instructions (str, optional): Instructions shown to workers describing how they should complete the task.
+            callback_url (str, optional): url that receives a POST request with the project's data.
+            fields_template (str, optional): A template describing how fields are shown to workers working on the task.
+                For example, if fields_template is "{{company_name}}", then workers will be shown a link to the company.
+            num_workers_per_task (int, optional): How many workers work on each task (i.e., how many responses per task).
+
+        Returns:
+            project: new Project object
+        '''
+
+        params = {}
+
+        Project._validate_questions(questions)
+        questions_json = [q.to_dict() for q in questions]
+
+        if name is not None and len(name) > 0:
+            params["name"] = name
+        if payment_per_response is not None:
+            params["payment_per_response"] = payment_per_response
+        if instructions is not None and len(instructions) > 0:
+            params["instructions"] = instructions
+        if callback_url is not None and len(callback_url) > 0:
+            params["callback_url"] = callback_url
+        if num_workers_per_task > 0:
+            params["num_workers_per_task"] = num_workers_per_task
+
+        endpoint = f"{PROJECTS_ENDPOINT}/{self.id}"
+        response_json = self.put(endpoint, params)
+        return Project(**response_json)
