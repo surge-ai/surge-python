@@ -118,7 +118,7 @@ class Task(APIResource):
         return tasks
 
     @classmethod
-    def list(cls, project_id: str, page: int = 1):
+    def list(cls, project_id: str, page: int = 1, per_page: int = 100):
         '''
         Lists all tasks belonging to a given project.
         Tasks are returned in ascending order of created_at.
@@ -132,7 +132,7 @@ class Task(APIResource):
             tasks (list): list of Task objects.
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}"
-        params = {"page": page}
+        params = {"page": page, "per_page": per_page}
         response_json = cls.get(endpoint, params)
         tasks = [cls(**task_json) for task_json in response_json]
         return tasks

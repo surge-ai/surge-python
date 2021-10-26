@@ -181,7 +181,7 @@ class Project(APIResource):
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/cancel"
         return self.put(endpoint)
 
-    def list_tasks(self, page: int = 1):
+    def list_tasks(self, page: int = 1, per_page: int = 100):
         '''
         Lists all tasks belonging to this project.
         Tasks are returned in ascending order of created_at.
@@ -193,7 +193,7 @@ class Project(APIResource):
         Returns:
             tasks (list): list of Task objects.
         '''
-        return Task.list(self.id, page=page)
+        return Task.list(self.id, page=page, per_page=per_page)
 
     def create_tasks(self, tasks_data: list, launch=False):
         '''
