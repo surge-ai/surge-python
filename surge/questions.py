@@ -36,3 +36,9 @@ class TextTaggingQuestion(Question):
     def __init__(self, text, options=[], required=True):
         super().__init__(text, type_="text_tagging", required=required)
         self.options = options
+
+class TreeSelectionQuestion(Question):
+    def __init__(self, text, options=[], descriptions=[], required=True):
+        super().__init__(text, type_="tree_selection", required=required)
+        self.options = options
+        self.descriptions = descriptions
