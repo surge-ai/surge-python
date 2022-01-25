@@ -25,15 +25,11 @@ class Report(APIResource):
         is a presigned URL which is active for only a limited duration.
 
         Type may be one of these types:
-          * `responses` - all of the responses with duplicate rows if there is more than one worker per task
-          * `responses_aggregated` - all of the responses with work for the same tasks aggregated
           * `export_json`
           * `export_json_aggregated`
           * `export_csv`
           * `export_csv_aggregated`
           * `export_csv_flattened`
-          * `responses_by_task`
-          * `task_input_data`        
 
         These are the different responses:
 
