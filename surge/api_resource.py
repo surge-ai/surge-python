@@ -3,10 +3,12 @@ import requests
 import surge
 from surge.errors import SurgeRequestError, SurgeMissingAPIKeyError
 
-BASE_URL = "https://app.surgehq.ai/api"
+# BASE_URL = "https://app.surgehq.ai/api"
+BASE_URL = "http://localhost:3000/api"
 
 PROJECTS_ENDPOINT = "projects"
 TASKS_ENDPOINT = "tasks"
+REPORTS_ENDPOINT = "projects"
 
 class APIResource(object):
     def __init__(self, id=None):
