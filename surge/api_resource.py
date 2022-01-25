@@ -7,6 +7,7 @@ BASE_URL = "https://app.surgehq.ai/api"
 
 PROJECTS_ENDPOINT = "projects"
 TASKS_ENDPOINT = "tasks"
+REPORTS_ENDPOINT = "projects"
 
 class APIResource(object):
     def __init__(self, id=None):
