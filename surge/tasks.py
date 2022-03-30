@@ -38,7 +38,8 @@ class Task(APIResource):
 
     def set_gold_standard(self,
                           gold_standard_answers=None,
-                          is_gold_standard=True):
+                          is_gold_standard=True,
+                          explanations=None):
         '''
         Set gold standard answers for this task.
 
@@ -50,9 +51,13 @@ class Task(APIResource):
         '''
         if self.id is None or self.project_id is None:
             raise SurgeMissingIDError
+        if explanations is None:
+            explanations = []
+
         endpoint = f"{TASKS_ENDPOINT}/{self.id}/gold-standards"
         data = {
-            "is_gold_standard": is_gold_standard,
+            'is_gold_standard': is_gold_standard,
+            'explanations': explanations,
             'answers': gold_standard_answers
         }
         return self.post(endpoint, data)
