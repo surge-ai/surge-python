@@ -42,3 +42,7 @@ class TreeSelectionQuestion(Question):
         super().__init__(text, type_="tree_selection", required=required)
         self.options = options
         self.descriptions = descriptions
+
+class TextArea(Question):
+    def __init__(self, text):
+        super().__init__(text, type_="text")
