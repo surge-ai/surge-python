@@ -150,6 +150,18 @@ class Project(APIResource):
         response_json = cls.get(endpoint)
         return cls(**response_json)
 
+    def launch(self):
+        '''
+        Launches a project.
+        If work is being completed by the Surge workforce, you will be charged when the project launches
+        and your accounts neeeds to have sufficient funds before launching.
+
+        Returns:
+            project: new Project object with updated status
+        '''
+        endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/launch"
+        return self.put(endpoint)
+
     def pause(self):
         '''
         Pauses a project.
