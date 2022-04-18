@@ -1,6 +1,7 @@
 from surge.errors import SurgeMissingIDError, SurgeMissingAttributeError
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
 
+
 class Report(APIResource):
     def __init__(self, **kwargs):
         super().__init__()
@@ -56,9 +57,7 @@ class Report(APIResource):
             status: Report status object which includes report id
         '''
         endpoint = f"{REPORTS_ENDPOINT}/{project_id}/report"
-        params = {
-          "report_type": type
-        }
+        params = {"report_type": type}
         response_json = cls.post(endpoint, params)
         return cls(**response_json)
 
@@ -103,8 +102,6 @@ class Report(APIResource):
             status: Report status object
         '''
         endpoint = f"{REPORTS_ENDPOINT}/{project_id}/report_status"
-        params = {
-          "job_id": job_id
-        }
+        params = {"job_id": job_id}
         response_json = cls.get(endpoint, params)
         return cls(**response_json)

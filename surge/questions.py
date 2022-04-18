@@ -25,6 +25,7 @@ class MultipleChoiceQuestion(Question):
         self.options = options
         self.descriptions = descriptions
 
+
 class CheckboxQuestion(Question):
     def __init__(self, text, options=[], descriptions=[], required=True):
         super().__init__(text, type_="checkbox", required=required)
@@ -37,11 +38,13 @@ class TextTaggingQuestion(Question):
         super().__init__(text, type_="text_tagging", required=required)
         self.options = options
 
+
 class TreeSelectionQuestion(Question):
     def __init__(self, text, options=[], descriptions=[], required=True):
         super().__init__(text, type_="tree_selection", required=required)
         self.options = options
         self.descriptions = descriptions
+
 
 class TextArea(Question):
     def __init__(self, text):

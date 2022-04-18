@@ -9,6 +9,7 @@ PROJECTS_ENDPOINT = "projects"
 TASKS_ENDPOINT = "tasks"
 REPORTS_ENDPOINT = "projects"
 
+
 class APIResource(object):
     def __init__(self, id=None):
         self.id = id
@@ -42,7 +43,9 @@ class APIResource(object):
             # PUT request
             elif method == "put":
                 if params is not None and len(params):
-                    response = requests.put(url, auth=(surge.api_key, ""), data=params)
+                    response = requests.put(url,
+                                            auth=(surge.api_key, ""),
+                                            data=params)
                 else:
                     response = requests.put(url, auth=(surge.api_key, ""))
 
