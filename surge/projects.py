@@ -77,7 +77,8 @@ class Project(APIResource):
                qualifications_required: list = [],
                callback_url: str = None,
                fields_template: str = None,
-               num_workers_per_task: int = 1):
+               num_workers_per_task: int = 1,
+               tags=[]):
         '''
         Creates a new Project.
 
@@ -93,6 +94,7 @@ class Project(APIResource):
             fields_template (str, optional): A template describing how fields are shown to workers working on the task.
                 For example, if fields_template is "{{company_name}}", then workers will be shown a link to the company.
             num_workers_per_task (int, optional): How many workers work on each task (i.e., how many responses per task).
+            tags (list, optional): An array of strings to tag the project with. Worker won't see these tags.
 
         Returns:
             project: new Project object
@@ -110,7 +112,8 @@ class Project(APIResource):
             "qualifications_required": qualifications_required,
             "callback_url": callback_url,
             "fields_template": fields_template,
-            "num_workers_per_task": num_workers_per_task
+            "num_workers_per_task": num_workers_per_task,
+            "tags": tags
         }
         if payment_per_response is not None:
             params["payment_per_response"] = payment_per_response
