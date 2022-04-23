@@ -35,8 +35,6 @@ class Project(APIResource):
     def attrs_repr(self):
         return self.print_attrs(forbid_list=["name", "id"])
 
-
-
     def _convert_questions_to_objects(self, questions_data):
         questions = []
         for q in questions_data:
