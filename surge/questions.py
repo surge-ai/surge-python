@@ -60,12 +60,12 @@ class RankingQuestion(Question):
 
 class FileUpload(Question):
     def __init__(self, text):
-    """
-        Add a file upload widget where workers can upload images, documents, or other files.
+        """
+            Add a file upload widget where workers can upload images, documents, or other files.
 
-        Args:
-            text (string): This text will appear above the file upload and can be used to specify any instructions.
-    """
+            Args:
+                text (string): This text will appear above the file upload and can be used to specify any instructions.
+        """
         super().__init__(text, type_="file_upload", required=False)
 
 class ChatBot(Question):
