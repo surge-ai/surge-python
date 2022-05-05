@@ -58,6 +58,16 @@ class RankingQuestion(Question):
         super().__init__(text, type_="ranking", required=False)
         self.options = options
 
+class FileUpload(Question):
+    def __init__(self, text):
+    """
+        Add a file upload widget where workers can upload images, documents, or other files.
+
+        Args:
+            text (string): This text will appear above the file upload and can be used to specify any instructions.
+    """
+        super().__init__(text, type_="file_upload", required=False)
+
 class ChatBot(Question):
     def __init__(self, text, options=[], endpoint_url=None, endpoint_headers=None):
         super().__init__(text, type_="chat", required=False)
