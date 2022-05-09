@@ -73,6 +73,7 @@ class Project(APIResource):
                instructions: str = None,
                questions: list = [],
                qualifications_required: list = [],
+               teams_required: list = [],
                callback_url: str = None,
                fields_template: str = None,
                num_workers_per_task: int = 1,
@@ -88,6 +89,8 @@ class Project(APIResource):
                 Indicates if the project's tasks will be done by a private workforce.
             instructions (str, optional): Instructions shown to workers describing how they should complete the task.
             questions (list, optional): An array of question objects describing the questions to be answered.
+            qualifications_required (list, optional): Deprecated in favor of teams_required.
+            teams_required (list, optional): If you have created custom teams, you can pass a list of team ids Surgers must have to work on the project here.
             callback_url (str, optional): url that receives a POST request with the project's data.
             fields_template (str, optional): A template describing how fields are shown to workers working on the task.
                 For example, if fields_template is "{{company_name}}", then workers will be shown a link to the company.
@@ -102,12 +105,16 @@ class Project(APIResource):
 
         questions_json = [q.to_dict() for q in questions]
 
+        # qualifications_required still needs to work for backwards compatibility
+        if len(teams_required) == 0 and len(qualifications_required) > 0:
+            teams_required = qualifications_required
+
         params = {
             "name": name,
             "private_workforce": private_workforce,
             "instructions": instructions,
             "questions": questions_json,
-            "qualifications_required": qualifications_required,
+            "qualifications_required": teams_required,
             "callback_url": callback_url,
             "fields_template": fields_template,
             "num_workers_per_task": num_workers_per_task,
