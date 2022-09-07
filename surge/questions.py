@@ -66,12 +66,13 @@ class CheckboxQuestion(Question):
 
 
 class TextTaggingQuestion(Question):
-    def __init__(self, text, options=[], preexisting_annotations=None, token_granularity=True, allow_relationship_tags=False, allow_overlapping_tags=False):
+    def __init__(self, text, options=[], required=True, preexisting_annotations=None, token_granularity=True, allow_relationship_tags=False, allow_overlapping_tags=False):
         '''
         Create a text tagging (NER) question. Unlikely a multiple choice question, it's possible to select multiple checkboxes
 
         Args:
             text (string): Required. The text that needs to be tagged.
+            required (boolean): If true, worker must tag at least element.
             options (list of strings): Required. A list of tags that can be used to tag spans of text, e.g. ["Person", "Place"].
             preexisting_annotations (string): You can use preexisting annotations to prepopulate the named entity tagger. This must contain serialized JSON data
                 in the same format outputted by the text tagging tool.
