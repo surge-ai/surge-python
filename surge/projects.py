@@ -130,7 +130,7 @@ class Project(APIResource):
         '''
         Lists all projects you have created.
         Projects are returned in descending order of created_at.
-        Each page contains a maximum of 25 projects.
+        Each page contains a maximum of 100 projects.
 
         Arguments:
             page (int, optional): Page number to retrieve. Pages start at 1 (default value).
@@ -140,6 +140,25 @@ class Project(APIResource):
         '''
         params = {"page": page}
         response_json = cls.get(PROJECTS_ENDPOINT, params)
+        projects = [cls(**project_json) for project_json in response_json]
+        return projects
+
+    @classmethod
+    def list_shared(cls, page: int = 1):
+        '''
+        Lists all projects created by anyone in your organization.
+        Projects are returned in descending order of created_at.
+        Each page contains a maximum of 100 projects.
+
+        Arguments:
+            page (int, optional): Page number to retrieve. Pages start at 1 (default value).
+
+        Returns:
+            projects (list): list of Project objects.
+        '''
+        params = {"page": page}
+        endpoint = f"{PROJECTS_ENDPOINT}/shared"
+        response_json = cls.get(endpoint, params)
         projects = [cls(**project_json) for project_json in response_json]
         return projects
 
