@@ -66,7 +66,7 @@ class CheckboxQuestion(Question):
 
 
 class TextTaggingQuestion(Question):
-    def __init__(self, text, options=[], required=True, preexisting_annotations=None, token_granularity=True, allow_relationship_tags=False, allow_overlapping_tags=False):
+    def __init__(self, text, options=[], required=True, preexisting_annotations=None, token_granularity=True, allow_relationship_tags=False, allow_overlapping_tags=False, require_tiebreaker=False):
         '''
         Create a text tagging (NER) question. Unlikely a multiple choice question, it's possible to select multiple checkboxes
 
@@ -86,9 +86,10 @@ class TextTaggingQuestion(Question):
         self.token_granularity = token_granularity
         self.allow_relationship_tags = allow_relationship_tags
         self.allow_overlapping_tags = allow_overlapping_tags
+        self.require_tiebreaker = require_tiebreaker
 
 class TreeSelectionQuestion(Question):
-    def __init__(self, text, options=[], descriptions=[], required=True, preexisting_annotations=None):
+    def __init__(self, text, options=[], descriptions=[], required=True, preexisting_annotations=None, require_tiebreaker=False):
         '''
         Create a hierarchical multiple choice question. This is useful if you have a lot of options in a nested format.
 
@@ -108,11 +109,7 @@ class TreeSelectionQuestion(Question):
         self.options = options
         self.descriptions = descriptions
         self.preexisting_annotations = preexisting_annotations
-
-class RankingQuestion(Question):
-    def __init__(self, text, options=[]):
-        super().__init__(text, type_="ranking", required=False)
-        self.options = options
+        self.require_tiebreaker = require_tiebreaker
 
 class FileUpload(Question):
     def __init__(self, text):
@@ -126,7 +123,7 @@ class FileUpload(Question):
 
 
 class RankingQuestion(Question):
-    def __init__(self, text, options=[]):
+    def __init__(self, text, options=[], allow_ranking_ties=False):
         '''
         Create a ranking widget. Workers can drag and drop the option to specify their ranking.
 
@@ -136,6 +133,7 @@ class RankingQuestion(Question):
         '''
         super().__init__(text, type_="ranking", required=False)
         self.options = options
+        self.allow_ranking_ties = allow_ranking_ties
 
 class ChatBot(Question):
     def __init__(self, text, options=[], endpoint_url=None, endpoint_headers=None):
