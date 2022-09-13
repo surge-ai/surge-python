@@ -88,6 +88,8 @@ def test_init_complete():
             None,
             'preexisting_annotations':
             None,
+            'require_tie_breaker':
+            False,
             'type':
             'multiple_choice',
             'options': ['Option A', 'Option B', 'Option C'],
@@ -180,6 +182,8 @@ def test_convert_questions_to_objects():
         None,
         'preexisting_annotations':
         None,
+        'require_tie_breaker':
+        False,
         'type':
         'checkbox',
         'options': ['Option 1', 'Option 2'],
@@ -211,6 +215,8 @@ def test_convert_questions_to_objects():
         None,
         'preexisting_annotations':
         None,
+        'require_tie_breaker':
+        False,
         'type':
         'multiple_choice',
         'options': ['Choice 1', 'Choice 2'],
@@ -252,6 +258,10 @@ def test_convert_questions_to_objects():
         None,
         'preexisting_annotations':
         None,
+        'ner_token_granularity':
+        True,
+        'require_tie_breaker':
+        False,
         'type':
         'text_tagging',
         'options': ['Label 1', 'Label 2', 'Label 3'],
