@@ -58,8 +58,6 @@ class Project(APIResource):
                     CheckboxQuestion(q["text"],
                                      options=q["options"],
                                      required=q["required"],
-                                     # potential issue
-                                     descriptions=q["descriptions"],
                                      preexisting_annotations=q["preexisting_annotations"],
                                      require_tiebreaker=q["require_tie_breaker"]))
             elif q["type"] == "text_tagging":
