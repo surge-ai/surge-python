@@ -21,7 +21,14 @@ class FreeResponseQuestion(Question):
 
 
 class MultipleChoiceQuestion(Question):
-    def __init__(self, text, options=[], descriptions=[], required=True, preexisting_annotations=None, require_tiebreaker=False):
+    def __init__(
+            self,
+            text,
+            options=[],
+            descriptions=[],
+            required=True,
+            preexisting_annotations=None,
+            require_tiebreaker=False):
         '''
         Create a multiple choice radio question.
 
@@ -42,8 +49,16 @@ class MultipleChoiceQuestion(Question):
         self.preexisting_annotations = preexisting_annotations
         self.require_tiebreaker = require_tiebreaker
 
+
 class CheckboxQuestion(Question):
-    def __init__(self, text, options=[], descriptions=[], required=True, preexisting_annotations=None, require_tiebreaker=False):
+    def __init__(
+            self,
+            text,
+            options=[],
+            descriptions=[],
+            required=True,
+            preexisting_annotations=None,
+            require_tiebreaker=False):
         '''
         Create a checkbox question. Unlike a multiple choice question, it's possible to select multiple checkboxes.
 
@@ -66,7 +81,16 @@ class CheckboxQuestion(Question):
 
 
 class TextTaggingQuestion(Question):
-    def __init__(self, text, options=[], required=True, preexisting_annotations=None, token_granularity=True, allow_relationship_tags=False, allow_overlapping_tags=False, require_tiebreaker=False):
+    def __init__(
+            self,
+            text,
+            options=[],
+            required=True,
+            preexisting_annotations=None,
+            token_granularity=True,
+            allow_relationship_tags=False,
+            allow_overlapping_tags=False,
+            require_tiebreaker=False):
         '''
         Create a text tagging (NER) question. Unlikely a multiple choice question, it's possible to select multiple checkboxes
 
@@ -79,6 +103,8 @@ class TextTaggingQuestion(Question):
             token_granularity (boolean): If set to true, spans will snap to the nearest word to prevent workers from accidentally tagging parts of words.
             allow_relationship_tags (boolean): If true, enable relationship tagging.
             allow_overlapping_tags (boolean): If true, allow multiple tags to be assigned to the same span of text.
+            require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
+                Workers must have the exact same set of tags to be considered in agreement.
         '''
         super().__init__(text, type_="text_tagging", required=False)
         self.options = options
@@ -88,8 +114,16 @@ class TextTaggingQuestion(Question):
         self.allow_overlapping_tags = allow_overlapping_tags
         self.require_tiebreaker = require_tiebreaker
 
+
 class TreeSelectionQuestion(Question):
-    def __init__(self, text, options=[], descriptions=[], required=True, preexisting_annotations=None, require_tiebreaker=False):
+    def __init__(
+            self,
+            text,
+            options=[],
+            descriptions=[],
+            required=True,
+            preexisting_annotations=None,
+            require_tiebreaker=False):
         '''
         Create a hierarchical multiple choice question. This is useful if you have a lot of options in a nested format.
 
@@ -111,32 +145,49 @@ class TreeSelectionQuestion(Question):
         self.preexisting_annotations = preexisting_annotations
         self.require_tiebreaker = require_tiebreaker
 
+
 class FileUpload(Question):
-    def __init__(self, text):
+    def __init__(self, text, required=False):
         '''
         Add a file upload widget where workers can upload images, documents, or other files.
 
         Args:
             text (string): This text will appear above the file upload and can be used to specify any instructions.
         '''
-        super().__init__(text, type_="file_upload", required=False)
+        super().__init__(text, type_="file_upload", required=required)
 
 
 class RankingQuestion(Question):
-    def __init__(self, text, options=[], allow_ranking_ties=False):
+    def __init__(
+            self,
+            text,
+            options=[],
+            required=False,
+            preexisting_annotations=None,
+            allow_ranking_ties=False):
         '''
         Create a ranking widget. Workers can drag and drop the option to specify their ranking.
 
         Args:
+            required (boolean): If true, worker must rank at least one element.
             text (string): Required. The text of the question being asked, e.g. "Please rank these search results from best to worst"
             options (list of strings): Required. A list of the options being ranked.
+            preexisting_annotations (string): You can use preexisting annotations to prepopulate the named entity tagger.
+                This must contain serialized data in the same format outputted by the ranking tool.
+            allow_ranking_ties (boolean): Optional. Whether or not to allow ties in the ranking. If ties are allowed, two options can be ranked in the same group.
         '''
-        super().__init__(text, type_="ranking", required=False)
+        super().__init__(text, type_="ranking", required=required)
         self.options = options
         self.allow_ranking_ties = allow_ranking_ties
 
+
 class ChatBot(Question):
-    def __init__(self, text, options=[], endpoint_url=None, endpoint_headers=None):
+    def __init__(
+            self,
+            text,
+            options=[],
+            endpoint_url=None,
+            endpoint_headers=None):
         '''
         Create an interactive chatbot on the labeling page. This is an advanced item type.
 
@@ -150,6 +201,7 @@ class ChatBot(Question):
         self.options = options
         self.endpoint_url = endpoint_url
         self.endpoint_headers = endpoint_headers
+
 
 class TextArea(Question):
     def __init__(self, text):
