@@ -1,3 +1,7 @@
+import gzip
+from time import sleep
+import urllib
+
 from surge.errors import SurgeMissingIDError, SurgeMissingAttributeError
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
 
@@ -15,6 +19,43 @@ class Report(APIResource):
 
     def attrs_repr(self):
         return self.print_attrs(forbid_list=["id"])
+
+    @classmethod
+    def save_report(cls, project_id: str, type: str, filepath=None, poll_time=30):
+        '''
+        Request creation of a report, poll until the report is generated, and save the data to a file all in one call.
+        Args:
+        project_id (string): UUID of project to get data for
+        type (string): Must be one of these types:
+          * `export_json`
+          * `export_json_aggregated`
+          * `export_csv`
+          * `export_csv_aggregated`
+          * `export_csv_flattened`
+        filepath (string or None): Location to save the results file. If not specified, will save to "project_{project_id}_results.{csv/json}
+        poll_time (int): Number of seconds to poll for the report
+      '''
+        for _ in range(poll_time // 2):
+            response = cls.request(project_id=project_id, type=type)
+            # Download zipped project results if ready
+            if response.status == "READY":
+                file_ext = "csv" if "csv" in type else "json"
+                default_file_name = "project_{project_id}_results.{file_ext}.gzip".format(project_id=project_id, file_ext=file_ext)
+                downloaded_file, http_message = urllib.request.urlretrieve(
+                    response.url, default_file_name
+                )
+                # Unzip and save results
+                data =  gzip.open(downloaded_file, "r").read()
+                open(filepath or default_file_name.rstrip('.gzip'), "wb").write(data)
+
+            # Wait two seconds before polling again
+            elif response.status == 'CREATING':
+                sleep(2)
+                continue
+            else:
+                raise ValueError("Report failed to generate with status {}".format(response.status))
+
+            raise Exception("Report failed to generate within {poll_time} seconds".format(poll_time))
 
     @classmethod
     def request(cls, project_id: str, type: str):
