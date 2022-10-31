@@ -47,6 +47,7 @@ class Report(APIResource):
                 # Unzip and save results
                 data =  gzip.open(downloaded_file, "r").read()
                 open(filepath or default_file_name.rstrip('.gzip'), "wb").write(data)
+                return None
 
             # Wait two seconds before polling again
             elif response.status == 'CREATING':
@@ -55,7 +56,7 @@ class Report(APIResource):
             else:
                 raise ValueError("Report failed to generate with status {}".format(response.status))
 
-            raise Exception("Report failed to generate within {poll_time} seconds".format(poll_time))
+            raise Exception("Report failed to generate within {poll_time} seconds".format(poll_time=poll_time))
 
     @classmethod
     def request(cls, project_id: str, type: str):
