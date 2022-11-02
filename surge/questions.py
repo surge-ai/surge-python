@@ -205,4 +205,4 @@ class ChatBot(Question):
 
 class TextArea(Question):
     def __init__(self, text):
-        super().__init__(text, type_="text")
+        super().__init__(text, type_="text", required=False)

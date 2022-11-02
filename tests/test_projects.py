@@ -5,7 +5,7 @@ import pytest
 import surge
 from surge.api_resource import APIResource
 from surge.projects import Project
-from surge.questions import Question, FreeResponseQuestion, MultipleChoiceQuestion, CheckboxQuestion, TextTaggingQuestion
+from surge.questions import Question, FreeResponseQuestion, MultipleChoiceQuestion, CheckboxQuestion, TextTaggingQuestion, TextArea
 from surge.errors import SurgeMissingIDError, SurgeMissingAttributeError
 
 
@@ -287,12 +287,19 @@ def test_convert_questions_to_objects():
             'updated_at': '2021-02-20T20:56:34.575Z',
             'order': 3
         }]
+    }, {
+        'id': '6123463e-349e-4450-80d2-6684a28755b4',
+        'text': 'Text area for {{url}}',
+        'type': 'text',
+        'required': False,
+        'options': [],
+        'options_objects': []
     }]
 
     project = Project(id="ABC1234", name="Hello World")
     questions = project._convert_questions_to_objects(questions_data)
     assert type(questions) == list
-    assert len(questions) == 4
+    assert len(questions) == 5
 
     assert type(questions[0]) == CheckboxQuestion
     assert questions[0].text == 'Checkbox for {{url}}'
@@ -314,3 +321,9 @@ def test_convert_questions_to_objects():
         3].text == 'This is a Named Entity Recognition prompt for {{url}}'
     assert questions[3].required == False
     assert questions[3].options
+
+    assert type(questions[4]) == TextArea
+    assert questions[
+        4].text == 'Text area for {{url}}'
+    assert questions[4].required == False
+    assert not hasattr(questions[4], "options")
