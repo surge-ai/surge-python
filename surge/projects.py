@@ -94,7 +94,7 @@ class Project(APIResource):
                                required=q["required"]))
             elif q["type"] == "text":
                 questions.append(
-                    TextTaggingQuestion(q["text"]))
+                    TextArea(q["text"]))
         return questions
 
     @staticmethod
