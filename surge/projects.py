@@ -260,6 +260,16 @@ class Project(APIResource):
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/cancel"
         return self.put(endpoint)
 
+    def delete(self):
+        '''
+        Permanently delete the project, including the input data and all responses.
+
+        Returns:
+            {"success": True}
+        '''
+        endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/delete"
+        return self.get(endpoint)
+
     def list_tasks(self, page: int = 1, per_page: int = 100):
         '''
         Lists all tasks belonging to this project.
