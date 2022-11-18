@@ -337,8 +337,6 @@ class Project(APIResource):
 
         params = {}
 
-        Project._validate_questions(questions)
-        questions_json = [q.to_dict() for q in questions]
 
         if name is not None and len(name) > 0:
             params["name"] = name
