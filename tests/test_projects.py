@@ -314,6 +314,7 @@ def test_convert_questions_to_objects():
     assert type(questions[2]) == FreeResponseQuestion
     assert questions[2].text == 'Free response for {{url}}'
     assert questions[2].required == False
+    assert questions[2].use_for_serial_collection == False
     assert not hasattr(questions[2], "options")
 
     assert type(questions[3]) == TextTaggingQuestion

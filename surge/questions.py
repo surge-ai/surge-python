@@ -15,9 +15,10 @@ class Question(object):
 
 
 class FreeResponseQuestion(Question):
-    def __init__(self, text, required=True, preexisting_annotations=None):
+    def __init__(self, text, required=True, preexisting_annotations=None, use_for_serial_collection=False):
         super().__init__(text, type_="free_response", required=required)
         self.preexisting_annotations = preexisting_annotations
+        self.use_for_serial_collection = use_for_serial_collection
 
 
 class MultipleChoiceQuestion(Question):
