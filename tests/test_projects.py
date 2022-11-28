@@ -5,7 +5,7 @@ import pytest
 import surge
 from surge.api_resource import APIResource
 from surge.projects import Project
-from surge.questions import Question, FreeResponseQuestion, MultipleChoiceQuestion, CheckboxQuestion, TextTaggingQuestion, TextArea
+from surge.questions import Question, FreeResponseQuestion, MultipleChoiceQuestion, CheckboxQuestion, TextTaggingQuestion, TextArea, ChatBot
 from surge.errors import SurgeMissingIDError, SurgeMissingAttributeError
 
 
@@ -294,12 +294,20 @@ def test_convert_questions_to_objects():
         'required': False,
         'options': [],
         'options_objects': []
+    }, {
+        'id': '6123463e-349e-4450-80d2-6684a28755b5',
+        'text': 'Chatbot for {{url}}',
+        'required': False,
+        'type': 'chat',
+        'options': [],
+        'endpoint_url': "https://google.com",
+        'endpoint_headers': None,
     }]
 
     project = Project(id="ABC1234", name="Hello World")
     questions = project._convert_questions_to_objects(questions_data)
     assert type(questions) == list
-    assert len(questions) == 5
+    assert len(questions) == 6
 
     assert type(questions[0]) == CheckboxQuestion
     assert questions[0].text == 'Checkbox for {{url}}'
@@ -328,3 +336,9 @@ def test_convert_questions_to_objects():
         4].text == 'Text area for {{url}}'
     assert questions[4].required == False
     assert not hasattr(questions[4], "options")
+
+    assert type(questions[5]) == ChatBot
+    assert questions[
+        5].text == 'Chatbot for {{url}}'
+    assert questions[5].required == False
+    assert questions[5].endpoint_url == "https://google.com"

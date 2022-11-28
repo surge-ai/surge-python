@@ -95,6 +95,13 @@ class Project(APIResource):
             elif q["type"] == "text":
                 questions.append(
                     TextArea(q["text"]))
+            elif q["type"] == "chat":
+                questions.append(
+                    ChatBot(
+                        q["text"],
+                        options=q["options"],
+                        endpoint_url=q["endpoint_url"],
+                        endpoint_headers=q["endpoint_headers"]))
         return questions
 
     @staticmethod
