@@ -188,7 +188,8 @@ class ChatBot(Question):
             text,
             options=[],
             endpoint_url=None,
-            endpoint_headers=None):
+            endpoint_headers=None,
+            preexisting_annotations=None):
         '''
         Create an interactive chatbot on the labeling page. This is an advanced item type.
 
@@ -202,6 +203,7 @@ class ChatBot(Question):
         self.options = options
         self.endpoint_url = endpoint_url
         self.endpoint_headers = endpoint_headers
+        self.preexisting_annotations=preexisting_annotations
 
 
 class TextArea(Question):

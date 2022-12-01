@@ -101,7 +101,8 @@ class Project(APIResource):
                         q["text"],
                         options=q["options"],
                         endpoint_url=q["endpoint_url"],
-                        endpoint_headers=q["endpoint_headers"]))
+                        endpoint_headers=q["endpoint_headers"],
+                        preexisting_annotations=q["preexisting_annotations"]))
         return questions
 
     @staticmethod
