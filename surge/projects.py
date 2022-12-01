@@ -124,7 +124,8 @@ class Project(APIResource):
                callback_url: str = None,
                fields_template: str = None,
                num_workers_per_task: int = 1,
-               tags=[]):
+               tags=[],
+               carousel=None):
         '''
         Creates a new Project.
 
@@ -168,6 +169,8 @@ class Project(APIResource):
             "num_workers_per_task": num_workers_per_task,
             "tags": tags
         }
+        if carousel is not None:
+            params = { **params, **carousel.to_dict() }
         if payment_per_response is not None:
             params["payment_per_response"] = payment_per_response
         response_json = cls.post(PROJECTS_ENDPOINT, params)
