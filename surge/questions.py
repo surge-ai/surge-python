@@ -107,7 +107,7 @@ class TextTaggingQuestion(Question):
             require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
                 Workers must have the exact same set of tags to be considered in agreement.
         '''
-        super().__init__(text, type_="text_tagging", required=False)
+        super().__init__(text, type_="text_tagging", required=required)
         self.options = options
         self.preexisting_annotations = preexisting_annotations
         self.token_granularity = token_granularity
@@ -189,7 +189,8 @@ class ChatBot(Question):
             options=[],
             endpoint_url=None,
             endpoint_headers=None,
-            preexisting_annotations=None):
+            preexisting_annotations=None,
+            required=False):
         '''
         Create an interactive chatbot on the labeling page. This is an advanced item type.
 
@@ -199,7 +200,7 @@ class ChatBot(Question):
             endpoint_url (string): A URL to send chat responses to. It must include a "text" field in its response.
             endpoint_headers (string): Please provide a JSON string with any headers that need to be set when calling this URL.
         '''
-        super().__init__(text, type_="chat", required=False)
+        super().__init__(text, type_="chat", required=required)
         self.options = options
         self.endpoint_url = endpoint_url
         self.endpoint_headers = endpoint_headers
