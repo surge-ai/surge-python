@@ -60,7 +60,9 @@ class Task(APIResource):
             'explanations': explanations,
             'answers': gold_standard_answers
         }
-        return self.post(endpoint, data)
+        response_json = self.post(endpoint, data)
+        self.__dict__.update(response_json)
+        return self
 
     def create_response(self, answers, worker_id=None):
         '''
