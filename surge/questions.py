@@ -2,10 +2,11 @@ import json
 
 
 class Question(object):
-    def __init__(self, text, type_=None, required=True):
+    def __init__(self, text, type_=None, required=True, column_header=None):
         self.text = text
         self.type = type_
         self.required = required
+        self.column_header = column_header
 
     def to_dict(self):
         return self.__dict__
@@ -15,8 +16,8 @@ class Question(object):
 
 
 class FreeResponseQuestion(Question):
-    def __init__(self, text, required=True, preexisting_annotations=None, use_for_serial_collection=False):
-        super().__init__(text, type_="free_response", required=required)
+    def __init__(self, text, required=True, preexisting_annotations=None, use_for_serial_collection=False, column_header=None):
+        super().__init__(text, type_="free_response", required=required, column_header=column_header)
         self.preexisting_annotations = preexisting_annotations
         self.use_for_serial_collection = use_for_serial_collection
 
@@ -29,7 +30,8 @@ class MultipleChoiceQuestion(Question):
             descriptions=[],
             required=True,
             preexisting_annotations=None,
-            require_tiebreaker=False):
+            require_tiebreaker=False,
+            column_header=None):
         '''
         Create a multiple choice radio question.
 
@@ -44,7 +46,7 @@ class MultipleChoiceQuestion(Question):
             require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
                 For example, imagine you are using two workers per task. If one selects Option A and the second one selections Option B a third will be assigned to the task to break the tie.
         '''
-        super().__init__(text, type_="multiple_choice", required=required)
+        super().__init__(text, type_="multiple_choice", required=required, column_header=column_header)
         self.options = options
         self.descriptions = descriptions
         self.preexisting_annotations = preexisting_annotations
@@ -59,7 +61,8 @@ class CheckboxQuestion(Question):
             descriptions=[],
             required=True,
             preexisting_annotations=None,
-            require_tiebreaker=False):
+            require_tiebreaker=False,
+            column_header=None):
         '''
         Create a checkbox question. Unlike a multiple choice question, it's possible to select multiple checkboxes.
 
@@ -74,7 +77,7 @@ class CheckboxQuestion(Question):
             require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
                 For example, imagine you are using two workers per task. If one selects Option A and the second one selections Option B a third will be assigned to the task to break the tie.
         '''
-        super().__init__(text, type_="checkbox", required=required)
+        super().__init__(text, type_="checkbox", required=required, column_header=column_header)
         self.options = options
         self.descriptions = descriptions
         self.preexisting_annotations = preexisting_annotations
@@ -91,7 +94,8 @@ class TextTaggingQuestion(Question):
             token_granularity=True,
             allow_relationship_tags=False,
             allow_overlapping_tags=False,
-            require_tiebreaker=False):
+            require_tiebreaker=False,
+            column_header=None):
         '''
         Create a text tagging (NER) question. Unlikely a multiple choice question, it's possible to select multiple checkboxes
 
@@ -107,7 +111,7 @@ class TextTaggingQuestion(Question):
             require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
                 Workers must have the exact same set of tags to be considered in agreement.
         '''
-        super().__init__(text, type_="text_tagging", required=required)
+        super().__init__(text, type_="text_tagging", required=required, column_header=column_header)
         self.options = options
         self.preexisting_annotations = preexisting_annotations
         self.token_granularity = token_granularity
@@ -124,7 +128,8 @@ class TreeSelectionQuestion(Question):
             descriptions=[],
             required=True,
             preexisting_annotations=None,
-            require_tiebreaker=False):
+            require_tiebreaker=False,
+            column_header=None):
         '''
         Create a hierarchical multiple choice question. This is useful if you have a lot of options in a nested format.
 
@@ -140,7 +145,7 @@ class TreeSelectionQuestion(Question):
             require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
                 For example, imagine you are using two workers per task. If one selects Option A and the second one selections Option B a third will be assigned to the task to break the tie.
         '''
-        super().__init__(text, type_="tree_selection", required=required)
+        super().__init__(text, type_="tree_selection", required=required, column_header=column_header)
         self.options = options
         self.descriptions = descriptions
         self.preexisting_annotations = preexisting_annotations
@@ -148,14 +153,14 @@ class TreeSelectionQuestion(Question):
 
 
 class FileUpload(Question):
-    def __init__(self, text, required=False):
+    def __init__(self, text, required=False, column_header=None):
         '''
         Add a file upload widget where workers can upload images, documents, or other files.
 
         Args:
             text (string): This text will appear above the file upload and can be used to specify any instructions.
         '''
-        super().__init__(text, type_="file_upload", required=required)
+        super().__init__(text, type_="file_upload", required=required, column_header=column_header)
 
 
 class RankingQuestion(Question):
@@ -165,7 +170,8 @@ class RankingQuestion(Question):
             options=[],
             required=False,
             preexisting_annotations=None,
-            allow_ranking_ties=False):
+            allow_ranking_ties=False,
+            column_header=None):
         '''
         Create a ranking widget. Workers can drag and drop the option to specify their ranking.
 
@@ -177,7 +183,7 @@ class RankingQuestion(Question):
                 This must contain serialized data in the same format outputted by the ranking tool.
             allow_ranking_ties (boolean): Optional. Whether or not to allow ties in the ranking. If ties are allowed, two options can be ranked in the same group.
         '''
-        super().__init__(text, type_="ranking", required=required)
+        super().__init__(text, type_="ranking", required=required, column_header=column_header)
         self.options = options
         self.allow_ranking_ties = allow_ranking_ties
 
@@ -190,7 +196,8 @@ class ChatBot(Question):
             endpoint_url=None,
             endpoint_headers=None,
             preexisting_annotations=None,
-            required=False):
+            required=False,
+            column_header=None):
         '''
         Create an interactive chatbot on the labeling page. This is an advanced item type.
 
@@ -200,7 +207,7 @@ class ChatBot(Question):
             endpoint_url (string): A URL to send chat responses to. It must include a "text" field in its response.
             endpoint_headers (string): Please provide a JSON string with any headers that need to be set when calling this URL.
         '''
-        super().__init__(text, type_="chat", required=required)
+        super().__init__(text, type_="chat", required=required, column_header=column_header)
         self.options = options
         self.endpoint_url = endpoint_url
         self.endpoint_headers = endpoint_headers
