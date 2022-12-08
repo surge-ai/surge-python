@@ -17,6 +17,18 @@ class Question(object):
 
 class FreeResponseQuestion(Question):
     def __init__(self, text, required=True, preexisting_annotations=None, use_for_serial_collection=False, column_header=None):
+        '''
+        Create a free response question.
+
+        Args:
+            text (string): Required. The instructions above the free text box, e.g. "Please explain your reasoning".
+            required (boolean): Defaults to true. Whether or not workers must fill out this question before moving on to the next task.
+            preexisting_annotations (string): You can use preexisting annotations to prepopulate text box an option specified in the task data.
+                The preexisting_annotations param should contain the task data key you are loading the default values from.
+            use_for_serial_collection (boolean): Deprecated in favor of carousel. The free response question will not be shown to the user,
+                but will rather be used to collect the responses to a number of other items as a JSON string.
+            column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
+        '''
         super().__init__(text, type_="free_response", required=required, column_header=column_header)
         self.preexisting_annotations = preexisting_annotations
         self.use_for_serial_collection = use_for_serial_collection
@@ -45,6 +57,7 @@ class MultipleChoiceQuestion(Question):
                 The preexisting_annotations param should contain the task data key you are loading the default values from.
             require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
                 For example, imagine you are using two workers per task. If one selects Option A and the second one selections Option B a third will be assigned to the task to break the tie.
+            column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
         super().__init__(text, type_="multiple_choice", required=required, column_header=column_header)
         self.options = options
@@ -76,6 +89,7 @@ class CheckboxQuestion(Question):
                 The preexisting_annotations param should contain the task data key you are loading the default values from.
             require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
                 For example, imagine you are using two workers per task. If one selects Option A and the second one selections Option B a third will be assigned to the task to break the tie.
+            column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
         super().__init__(text, type_="checkbox", required=required, column_header=column_header)
         self.options = options
@@ -110,6 +124,7 @@ class TextTaggingQuestion(Question):
             allow_overlapping_tags (boolean): If true, allow multiple tags to be assigned to the same span of text.
             require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
                 Workers must have the exact same set of tags to be considered in agreement.
+            column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
         super().__init__(text, type_="text_tagging", required=required, column_header=column_header)
         self.options = options
@@ -144,6 +159,7 @@ class TreeSelectionQuestion(Question):
                 The preexisting_annotations param should contain the task data key you are loading the default values from.
             require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
                 For example, imagine you are using two workers per task. If one selects Option A and the second one selections Option B a third will be assigned to the task to break the tie.
+            column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
         super().__init__(text, type_="tree_selection", required=required, column_header=column_header)
         self.options = options
@@ -159,6 +175,8 @@ class FileUpload(Question):
 
         Args:
             text (string): This text will appear above the file upload and can be used to specify any instructions.
+            required (boolean): If true, Surgers will be required to upload a file before moving on to the next task.
+            column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
         super().__init__(text, type_="file_upload", required=required, column_header=column_header)
 
@@ -182,6 +200,7 @@ class RankingQuestion(Question):
             preexisting_annotations (string): You can use preexisting annotations to prepopulate the named entity tagger.
                 This must contain serialized data in the same format outputted by the ranking tool.
             allow_ranking_ties (boolean): Optional. Whether or not to allow ties in the ranking. If ties are allowed, two options can be ranked in the same group.
+            column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
         super().__init__(text, type_="ranking", required=required, column_header=column_header)
         self.options = options
@@ -206,6 +225,7 @@ class ChatBot(Question):
             options (list of strings): Options for rating chatbot responses.
             endpoint_url (string): A URL to send chat responses to. It must include a "text" field in its response.
             endpoint_headers (string): Please provide a JSON string with any headers that need to be set when calling this URL.
+            column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
         super().__init__(text, type_="chat", required=required, column_header=column_header)
         self.options = options
