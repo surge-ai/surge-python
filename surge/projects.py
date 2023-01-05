@@ -42,12 +42,14 @@ class Project(APIResource):
                 questions.append(
                     FreeResponseQuestion(
                         q["text"],
+                        id=q["id"],
                         required=q["required"],
                         preexisting_annotations=q["preexisting_annotations"]))
             elif q["type"] == "multiple_choice":
                 questions.append(
                     MultipleChoiceQuestion(
                         q["text"],
+                        id=q["id"],
                         options=q["options"],
                         required=q["required"],
                         preexisting_annotations=q["preexisting_annotations"],
@@ -56,6 +58,7 @@ class Project(APIResource):
             elif q["type"] == "checkbox":
                 questions.append(
                     CheckboxQuestion(q["text"],
+                                     id=q["id"],
                                      options=q["options"],
                                      required=q["required"],
                                      preexisting_annotations=q["preexisting_annotations"],
@@ -64,6 +67,7 @@ class Project(APIResource):
                 questions.append(
                     TextTaggingQuestion(
                         q["text"],
+                        id=q["id"],
                         required=q["required"],
                         options=q["options"],
                         preexisting_annotations=q["preexisting_annotations"],
@@ -76,6 +80,7 @@ class Project(APIResource):
                 questions.append(
                     TreeSelectionQuestion(
                         q["text"],
+                        id=q["id"],
                         options=q["options"],
                         required=q["required"],
                         preexisting_annotations=q["preexisting_annotations"],
@@ -84,6 +89,7 @@ class Project(APIResource):
                 questions.append(
                     RankingQuestion(
                         q["text"],
+                        id=q["id"],
                         options=q["options"],
                         required=q["required"],
                         preexisting_annotations=q["preexisting_annotations"],
@@ -91,14 +97,16 @@ class Project(APIResource):
             elif q["type"] == "file_upload":
                 questions.append(
                     FileUpload(q["text"],
+                               id=q["id"],
                                required=q["required"]))
             elif q["type"] == "text":
                 questions.append(
-                    TextArea(q["text"]))
+                    TextArea(q["text"], id=q["id"]))
             elif q["type"] == "chat":
                 questions.append(
                     ChatBot(
                         q["text"],
+                        id=q["id"],
                         options=q["options"],
                         endpoint_url=q["endpoint_url"],
                         endpoint_headers=q["endpoint_headers"],

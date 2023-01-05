@@ -2,7 +2,8 @@ import json
 
 
 class Question(object):
-    def __init__(self, text, type_=None, required=True, column_header=None):
+    def __init__(self, id, text, type_=None, required=True, column_header=None):
+        self.id = id
         self.text = text
         self.type = type_
         self.required = required
@@ -16,12 +17,13 @@ class Question(object):
 
 
 class FreeResponseQuestion(Question):
-    def __init__(self, text, required=True, preexisting_annotations=None, use_for_serial_collection=False, column_header=None):
+    def __init__(self, text, id=None, required=True, preexisting_annotations=None, use_for_serial_collection=False, column_header=None):
         '''
         Create a free response question.
 
         Args:
             text (string): Required. The instructions above the free text box, e.g. "Please explain your reasoning".
+            id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             required (boolean): Defaults to true. Whether or not workers must fill out this question before moving on to the next task.
             preexisting_annotations (string): You can use preexisting annotations to prepopulate text box an option specified in the task data.
                 The preexisting_annotations param should contain the task data key you are loading the default values from.
@@ -29,7 +31,7 @@ class FreeResponseQuestion(Question):
                 but will rather be used to collect the responses to a number of other items as a JSON string.
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
-        super().__init__(text, type_="free_response", required=required, column_header=column_header)
+        super().__init__(id, text, type_="free_response", required=required, column_header=column_header)
         self.preexisting_annotations = preexisting_annotations
         self.use_for_serial_collection = use_for_serial_collection
 
@@ -38,6 +40,7 @@ class MultipleChoiceQuestion(Question):
     def __init__(
             self,
             text,
+            id=None,
             options=[],
             descriptions=[],
             required=True,
@@ -49,6 +52,7 @@ class MultipleChoiceQuestion(Question):
 
         Args:
             text (string): Required. The text of the question being asked, e.g. "Is the sentiment of this text positive or negative?"
+            id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             options (list of strings): Required. A list of the options for the radios, e.g. ["Yes", "No"].
             descriptions(list of strings): Tooltip text for the options. This should have the same length as the options.
                 You can substitute in empty strings if one option doesn't have a tooltip.
@@ -59,7 +63,7 @@ class MultipleChoiceQuestion(Question):
                 For example, imagine you are using two workers per task. If one selects Option A and the second one selections Option B a third will be assigned to the task to break the tie.
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
-        super().__init__(text, type_="multiple_choice", required=required, column_header=column_header)
+        super().__init__(id, text, type_="multiple_choice", required=required, column_header=column_header)
         self.options = options
         self.descriptions = descriptions
         self.preexisting_annotations = preexisting_annotations
@@ -70,6 +74,7 @@ class CheckboxQuestion(Question):
     def __init__(
             self,
             text,
+            id=None,
             options=[],
             descriptions=[],
             required=True,
@@ -81,6 +86,7 @@ class CheckboxQuestion(Question):
 
         Args:
             text (string): Required. The text of the question being asked, e.g. "Check all the apply."
+            id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             options (list of strings): Required. A list of the options for the checkboxes.
             descriptions(list of strings): Tooltip text for the options. This should have the same length as the options.
                 You can substitute in empty strings if one option doesn't have a tooltip.
@@ -91,7 +97,7 @@ class CheckboxQuestion(Question):
                 For example, imagine you are using two workers per task. If one selects Option A and the second one selections Option B a third will be assigned to the task to break the tie.
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
-        super().__init__(text, type_="checkbox", required=required, column_header=column_header)
+        super().__init__(id, text, type_="checkbox", required=required, column_header=column_header)
         self.options = options
         self.descriptions = descriptions
         self.preexisting_annotations = preexisting_annotations
@@ -102,6 +108,7 @@ class TextTaggingQuestion(Question):
     def __init__(
             self,
             text,
+            id=None,
             options=[],
             required=True,
             preexisting_annotations=None,
@@ -115,6 +122,7 @@ class TextTaggingQuestion(Question):
 
         Args:
             text (string): Required. The text that needs to be tagged.
+            id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             required (boolean): If true, worker must tag at least element.
             options (list of strings): Required. A list of tags that can be used to tag spans of text, e.g. ["Person", "Place"].
             preexisting_annotations (string): You can use preexisting annotations to prepopulate the named entity tagger. This must contain serialized JSON data
@@ -126,7 +134,7 @@ class TextTaggingQuestion(Question):
                 Workers must have the exact same set of tags to be considered in agreement.
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
-        super().__init__(text, type_="text_tagging", required=required, column_header=column_header)
+        super().__init__(id, text, type_="text_tagging", required=required, column_header=column_header)
         self.options = options
         self.preexisting_annotations = preexisting_annotations
         self.token_granularity = token_granularity
@@ -139,6 +147,7 @@ class TreeSelectionQuestion(Question):
     def __init__(
             self,
             text,
+            id=None,
             options=[],
             descriptions=[],
             required=True,
@@ -150,6 +159,7 @@ class TreeSelectionQuestion(Question):
 
         Args:
             text (string): Required. The text of the question being asked, e.g. "Which category does this example belong to?"
+            id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             options (list of strings): Required. A list of the options for the tree. Each level of hierarchy should be separate by a " / ".
                 For example, one valid set of options would be ["1A / 2A", "1A / 2B", "1B / 2C", "1B / 2D"].
             descriptions(list of strings): Tooltip text for the options. This should have the same length as the options.
@@ -161,7 +171,7 @@ class TreeSelectionQuestion(Question):
                 For example, imagine you are using two workers per task. If one selects Option A and the second one selections Option B a third will be assigned to the task to break the tie.
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
-        super().__init__(text, type_="tree_selection", required=required, column_header=column_header)
+        super().__init__(id, text, type_="tree_selection", required=required, column_header=column_header)
         self.options = options
         self.descriptions = descriptions
         self.preexisting_annotations = preexisting_annotations
@@ -169,22 +179,24 @@ class TreeSelectionQuestion(Question):
 
 
 class FileUpload(Question):
-    def __init__(self, text, required=False, column_header=None):
+    def __init__(self, text, id=None, required=False, column_header=None):
         '''
         Add a file upload widget where workers can upload images, documents, or other files.
 
         Args:
             text (string): This text will appear above the file upload and can be used to specify any instructions.
+            id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             required (boolean): If true, Surgers will be required to upload a file before moving on to the next task.
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
-        super().__init__(text, type_="file_upload", required=required, column_header=column_header)
+        super().__init__(id, text, type_="file_upload", required=required, column_header=column_header)
 
 
 class RankingQuestion(Question):
     def __init__(
             self,
             text,
+            id=None,
             options=[],
             required=False,
             preexisting_annotations=None,
@@ -196,13 +208,14 @@ class RankingQuestion(Question):
         Args:
             required (boolean): If true, worker must rank at least one element.
             text (string): Required. The text of the question being asked, e.g. "Please rank these search results from best to worst"
+            id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             options (list of strings): Required. A list of the options being ranked.
             preexisting_annotations (string): You can use preexisting annotations to prepopulate the named entity tagger.
                 This must contain serialized data in the same format outputted by the ranking tool.
             allow_ranking_ties (boolean): Optional. Whether or not to allow ties in the ranking. If ties are allowed, two options can be ranked in the same group.
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
-        super().__init__(text, type_="ranking", required=required, column_header=column_header)
+        super().__init__(id, text, type_="ranking", required=required, column_header=column_header)
         self.options = options
         self.allow_ranking_ties = allow_ranking_ties
 
@@ -211,6 +224,7 @@ class ChatBot(Question):
     def __init__(
             self,
             text,
+            id=None,
             options=[],
             endpoint_url=None,
             endpoint_headers=None,
@@ -222,12 +236,13 @@ class ChatBot(Question):
 
         Args:
             text (string): This text will appear above the chatbot and can be used to specify any instructions.
+            id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             options (list of strings): Options for rating chatbot responses.
             endpoint_url (string): A URL to send chat responses to. It must include a "text" field in its response.
             endpoint_headers (string): Please provide a JSON string with any headers that need to be set when calling this URL.
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
         '''
-        super().__init__(text, type_="chat", required=required, column_header=column_header)
+        super().__init__(id, text, type_="chat", required=required, column_header=column_header)
         self.options = options
         self.endpoint_url = endpoint_url
         self.endpoint_headers = endpoint_headers
@@ -235,5 +250,5 @@ class ChatBot(Question):
 
 
 class TextArea(Question):
-    def __init__(self, text):
-        super().__init__(text, type_="text", required=False)
+    def __init__(self, text, id=None):
+        super().__init__(id, text, type_="text", required=False)
