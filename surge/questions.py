@@ -1,7 +1,8 @@
 import json
+from surge.api_resource import QUESTIONS_ENDPOINT, APIResource
 
 
-class Question(object):
+class Question(APIResource):
     def __init__(self, id, text, type_=None, required=True, column_header=None):
         self.id = id
         self.text = text
@@ -14,6 +15,90 @@ class Question(object):
 
     def to_json(self):
         return json.dumps(self.to_dict())
+
+    @classmethod
+    def from_params(cls, q):
+        if q["type"] == "free_response":
+            return FreeResponseQuestion(
+                    q["text"],
+                    id=q["id"],
+                    required=q["required"],
+                    preexisting_annotations=q["preexisting_annotations"])
+        elif q["type"] == "multiple_choice":
+            return MultipleChoiceQuestion(
+                    q["text"],
+                    id=q["id"],
+                    options=q["options"],
+                    required=q["required"],
+                    preexisting_annotations=q["preexisting_annotations"],
+                    require_tiebreaker=q["require_tie_breaker"])
+
+        elif q["type"] == "checkbox":
+            return CheckboxQuestion(q["text"],
+                                 id=q["id"],
+                                 options=q["options"],
+                                 required=q["required"],
+                                 preexisting_annotations=q["preexisting_annotations"],
+                                 require_tiebreaker=q["require_tie_breaker"])
+        elif q["type"] == "text_tagging":
+            return TextTaggingQuestion(
+                    q["text"],
+                    id=q["id"],
+                    required=q["required"],
+                    options=q["options"],
+                    preexisting_annotations=q["preexisting_annotations"],
+                    token_granularity=q["ner_token_granularity"],
+                    allow_relationship_tags=q["ner_allow_relationship_tags"],
+                    allow_overlapping_tags=q["ner_allow_overlapping_tags"],
+                    require_tiebreaker=q["require_tie_breaker"])
+
+        elif q["type"] == "tree_selection":
+            return TreeSelectionQuestion(
+                    q["text"],
+                    id=q["id"],
+                    options=q["options"],
+                    required=q["required"],
+                    preexisting_annotations=q["preexisting_annotations"],
+                    require_tiebreaker=q["require_tie_breaker"])
+        elif q["type"] == "ranking":
+            return RankingQuestion(
+                    q["text"],
+                    id=q["id"],
+                    options=q["options"],
+                    required=q["required"],
+                    preexisting_annotations=q["preexisting_annotations"],
+                    allow_ranking_ties=q["allow_ranking_ties"])
+        elif q["type"] == "file_upload":
+            return FileUpload(q["text"],
+                           id=q["id"],
+                           required=q["required"])
+        elif q["type"] == "text":
+            return TextArea(q["text"], id=q["id"])
+        elif q["type"] == "chat":
+            return ChatBot(
+                    q["text"],
+                    id=q["id"],
+                    options=q["options"],
+                    endpoint_url=q["endpoint_url"],
+                    endpoint_headers=q["endpoint_headers"],
+                    preexisting_annotations=q["preexisting_annotations"])
+
+    def update(self,
+               text: str = None,
+               hidden_by_item_option_id: str = None,
+               shown_by_item_option_id: str = None):
+        params = {}
+
+        if text is not None:
+            params["text"] = text
+        if hidden_by_item_option_id is not None:
+            params["hidden_by_item_option_id"] = hidden_by_item_option_id
+        if shown_by_item_option_id is not None:
+            params["shown_by_item_option_id"] = shown_by_item_option_id
+
+        endpoint = f"{QUESTIONS_ENDPOINT}/{self.id}"
+        response_json = self.put(endpoint, params)
+        return Question.from_params(response_json)
 
 
 class FreeResponseQuestion(Question):

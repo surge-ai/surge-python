@@ -302,6 +302,7 @@ def test_convert_questions_to_objects():
         'options': [],
         'endpoint_url': "https://google.com",
         'endpoint_headers': None,
+        'preexisting_annotations': None,
     }]
 
     project = Project(id="ABC1234", name="Hello World")

@@ -2,7 +2,7 @@ import dateutil.parser
 
 from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError, SurgeMissingAttributeError
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
-from surge.questions import Question, FreeResponseQuestion, MultipleChoiceQuestion, CheckboxQuestion, TextTaggingQuestion, TreeSelectionQuestion, FileUpload, RankingQuestion, ChatBot, TextArea
+from surge.questions import Question
 from surge.tasks import Task
 from surge import utils
 
@@ -36,82 +36,7 @@ class Project(APIResource):
         return self.print_attrs(forbid_list=["name", "id"])
 
     def _convert_questions_to_objects(self, questions_data):
-        questions = []
-        for q in questions_data:
-            if q["type"] == "free_response":
-                questions.append(
-                    FreeResponseQuestion(
-                        q["text"],
-                        id=q["id"],
-                        required=q["required"],
-                        preexisting_annotations=q["preexisting_annotations"]))
-            elif q["type"] == "multiple_choice":
-                questions.append(
-                    MultipleChoiceQuestion(
-                        q["text"],
-                        id=q["id"],
-                        options=q["options"],
-                        required=q["required"],
-                        preexisting_annotations=q["preexisting_annotations"],
-                        require_tiebreaker=q["require_tie_breaker"]))
-
-            elif q["type"] == "checkbox":
-                questions.append(
-                    CheckboxQuestion(q["text"],
-                                     id=q["id"],
-                                     options=q["options"],
-                                     required=q["required"],
-                                     preexisting_annotations=q["preexisting_annotations"],
-                                     require_tiebreaker=q["require_tie_breaker"]))
-            elif q["type"] == "text_tagging":
-                questions.append(
-                    TextTaggingQuestion(
-                        q["text"],
-                        id=q["id"],
-                        required=q["required"],
-                        options=q["options"],
-                        preexisting_annotations=q["preexisting_annotations"],
-                        token_granularity=q["ner_token_granularity"],
-                        allow_relationship_tags=q["ner_allow_relationship_tags"],
-                        allow_overlapping_tags=q["ner_allow_overlapping_tags"],
-                        require_tiebreaker=q["require_tie_breaker"]))
-
-            elif q["type"] == "tree_selection":
-                questions.append(
-                    TreeSelectionQuestion(
-                        q["text"],
-                        id=q["id"],
-                        options=q["options"],
-                        required=q["required"],
-                        preexisting_annotations=q["preexisting_annotations"],
-                        require_tiebreaker=q["require_tie_breaker"]))
-            elif q["type"] == "ranking":
-                questions.append(
-                    RankingQuestion(
-                        q["text"],
-                        id=q["id"],
-                        options=q["options"],
-                        required=q["required"],
-                        preexisting_annotations=q["preexisting_annotations"],
-                        allow_ranking_ties=q["allow_ranking_ties"]))
-            elif q["type"] == "file_upload":
-                questions.append(
-                    FileUpload(q["text"],
-                               id=q["id"],
-                               required=q["required"]))
-            elif q["type"] == "text":
-                questions.append(
-                    TextArea(q["text"], id=q["id"]))
-            elif q["type"] == "chat":
-                questions.append(
-                    ChatBot(
-                        q["text"],
-                        id=q["id"],
-                        options=q["options"],
-                        endpoint_url=q["endpoint_url"],
-                        endpoint_headers=q["endpoint_headers"],
-                        preexisting_annotations=q["preexisting_annotations"]))
-        return questions
+        return list(map(lambda params: Question.from_params(params), questions_data))
 
     @staticmethod
     def _validate_questions(questions):
