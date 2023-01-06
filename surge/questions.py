@@ -3,7 +3,13 @@ from surge.api_resource import QUESTIONS_ENDPOINT, APIResource
 
 
 class Question(APIResource):
-    def __init__(self, id, text, type_=None, required=True, column_header=None):
+
+    def __init__(self,
+                 id,
+                 text,
+                 type_=None,
+                 required=True,
+                 column_header=None):
         self.id = id
         self.text = text
         self.type = type_
@@ -26,77 +32,79 @@ class Question(APIResource):
                 info.pop("updated_at", None)
         if q["type"] == "free_response":
             return FreeResponseQuestion(
-                    q["text"],
-                    id=q["id"],
-                    required=q["required"],
-                    preexisting_annotations=q["preexisting_annotations"],
-                    shown_by_option_id=q["shown_by_item_option_id"],
-                    hidden_by_option_id=q["hidden_by_item_option_id"])
+                q["text"],
+                id=q["id"],
+                required=q["required"],
+                preexisting_annotations=q["preexisting_annotations"],
+                shown_by_option_id=q["shown_by_item_option_id"],
+                hidden_by_option_id=q["hidden_by_item_option_id"])
         elif q["type"] == "multiple_choice":
             return MultipleChoiceQuestion(
-                    q["text"],
-                    id=q["id"],
-                    options=q["options"],
-                    options_info=options_info,
-                    required=q["required"],
-                    preexisting_annotations=q["preexisting_annotations"],
-                    require_tiebreaker=q["require_tie_breaker"],
-                    shown_by_option_id=q["shown_by_item_option_id"],
-                    hidden_by_option_id=q["hidden_by_item_option_id"])
+                q["text"],
+                id=q["id"],
+                options=q["options"],
+                options_info=options_info,
+                required=q["required"],
+                preexisting_annotations=q["preexisting_annotations"],
+                require_tiebreaker=q["require_tie_breaker"],
+                shown_by_option_id=q["shown_by_item_option_id"],
+                hidden_by_option_id=q["hidden_by_item_option_id"])
 
         elif q["type"] == "checkbox":
-            return CheckboxQuestion(q["text"],
-                                 id=q["id"],
-                                 options=q["options"],
-                                 options_info=options_info,
-                                 required=q["required"],
-                                 preexisting_annotations=q["preexisting_annotations"],
-                                 require_tiebreaker=q["require_tie_breaker"],
-                                 shown_by_option_id=q["shown_by_item_option_id"],
-                                 hidden_by_option_id=q["hidden_by_item_option_id"])
+            return CheckboxQuestion(
+                q["text"],
+                id=q["id"],
+                options=q["options"],
+                options_info=options_info,
+                required=q["required"],
+                preexisting_annotations=q["preexisting_annotations"],
+                require_tiebreaker=q["require_tie_breaker"],
+                shown_by_option_id=q["shown_by_item_option_id"],
+                hidden_by_option_id=q["hidden_by_item_option_id"])
         elif q["type"] == "text_tagging":
             return TextTaggingQuestion(
-                    q["text"],
-                    id=q["id"],
-                    required=q["required"],
-                    options=q["options"],
-                    options_info=options_info,
-                    preexisting_annotations=q["preexisting_annotations"],
-                    token_granularity=q["ner_token_granularity"],
-                    allow_relationship_tags=q["ner_allow_relationship_tags"],
-                    allow_overlapping_tags=q["ner_allow_overlapping_tags"],
-                    require_tiebreaker=q["require_tie_breaker"],
-                    shown_by_option_id=q["shown_by_item_option_id"],
-                    hidden_by_option_id=q["hidden_by_item_option_id"])
+                q["text"],
+                id=q["id"],
+                required=q["required"],
+                options=q["options"],
+                options_info=options_info,
+                preexisting_annotations=q["preexisting_annotations"],
+                token_granularity=q["ner_token_granularity"],
+                allow_relationship_tags=q["ner_allow_relationship_tags"],
+                allow_overlapping_tags=q["ner_allow_overlapping_tags"],
+                require_tiebreaker=q["require_tie_breaker"],
+                shown_by_option_id=q["shown_by_item_option_id"],
+                hidden_by_option_id=q["hidden_by_item_option_id"])
 
         elif q["type"] == "tree_selection":
             return TreeSelectionQuestion(
-                    q["text"],
-                    id=q["id"],
-                    options=q["options"],
-                    options_info=options_info,
-                    required=q["required"],
-                    preexisting_annotations=q["preexisting_annotations"],
-                    require_tiebreaker=q["require_tie_breaker"],
-                    shown_by_option_id=q["shown_by_item_option_id"],
-                    hidden_by_option_id=q["hidden_by_item_option_id"])
+                q["text"],
+                id=q["id"],
+                options=q["options"],
+                options_info=options_info,
+                required=q["required"],
+                preexisting_annotations=q["preexisting_annotations"],
+                require_tiebreaker=q["require_tie_breaker"],
+                shown_by_option_id=q["shown_by_item_option_id"],
+                hidden_by_option_id=q["hidden_by_item_option_id"])
         elif q["type"] == "ranking":
             return RankingQuestion(
-                    q["text"],
-                    id=q["id"],
-                    options=q["options"],
-                    options_info=options_info,
-                    required=q["required"],
-                    preexisting_annotations=q["preexisting_annotations"],
-                    allow_ranking_ties=q["allow_ranking_ties"],
-                    shown_by_option_id=q["shown_by_item_option_id"],
-                    hidden_by_option_id=q["hidden_by_item_option_id"])
+                q["text"],
+                id=q["id"],
+                options=q["options"],
+                options_info=options_info,
+                required=q["required"],
+                preexisting_annotations=q["preexisting_annotations"],
+                allow_ranking_ties=q["allow_ranking_ties"],
+                shown_by_option_id=q["shown_by_item_option_id"],
+                hidden_by_option_id=q["hidden_by_item_option_id"])
         elif q["type"] == "file_upload":
-            return FileUpload(q["text"],
-                           id=q["id"],
-                           required=q["required"],
-                           shown_by_option_id=q["shown_by_item_option_id"],
-                           hidden_by_option_id=q["hidden_by_item_option_id"])
+            return FileUpload(
+                q["text"],
+                id=q["id"],
+                required=q["required"],
+                shown_by_option_id=q["shown_by_item_option_id"],
+                hidden_by_option_id=q["hidden_by_item_option_id"])
         elif q["type"] == "text":
             return TextArea(q["text"],
                             id=q["id"],
@@ -104,15 +112,15 @@ class Question(APIResource):
                             hidden_by_option_id=q["hidden_by_item_option_id"])
         elif q["type"] == "chat":
             return ChatBot(
-                    q["text"],
-                    id=q["id"],
-                    options=q["options"],
-                    options_info=options_info,
-                    endpoint_url=q["endpoint_url"],
-                    endpoint_headers=q["endpoint_headers"],
-                    preexisting_annotations=q["preexisting_annotations"],
-                    shown_by_option_id=q["shown_by_item_option_id"],
-                    hidden_by_option_id=q["hidden_by_item_option_id"])
+                q["text"],
+                id=q["id"],
+                options=q["options"],
+                options_info=options_info,
+                endpoint_url=q["endpoint_url"],
+                endpoint_headers=q["endpoint_headers"],
+                preexisting_annotations=q["preexisting_annotations"],
+                shown_by_option_id=q["shown_by_item_option_id"],
+                hidden_by_option_id=q["hidden_by_item_option_id"])
 
     def update(self,
                text: str = None,
@@ -133,16 +141,16 @@ class Question(APIResource):
 
 
 class FreeResponseQuestion(Question):
-    def __init__(
-            self,
-            text,
-            id=None,
-            required=True,
-            preexisting_annotations=None,
-            use_for_serial_collection=False,
-            column_header=None,
-            hidden_by_option_id=None,
-            shown_by_option_id=None):
+
+    def __init__(self,
+                 text,
+                 id=None,
+                 required=True,
+                 preexisting_annotations=None,
+                 use_for_serial_collection=False,
+                 column_header=None,
+                 hidden_by_option_id=None,
+                 shown_by_option_id=None):
         '''
         Create a free response question.
 
@@ -158,7 +166,11 @@ class FreeResponseQuestion(Question):
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
         '''
-        super().__init__(id, text, type_="free_response", required=required, column_header=column_header)
+        super().__init__(id,
+                         text,
+                         type_="free_response",
+                         required=required,
+                         column_header=column_header)
         self.preexisting_annotations = preexisting_annotations
         self.use_for_serial_collection = use_for_serial_collection
         self.hidden_by_option_id = hidden_by_option_id
@@ -166,19 +178,19 @@ class FreeResponseQuestion(Question):
 
 
 class MultipleChoiceQuestion(Question):
-    def __init__(
-            self,
-            text,
-            id=None,
-            options=[],
-            options_info=None,
-            descriptions=[],
-            required=True,
-            preexisting_annotations=None,
-            require_tiebreaker=False,
-            column_header=None,
-            hidden_by_option_id=None,
-            shown_by_option_id=None):
+
+    def __init__(self,
+                 text,
+                 id=None,
+                 options=[],
+                 options_info=None,
+                 descriptions=[],
+                 required=True,
+                 preexisting_annotations=None,
+                 require_tiebreaker=False,
+                 column_header=None,
+                 hidden_by_option_id=None,
+                 shown_by_option_id=None):
         '''
         Create a multiple choice radio question.
 
@@ -198,7 +210,11 @@ class MultipleChoiceQuestion(Question):
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
         '''
-        super().__init__(id, text, type_="multiple_choice", required=required, column_header=column_header)
+        super().__init__(id,
+                         text,
+                         type_="multiple_choice",
+                         required=required,
+                         column_header=column_header)
         self.options = options
         self.options_info = options_info
         self.descriptions = descriptions
@@ -209,19 +225,19 @@ class MultipleChoiceQuestion(Question):
 
 
 class CheckboxQuestion(Question):
-    def __init__(
-            self,
-            text,
-            id=None,
-            options=[],
-            options_info=None,
-            descriptions=[],
-            required=True,
-            preexisting_annotations=None,
-            require_tiebreaker=False,
-            column_header=None,
-            hidden_by_option_id=None,
-            shown_by_option_id=None):
+
+    def __init__(self,
+                 text,
+                 id=None,
+                 options=[],
+                 options_info=None,
+                 descriptions=[],
+                 required=True,
+                 preexisting_annotations=None,
+                 require_tiebreaker=False,
+                 column_header=None,
+                 hidden_by_option_id=None,
+                 shown_by_option_id=None):
         '''
         Create a checkbox question. Unlike a multiple choice question, it's possible to select multiple checkboxes.
 
@@ -241,7 +257,11 @@ class CheckboxQuestion(Question):
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
         '''
-        super().__init__(id, text, type_="checkbox", required=required, column_header=column_header)
+        super().__init__(id,
+                         text,
+                         type_="checkbox",
+                         required=required,
+                         column_header=column_header)
         self.options = options
         self.options_info = options_info
         self.descriptions = descriptions
@@ -252,21 +272,21 @@ class CheckboxQuestion(Question):
 
 
 class TextTaggingQuestion(Question):
-    def __init__(
-            self,
-            text,
-            id=None,
-            options=[],
-            options_info=None,
-            required=True,
-            preexisting_annotations=None,
-            token_granularity=True,
-            allow_relationship_tags=False,
-            allow_overlapping_tags=False,
-            require_tiebreaker=False,
-            column_header=None,
-            hidden_by_option_id=None,
-            shown_by_option_id=None):
+
+    def __init__(self,
+                 text,
+                 id=None,
+                 options=[],
+                 options_info=None,
+                 required=True,
+                 preexisting_annotations=None,
+                 token_granularity=True,
+                 allow_relationship_tags=False,
+                 allow_overlapping_tags=False,
+                 require_tiebreaker=False,
+                 column_header=None,
+                 hidden_by_option_id=None,
+                 shown_by_option_id=None):
         '''
         Create a text tagging (NER) question. Unlikely a multiple choice question, it's possible to select multiple checkboxes
 
@@ -287,7 +307,11 @@ class TextTaggingQuestion(Question):
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
         '''
-        super().__init__(id, text, type_="text_tagging", required=required, column_header=column_header)
+        super().__init__(id,
+                         text,
+                         type_="text_tagging",
+                         required=required,
+                         column_header=column_header)
         self.options = options
         self.options_info = options_info
         self.preexisting_annotations = preexisting_annotations
@@ -300,19 +324,19 @@ class TextTaggingQuestion(Question):
 
 
 class TreeSelectionQuestion(Question):
-    def __init__(
-            self,
-            text,
-            id=None,
-            options=[],
-            options_info=None,
-            descriptions=[],
-            required=True,
-            preexisting_annotations=None,
-            require_tiebreaker=False,
-            column_header=None,
-            hidden_by_option_id=None,
-            shown_by_option_id=None):
+
+    def __init__(self,
+                 text,
+                 id=None,
+                 options=[],
+                 options_info=None,
+                 descriptions=[],
+                 required=True,
+                 preexisting_annotations=None,
+                 require_tiebreaker=False,
+                 column_header=None,
+                 hidden_by_option_id=None,
+                 shown_by_option_id=None):
         '''
         Create a hierarchical multiple choice question. This is useful if you have a lot of options in a nested format.
 
@@ -333,7 +357,11 @@ class TreeSelectionQuestion(Question):
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
         '''
-        super().__init__(id, text, type_="tree_selection", required=required, column_header=column_header)
+        super().__init__(id,
+                         text,
+                         type_="tree_selection",
+                         required=required,
+                         column_header=column_header)
         self.options = options
         self.options_info = options_info
         self.descriptions = descriptions
@@ -344,14 +372,14 @@ class TreeSelectionQuestion(Question):
 
 
 class FileUpload(Question):
-    def __init__(
-            self,
-            text,
-            id=None,
-            required=False,
-            column_header=None,
-            hidden_by_option_id=None,
-            shown_by_option_id=None):
+
+    def __init__(self,
+                 text,
+                 id=None,
+                 required=False,
+                 column_header=None,
+                 hidden_by_option_id=None,
+                 shown_by_option_id=None):
         '''
         Add a file upload widget where workers can upload images, documents, or other files.
 
@@ -363,24 +391,28 @@ class FileUpload(Question):
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
         '''
-        super().__init__(id, text, type_="file_upload", required=required, column_header=column_header)
+        super().__init__(id,
+                         text,
+                         type_="file_upload",
+                         required=required,
+                         column_header=column_header)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
 
 
 class RankingQuestion(Question):
-    def __init__(
-            self,
-            text,
-            id=None,
-            options=[],
-            options_info=None,
-            required=False,
-            preexisting_annotations=None,
-            allow_ranking_ties=False,
-            column_header=None,
-            hidden_by_option_id=None,
-            shown_by_option_id=None):
+
+    def __init__(self,
+                 text,
+                 id=None,
+                 options=[],
+                 options_info=None,
+                 required=False,
+                 preexisting_annotations=None,
+                 allow_ranking_ties=False,
+                 column_header=None,
+                 hidden_by_option_id=None,
+                 shown_by_option_id=None):
         '''
         Create a ranking widget. Workers can drag and drop the option to specify their ranking.
 
@@ -397,7 +429,11 @@ class RankingQuestion(Question):
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
         '''
-        super().__init__(id, text, type_="ranking", required=required, column_header=column_header)
+        super().__init__(id,
+                         text,
+                         type_="ranking",
+                         required=required,
+                         column_header=column_header)
         self.options = options
         self.options_info = options_info
         self.allow_ranking_ties = allow_ranking_ties
@@ -406,19 +442,19 @@ class RankingQuestion(Question):
 
 
 class ChatBot(Question):
-    def __init__(
-            self,
-            text,
-            id=None,
-            options=[],
-            options_info=None,
-            endpoint_url=None,
-            endpoint_headers=None,
-            preexisting_annotations=None,
-            required=False,
-            column_header=None,
-            hidden_by_option_id=None,
-            shown_by_option_id=None):
+
+    def __init__(self,
+                 text,
+                 id=None,
+                 options=[],
+                 options_info=None,
+                 endpoint_url=None,
+                 endpoint_headers=None,
+                 preexisting_annotations=None,
+                 required=False,
+                 column_header=None,
+                 hidden_by_option_id=None,
+                 shown_by_option_id=None):
         '''
         Create an interactive chatbot on the labeling page. This is an advanced item type.
 
@@ -433,23 +469,27 @@ class ChatBot(Question):
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
         '''
-        super().__init__(id, text, type_="chat", required=required, column_header=column_header)
+        super().__init__(id,
+                         text,
+                         type_="chat",
+                         required=required,
+                         column_header=column_header)
         self.options = options
         self.options_info = options_info
         self.endpoint_url = endpoint_url
         self.endpoint_headers = endpoint_headers
-        self.preexisting_annotations=preexisting_annotations
+        self.preexisting_annotations = preexisting_annotations
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
 
 
 class TextArea(Question):
-    def __init__(
-            self,
-            text,
-            id=None,
-            hidden_by_option_id=None,
-            shown_by_option_id=None):
+
+    def __init__(self,
+                 text,
+                 id=None,
+                 hidden_by_option_id=None,
+                 shown_by_option_id=None):
         super().__init__(id, text, type_="text", required=False)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id

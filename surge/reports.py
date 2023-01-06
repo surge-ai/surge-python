@@ -7,6 +7,7 @@ from surge.api_resource import REPORTS_ENDPOINT, APIResource
 
 
 class Report(APIResource):
+
     def __init__(self, **kwargs):
         super().__init__()
         self.__dict__.update(kwargs)
@@ -21,7 +22,11 @@ class Report(APIResource):
         return self.print_attrs(forbid_list=["id"])
 
     @classmethod
-    def save_report(cls, project_id: str, type: str, filepath=None, poll_time=30):
+    def save_report(cls,
+                    project_id: str,
+                    type: str,
+                    filepath=None,
+                    poll_time=30):
         '''
         Request creation of a report, poll until the report is generated, and save the data to a file all in one call.
         Args:
@@ -40,13 +45,14 @@ class Report(APIResource):
             # Download zipped project results if ready
             if response.status == "READY":
                 file_ext = "csv" if "csv" in type else "json"
-                default_file_name = "project_{project_id}_results.{file_ext}.gzip".format(project_id=project_id, file_ext=file_ext)
+                default_file_name = "project_{project_id}_results.{file_ext}.gzip".format(
+                    project_id=project_id, file_ext=file_ext)
                 downloaded_file, http_message = urllib.request.urlretrieve(
-                    response.url, default_file_name
-                )
+                    response.url, default_file_name)
                 # Unzip and save results
-                data =  gzip.open(downloaded_file, "r").read()
-                open(filepath or default_file_name.rstrip('.gzip'), "wb").write(data)
+                data = gzip.open(downloaded_file, "r").read()
+                open(filepath or default_file_name.rstrip('.gzip'),
+                     "wb").write(data)
                 return None
 
             # Wait two seconds before polling again
@@ -54,9 +60,13 @@ class Report(APIResource):
                 sleep(2)
                 continue
             else:
-                raise ValueError("Report failed to generate with status {}".format(response.status))
+                raise ValueError(
+                    "Report failed to generate with status {}".format(
+                        response.status))
 
-            raise Exception("Report failed to generate within {poll_time} seconds".format(poll_time=poll_time))
+            raise Exception(
+                "Report failed to generate within {poll_time} seconds".format(
+                    poll_time=poll_time))
 
     @classmethod
     def request(cls, project_id: str, type: str):

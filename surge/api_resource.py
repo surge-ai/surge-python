@@ -12,6 +12,7 @@ QUESTIONS_ENDPOINT = "items"
 
 
 class APIResource(object):
+
     def __init__(self, id=None):
         self.id = id
 

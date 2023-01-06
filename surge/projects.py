@@ -8,6 +8,7 @@ from surge import utils
 
 
 class Project(APIResource):
+
     def __init__(self, **kwargs):
         super().__init__()
         self.__dict__.update(kwargs)
@@ -36,7 +37,8 @@ class Project(APIResource):
         return self.print_attrs(forbid_list=["name", "id"])
 
     def _convert_questions_to_objects(self, questions_data):
-        return list(map(lambda params: Question.from_params(params), questions_data))
+        return list(
+            map(lambda params: Question.from_params(params), questions_data))
 
     @staticmethod
     def _validate_questions(questions):
@@ -103,7 +105,7 @@ class Project(APIResource):
             "tags": tags
         }
         if carousel is not None:
-            params = { **params, **carousel.to_dict() }
+            params = {**params, **carousel.to_dict()}
         if payment_per_response is not None:
             params["payment_per_response"] = payment_per_response
         response_json = cls.post(PROJECTS_ENDPOINT, params)
@@ -280,7 +282,6 @@ class Project(APIResource):
         '''
 
         params = {}
-
 
         if name is not None and len(name) > 0:
             params["name"] = name
