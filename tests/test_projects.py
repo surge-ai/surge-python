@@ -114,7 +114,9 @@ def test_init_complete():
                 'created_at': '2021-01-22T19:53:04.560Z',
                 'updated_at': '2021-01-22T19:53:04.560Z',
                 'order': 3
-            }]
+            }],
+            'hidden_by_item_option_id': None,
+            'shown_by_item_option_id': None,
         }]
     }
 
@@ -201,7 +203,9 @@ def test_convert_questions_to_objects():
             'created_at': '2021-02-20T20:56:34.543Z',
             'updated_at': '2021-02-20T20:56:34.543Z',
             'order': 2
-        }]
+        }],
+        'hidden_by_item_option_id': None,
+        'shown_by_item_option_id': None,
     }, {
         'id':
         'c4b0d6a9-f735-40c1-9b42-0414945ef2db',
@@ -234,7 +238,9 @@ def test_convert_questions_to_objects():
             'created_at': '2021-02-20T20:56:34.551Z',
             'updated_at': '2021-02-20T20:56:34.551Z',
             'order': 2
-        }]
+        }],
+        'hidden_by_item_option_id': None,
+        'shown_by_item_option_id': None,
     }, {
         'id': '6123463e-349e-4450-80d2-6684a28755b3',
         'text': 'Free response for {{url}}',
@@ -244,7 +250,9 @@ def test_convert_questions_to_objects():
         'preexisting_annotations': None,
         'type': 'free_response',
         'options': [],
-        'options_objects': []
+        'options_objects': [],
+        'hidden_by_item_option_id': None,
+        'shown_by_item_option_id': None,
     }, {
         'id':
         'c46e2714-9bf6-44a8-aac3-f01f9fec8ae2',
@@ -286,14 +294,18 @@ def test_convert_questions_to_objects():
             'created_at': '2021-02-20T20:56:34.575Z',
             'updated_at': '2021-02-20T20:56:34.575Z',
             'order': 3
-        }]
+        }],
+        'hidden_by_item_option_id': None,
+        'shown_by_item_option_id': None,
     }, {
         'id': '6123463e-349e-4450-80d2-6684a28755b4',
         'text': 'Text area for {{url}}',
         'type': 'text',
         'required': False,
         'options': [],
-        'options_objects': []
+        'options_objects': [],
+        'hidden_by_item_option_id': None,
+        'shown_by_item_option_id': None,
     }, {
         'id': '6123463e-349e-4450-80d2-6684a28755b5',
         'text': 'Chatbot for {{url}}',
@@ -302,6 +314,9 @@ def test_convert_questions_to_objects():
         'options': [],
         'endpoint_url': "https://google.com",
         'endpoint_headers': None,
+        'preexisting_annotations': None,
+        'hidden_by_item_option_id': None,
+        'shown_by_item_option_id': None,
     }]
 
     project = Project(id="ABC1234", name="Hello World")

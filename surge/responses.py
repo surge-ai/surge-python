@@ -3,6 +3,7 @@ from datetime import datetime
 
 
 class Response(object):
+
     def __init__(self, id: str):
         self.id = id
 
@@ -20,6 +21,7 @@ class Response(object):
 
 
 class TaskResponse(Response):
+
     def __init__(self, id: str, data: dict, completed_at: datetime,
                  worker_id: str):
         super().__init__(id)
