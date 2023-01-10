@@ -297,3 +297,18 @@ class Project(APIResource):
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}"
         response_json = self.put(endpoint, params)
         return Project(**response_json)
+
+    def workable_by_surger(self, surger_id):
+        '''
+        Checks if a specific Surger can work on this project.
+
+        Arguments:
+            surger_id (str): ID of surger.
+
+        Returns:
+            workable (bool): True if surger can work on this project, False otherwise.
+        '''
+        endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/workable_by_surger"
+        params = {"surger_id": surger_id}
+        response_json = self.get(endpoint, params)
+        return response_json.get("workable", False)

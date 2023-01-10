@@ -9,6 +9,7 @@ PROJECTS_ENDPOINT = "projects"
 TASKS_ENDPOINT = "tasks"
 REPORTS_ENDPOINT = "projects"
 QUESTIONS_ENDPOINT = "items"
+TEAMS_ENDPOINT = "teams"
 
 
 class APIResource(object):
@@ -51,6 +52,9 @@ class APIResource(object):
                 else:
                     response = requests.put(url, auth=(surge.api_key, ""))
 
+            elif method == "delete":
+                response = requests.delete(url, auth=(surge.api_key, ""))
+
             else:
                 raise SurgeRequestError("Invalid HTTP method.")
 
@@ -83,3 +87,8 @@ class APIResource(object):
     def put(cls, api_endpoint, params=None):
         method = "put"
         return cls._base_request(method, api_endpoint, params=params)
+
+    @classmethod
+    def delete_request(cls, api_endpoint):
+        method = "delete"
+        return cls._base_request(method, api_endpoint)
