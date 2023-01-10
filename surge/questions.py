@@ -130,9 +130,9 @@ class Question(APIResource):
 
         if text is not None:
             params["text"] = text
-        if hidden_by_item_option_id is not None:
+        if hidden_by_option_id is not None:
             params["hidden_by_item_option_id"] = hidden_by_option_id
-        if shown_by_item_option_id is not None:
+        if shown_by_option_id is not None:
             params["shown_by_item_option_id"] = shown_by_option_id
 
         endpoint = f"{QUESTIONS_ENDPOINT}/{self.id}"
