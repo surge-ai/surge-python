@@ -80,7 +80,7 @@ class Project(APIResource):
                 For example, if fields_template is "{{company_name}}", then workers will be shown a link to the company.
             num_workers_per_task (int, optional): How many workers work on each task (i.e., how many responses per task).
             tags (list, optional): An array of strings to tag the project with. Worker won't see these tags.
-            carousel (Carousel, optional): Advanced option for creating a carousel project.
+            carousel (dict, optional): Advanced options for creating a carousel project.
             copy_from_project_id (str, optional): ID of project to copy from.
 
         Returns:
