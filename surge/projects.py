@@ -61,7 +61,7 @@ class Project(APIResource):
                num_workers_per_task: int = 1,
                tags=[],
                carousel=None,
-               copy_from_project_id=None):
+               template_id=None):
         '''
         Creates a new Project.
 
@@ -81,8 +81,7 @@ class Project(APIResource):
             num_workers_per_task (int, optional): How many workers work on each task (i.e., how many responses per task).
             tags (list, optional): An array of strings to tag the project with. Worker won't see these tags.
             carousel (dict, optional): Advanced options for creating a carousel project.
-            copy_from_project_id (str, optional): ID of project to copy from.
-
+            template_id (str, optional): ID of project to copy from. If you are using a template, you can omit all other parameters besides the name of the copy.
         Returns:
             project: new Project object
         '''
@@ -111,8 +110,8 @@ class Project(APIResource):
             params = {**params, **carousel.to_dict()}
         if payment_per_response is not None:
             params["payment_per_response"] = payment_per_response
-        if copy_from_project_id is not None:
-            params["copy_from_project"] = copy_from_project_id
+        if template_id is not None:
+            params["template_id"] = template_id
         response_json = cls.post(PROJECTS_ENDPOINT, params)
         return cls(**response_json)
 
