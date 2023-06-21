@@ -49,8 +49,30 @@ project = surge.Project.retrieve("076d207b-c207-41ca-b73a-5822fe2248ab")
 # print the number of tasks in that Project
 print(project.num_tasks)
 ```
+If you have an existing project, you can use it as a template to get a new batch of data annotated.
+You can add new labeling tasks from a CSV or with a list of dictionaries.
 
-When creating a new Project, you can create a list of Questions and include them in the new Project.
+```python
+# Create a project from a template
+template_project_id = "076d207b-c207-41ca-b73a-5822fe2248ab"
+project = surge.Project.create("My Labeling Project (July 2023 Batch)", template_id=template_project_id)
+
+# Add data from a CSV file
+project.create_tasks_from_csv('my_data.csv')
+
+# Or add data directly
+tasks = project.create_tasks([{
+    "company": "Surge",
+    "city": "San Francisco",
+    "state": "CA"
+}])
+
+# Launch the project to send it to the Surge workforce
+project.launch()
+```
+
+
+Or you can create a new project from scratch by creating your own template and list of Question:
 
 ```python
 from surge.questions import FreeResponseQuestion, MultipleChoiceQuestion, CheckboxQuestion
