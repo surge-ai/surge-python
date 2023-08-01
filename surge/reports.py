@@ -1,6 +1,8 @@
 import gzip
 from time import sleep
 import urllib
+import tempfile
+import shutil
 
 from surge.errors import SurgeMissingIDError, SurgeMissingAttributeError
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
@@ -47,8 +49,10 @@ class Report(APIResource):
                 file_ext = "csv" if "csv" in type else "json"
                 default_file_name = "project_{project_id}_results.{file_ext}.gzip".format(
                     project_id=project_id, file_ext=file_ext)
-                downloaded_file, http_message = urllib.request.urlretrieve(
-                    response.url, default_file_name)
+                with urllib.request.urlopen(response.url) as response:
+                  with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                    shutil.copyfileobj(response, tmp_file)
+                    downloaded_file = tmp_file.name
                 # Unzip and save results
                 data = gzip.open(downloaded_file, "r").read()
                 open(filepath or default_file_name.rstrip('.gzip'),
