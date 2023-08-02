@@ -50,13 +50,12 @@ class Report(APIResource):
                 default_file_name = "project_{project_id}_results.{file_ext}.gzip".format(
                     project_id=project_id, file_ext=file_ext)
                 with urllib.request.urlopen(response.url) as response:
-                  with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                  with tempfile.NamedTemporaryFile() as tmp_file:
                     shutil.copyfileobj(response, tmp_file)
-                    downloaded_file = tmp_file.name
-                # Unzip and save results
-                data = gzip.open(downloaded_file, "r").read()
-                open(filepath or default_file_name.rstrip('.gzip'),
-                     "wb").write(data)
+                    # Unzip and save results
+                    data = gzip.open(tmp_file.name, "r").read()
+                    open(filepath or default_file_name.rstrip('.gzip'),
+                        "wb").write(data)
                 return None
 
             # Wait two seconds before polling again
