@@ -1,6 +1,8 @@
 import gzip
 from time import sleep
 import urllib
+import tempfile
+import shutil
 
 from surge.errors import SurgeMissingIDError, SurgeMissingAttributeError
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
@@ -47,12 +49,13 @@ class Report(APIResource):
                 file_ext = "csv" if "csv" in type else "json"
                 default_file_name = "project_{project_id}_results.{file_ext}.gzip".format(
                     project_id=project_id, file_ext=file_ext)
-                downloaded_file, http_message = urllib.request.urlretrieve(
-                    response.url, default_file_name)
-                # Unzip and save results
-                data = gzip.open(downloaded_file, "r").read()
-                open(filepath or default_file_name.rstrip('.gzip'),
-                     "wb").write(data)
+                with urllib.request.urlopen(response.url) as response:
+                  with tempfile.NamedTemporaryFile() as tmp_file:
+                    shutil.copyfileobj(response, tmp_file)
+                    # Unzip and save results
+                    data = gzip.open(tmp_file.name, "r").read()
+                    open(filepath or default_file_name.rstrip('.gzip'),
+                        "wb").write(data)
                 return None
 
             # Wait two seconds before polling again
