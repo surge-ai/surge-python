@@ -26,3 +26,10 @@ class DataKeyCarousel(Carousel):
     def __init__(self, carousel_data_key=None):
         super().__init__(carousel_type="data_key")
         self.carousel_data_key = carousel_data_key
+
+
+class OrdinalColumnsCarousel(Carousel):
+
+    def __init__(self, max_rounds_for_carousel=1):
+        super().__init__(carousel_type="ordinal_columns")
+        self.max_rounds_for_carousel = max_rounds_for_carousel

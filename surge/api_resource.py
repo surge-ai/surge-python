@@ -3,7 +3,7 @@ import requests
 import surge
 from surge.errors import SurgeRequestError, SurgeMissingAPIKeyError
 
-BASE_URL = "https://app.surgehq.ai/api"
+BASE_URL = "http://localhost:3000/api"
 
 PROJECTS_ENDPOINT = "projects"
 TASKS_ENDPOINT = "tasks"

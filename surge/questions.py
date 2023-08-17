@@ -37,7 +37,8 @@ class Question(APIResource):
                 required=q["required"],
                 preexisting_annotations=q["preexisting_annotations"],
                 shown_by_option_id=q["shown_by_item_option_id"],
-                hidden_by_option_id=q["hidden_by_item_option_id"])
+                hidden_by_option_id=q["hidden_by_item_option_id"],
+                holistic=q["holistic"])
         elif q["type"] == "multiple_choice":
             return MultipleChoiceQuestion(
                 q["text"],
@@ -48,7 +49,8 @@ class Question(APIResource):
                 preexisting_annotations=q["preexisting_annotations"],
                 require_tiebreaker=q["require_tie_breaker"],
                 shown_by_option_id=q["shown_by_item_option_id"],
-                hidden_by_option_id=q["hidden_by_item_option_id"])
+                hidden_by_option_id=q["hidden_by_item_option_id"],
+                holistic=q["holistic"])
 
         elif q["type"] == "checkbox":
             return CheckboxQuestion(
@@ -60,7 +62,8 @@ class Question(APIResource):
                 preexisting_annotations=q["preexisting_annotations"],
                 require_tiebreaker=q["require_tie_breaker"],
                 shown_by_option_id=q["shown_by_item_option_id"],
-                hidden_by_option_id=q["hidden_by_item_option_id"])
+                hidden_by_option_id=q["hidden_by_item_option_id"],
+                holistic=q["holistic"])
         elif q["type"] == "text_tagging":
             return TextTaggingQuestion(
                 q["text"],
@@ -74,7 +77,8 @@ class Question(APIResource):
                 allow_overlapping_tags=q["ner_allow_overlapping_tags"],
                 require_tiebreaker=q["require_tie_breaker"],
                 shown_by_option_id=q["shown_by_item_option_id"],
-                hidden_by_option_id=q["hidden_by_item_option_id"])
+                hidden_by_option_id=q["hidden_by_item_option_id"],
+                holistic=q["holistic"])
 
         elif q["type"] == "tree_selection":
             return TreeSelectionQuestion(
@@ -86,7 +90,8 @@ class Question(APIResource):
                 preexisting_annotations=q["preexisting_annotations"],
                 require_tiebreaker=q["require_tie_breaker"],
                 shown_by_option_id=q["shown_by_item_option_id"],
-                hidden_by_option_id=q["hidden_by_item_option_id"])
+                hidden_by_option_id=q["hidden_by_item_option_id"],
+                holistic=q["holistic"])
         elif q["type"] == "ranking":
             return RankingQuestion(
                 q["text"],
@@ -97,19 +102,22 @@ class Question(APIResource):
                 preexisting_annotations=q["preexisting_annotations"],
                 allow_ranking_ties=q["allow_ranking_ties"],
                 shown_by_option_id=q["shown_by_item_option_id"],
-                hidden_by_option_id=q["hidden_by_item_option_id"])
+                hidden_by_option_id=q["hidden_by_item_option_id"],
+                holistic=q["holistic"])
         elif q["type"] == "file_upload":
             return FileUpload(
                 q["text"],
                 id=q["id"],
                 required=q["required"],
                 shown_by_option_id=q["shown_by_item_option_id"],
-                hidden_by_option_id=q["hidden_by_item_option_id"])
+                hidden_by_option_id=q["hidden_by_item_option_id"],
+                holistic=q["holistic"])
         elif q["type"] == "text":
             return TextArea(q["text"],
                             id=q["id"],
                             shown_by_option_id=q["shown_by_item_option_id"],
-                            hidden_by_option_id=q["hidden_by_item_option_id"])
+                            hidden_by_option_id=q["hidden_by_item_option_id"],
+                            holistic=q["holistic"])
         elif q["type"] == "chat":
             return ChatBot(
                 q["text"],
@@ -120,7 +128,8 @@ class Question(APIResource):
                 endpoint_headers=q["endpoint_headers"],
                 preexisting_annotations=q["preexisting_annotations"],
                 shown_by_option_id=q["shown_by_item_option_id"],
-                hidden_by_option_id=q["hidden_by_item_option_id"])
+                hidden_by_option_id=q["hidden_by_item_option_id"],
+                holistic=q["holistic"])
 
     def update(self,
                text: str = None,
@@ -150,7 +159,8 @@ class FreeResponseQuestion(Question):
                  use_for_serial_collection=False,
                  column_header=None,
                  hidden_by_option_id=None,
-                 shown_by_option_id=None):
+                 shown_by_option_id=None,
+                 holistic=False):
         '''
         Create a free response question.
 
@@ -175,6 +185,7 @@ class FreeResponseQuestion(Question):
         self.use_for_serial_collection = use_for_serial_collection
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
+        self.holistic = holistic
 
 
 class MultipleChoiceQuestion(Question):
@@ -190,7 +201,8 @@ class MultipleChoiceQuestion(Question):
                  require_tiebreaker=False,
                  column_header=None,
                  hidden_by_option_id=None,
-                 shown_by_option_id=None):
+                 shown_by_option_id=None,
+                 holistic=False):
         '''
         Create a multiple choice radio question.
 
@@ -222,6 +234,7 @@ class MultipleChoiceQuestion(Question):
         self.require_tiebreaker = require_tiebreaker
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
+        self.holistic = holistic
 
 
 class CheckboxQuestion(Question):
@@ -237,7 +250,8 @@ class CheckboxQuestion(Question):
                  require_tiebreaker=False,
                  column_header=None,
                  hidden_by_option_id=None,
-                 shown_by_option_id=None):
+                 shown_by_option_id=None,
+                 holistic=False):
         '''
         Create a checkbox question. Unlike a multiple choice question, it's possible to select multiple checkboxes.
 
@@ -269,6 +283,7 @@ class CheckboxQuestion(Question):
         self.require_tiebreaker = require_tiebreaker
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
+        self.holistic = holistic
 
 
 class TextTaggingQuestion(Question):
@@ -286,7 +301,8 @@ class TextTaggingQuestion(Question):
                  require_tiebreaker=False,
                  column_header=None,
                  hidden_by_option_id=None,
-                 shown_by_option_id=None):
+                 shown_by_option_id=None,
+                 holistic=False):
         '''
         Create a text tagging (NER) question. Unlikely a multiple choice question, it's possible to select multiple checkboxes
 
@@ -321,6 +337,7 @@ class TextTaggingQuestion(Question):
         self.require_tiebreaker = require_tiebreaker
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
+        self.holistic = holistic
 
 
 class TreeSelectionQuestion(Question):
@@ -336,7 +353,8 @@ class TreeSelectionQuestion(Question):
                  require_tiebreaker=False,
                  column_header=None,
                  hidden_by_option_id=None,
-                 shown_by_option_id=None):
+                 shown_by_option_id=None,
+                 holistic=False):
         '''
         Create a hierarchical multiple choice question. This is useful if you have a lot of options in a nested format.
 
@@ -369,6 +387,7 @@ class TreeSelectionQuestion(Question):
         self.require_tiebreaker = require_tiebreaker
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
+        self.holistic = holistic
 
 
 class FileUpload(Question):
@@ -379,7 +398,8 @@ class FileUpload(Question):
                  required=False,
                  column_header=None,
                  hidden_by_option_id=None,
-                 shown_by_option_id=None):
+                 shown_by_option_id=None,
+                 holistic=False):
         '''
         Add a file upload widget where workers can upload images, documents, or other files.
 
@@ -398,6 +418,7 @@ class FileUpload(Question):
                          column_header=column_header)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
+        self.holistic = holistic
 
 
 class RankingQuestion(Question):
@@ -412,7 +433,8 @@ class RankingQuestion(Question):
                  allow_ranking_ties=False,
                  column_header=None,
                  hidden_by_option_id=None,
-                 shown_by_option_id=None):
+                 shown_by_option_id=None,
+                 holistic=False):
         '''
         Create a ranking widget. Workers can drag and drop the option to specify their ranking.
 
@@ -439,6 +461,7 @@ class RankingQuestion(Question):
         self.allow_ranking_ties = allow_ranking_ties
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
+        self.holistic = holistic
 
 
 class ChatBot(Question):
@@ -454,7 +477,8 @@ class ChatBot(Question):
                  required=False,
                  column_header=None,
                  hidden_by_option_id=None,
-                 shown_by_option_id=None):
+                 shown_by_option_id=None,
+                 holistic=False):
         '''
         Create an interactive chatbot on the labeling page. This is an advanced item type.
 
@@ -481,6 +505,7 @@ class ChatBot(Question):
         self.preexisting_annotations = preexisting_annotations
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
+        self.holistic = holistic
 
 
 class TextArea(Question):
@@ -489,7 +514,9 @@ class TextArea(Question):
                  text,
                  id=None,
                  hidden_by_option_id=None,
-                 shown_by_option_id=None):
+                 shown_by_option_id=None,
+                 holistic=False):
         super().__init__(id, text, type_="text", required=False)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
+        self.holistic = holistic
