@@ -6,6 +6,7 @@ from surge.responses import TaskResponse
 
 
 class Team(APIResource):
+
     def __init__(self, **kwargs):
         super().__init__()
         self.__dict__.update(kwargs)
@@ -100,7 +101,6 @@ class Team(APIResource):
             data["description"] = description
         response_json = cls.post(endpoint, data)
         return cls(**response_json)
-
 
     @classmethod
     def list(cls):
