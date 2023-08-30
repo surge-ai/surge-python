@@ -3,8 +3,6 @@ import requests
 import surge
 from surge.errors import SurgeRequestError, SurgeMissingAPIKeyError
 
-BASE_URL = "https://app.surgehq.ai/api"
-
 PROJECTS_ENDPOINT = "projects"
 TASKS_ENDPOINT = "tasks"
 REPORTS_ENDPOINT = "projects"
@@ -29,7 +27,7 @@ class APIResource(object):
             raise SurgeMissingAPIKeyError
 
         try:
-            url = f"{BASE_URL}/{api_endpoint}"
+            url = f"{surge.base_url}/{api_endpoint}"
 
             # GET request
             if method == "get":
