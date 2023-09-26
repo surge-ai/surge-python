@@ -153,6 +153,20 @@ class Project(APIResource):
         return projects
 
     @classmethod
+    def list_blueprints(cls):
+        '''
+        Lists blueprint projects for your organization.
+
+        Returns:
+            projects (list): list of Project objects.
+        '''
+        endpoint = f"{PROJECTS_ENDPOINT}/blueprints"
+        response_json = cls.get(endpoint)
+        projects = [cls(**project_json) for project_json in response_json]
+        return projects
+
+
+    @classmethod
     def retrieve(cls, project_id: str):
         '''
         Retrieves a specific project you have created.
