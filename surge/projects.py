@@ -181,6 +181,19 @@ class Project(APIResource):
         response_json = cls.get(endpoint)
         return cls(**response_json)
 
+    def list_copies(self):
+        '''
+        Lists copies made from the current project.
+
+        Returns:
+            projects (list): list of Project objects.
+        '''
+        endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/copies"
+        response_json = self.get(endpoint)
+        projects = [Project(**project_json) for project_json in response_json]
+        return projects
+
+
     def launch(self):
         '''
         Launches a project.
