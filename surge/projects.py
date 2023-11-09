@@ -61,8 +61,8 @@ class Project(APIResource):
                num_workers_per_task: int = 1,
                tags=[],
                carousel=None,
-               template_id="",
-               description=""):
+               template_id: str="",
+               description: str=""):
         '''
         Creates a new Project.
 
