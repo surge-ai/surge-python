@@ -61,7 +61,8 @@ class Project(APIResource):
                num_workers_per_task: int = 1,
                tags=[],
                carousel=None,
-               template_id=None):
+               template_id=None,
+               description=""):
         '''
         Creates a new Project.
 
@@ -104,7 +105,8 @@ class Project(APIResource):
             "callback_url": callback_url,
             "fields_template": fields_template,
             "num_workers_per_task": num_workers_per_task,
-            "tags": tags
+            "tags": tags,
+            "description": description,
         }
         if carousel is not None:
             params = {**params, **carousel.to_dict()}
@@ -294,7 +296,8 @@ class Project(APIResource):
                instructions: str = None,
                callback_url: str = None,
                fields_template: str = None,
-               num_workers_per_task: int = 0):
+               num_workers_per_task: int = 0,
+               description: str = None):
         '''
         Update an existing project
 
@@ -320,6 +323,8 @@ class Project(APIResource):
             params["payment_per_response"] = payment_per_response
         if instructions is not None and len(instructions) > 0:
             params["instructions"] = instructions
+        if description is not None and len(description) > 0:
+            params["description"] = description
         if callback_url is not None and len(callback_url) > 0:
             params["callback_url"] = callback_url
         if num_workers_per_task > 0:
