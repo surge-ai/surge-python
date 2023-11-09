@@ -61,8 +61,8 @@ class Project(APIResource):
                num_workers_per_task: int = 1,
                tags=[],
                carousel=None,
-               template_id: str=None,
-               description: str=None):
+               template_id: str = None,
+               description: str = None):
         '''
         Creates a new Project.
 
@@ -167,7 +167,6 @@ class Project(APIResource):
         projects = [cls(**project_json) for project_json in response_json]
         return projects
 
-
     @classmethod
     def retrieve(cls, project_id: str):
         '''
@@ -194,7 +193,6 @@ class Project(APIResource):
         response_json = self.get(endpoint)
         projects = [Project(**project_json) for project_json in response_json]
         return projects
-
 
     def launch(self):
         '''
