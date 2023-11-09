@@ -61,7 +61,7 @@ class Project(APIResource):
                num_workers_per_task: int = 1,
                tags=[],
                carousel=None,
-               template_id=None,
+               template_id="",
                description=""):
         '''
         Creates a new Project.
@@ -297,7 +297,7 @@ class Project(APIResource):
                callback_url: str = None,
                fields_template: str = None,
                num_workers_per_task: int = 0,
-               description: str = None):
+               description: str = ""):
         '''
         Update an existing project
 
