@@ -117,6 +117,7 @@ def test_init_complete():
             }],
             'hidden_by_item_option_id': None,
             'shown_by_item_option_id': None,
+            'holistic': False
         }]
     }
 
@@ -206,6 +207,7 @@ def test_convert_questions_to_objects():
         }],
         'hidden_by_item_option_id': None,
         'shown_by_item_option_id': None,
+        'holistic': False
     }, {
         'id':
         'c4b0d6a9-f735-40c1-9b42-0414945ef2db',
@@ -241,6 +243,7 @@ def test_convert_questions_to_objects():
         }],
         'hidden_by_item_option_id': None,
         'shown_by_item_option_id': None,
+        'holistic': False
     }, {
         'id': '6123463e-349e-4450-80d2-6684a28755b3',
         'text': 'Free response for {{url}}',
@@ -253,6 +256,7 @@ def test_convert_questions_to_objects():
         'options_objects': [],
         'hidden_by_item_option_id': None,
         'shown_by_item_option_id': None,
+        'holistic': False
     }, {
         'id':
         'c46e2714-9bf6-44a8-aac3-f01f9fec8ae2',
@@ -297,6 +301,7 @@ def test_convert_questions_to_objects():
         }],
         'hidden_by_item_option_id': None,
         'shown_by_item_option_id': None,
+        'holistic': False
     }, {
         'id': '6123463e-349e-4450-80d2-6684a28755b4',
         'text': 'Text area for {{url}}',
@@ -306,6 +311,7 @@ def test_convert_questions_to_objects():
         'options_objects': [],
         'hidden_by_item_option_id': None,
         'shown_by_item_option_id': None,
+        'holistic': True
     }, {
         'id': '6123463e-349e-4450-80d2-6684a28755b5',
         'text': 'Chatbot for {{url}}',
@@ -317,6 +323,7 @@ def test_convert_questions_to_objects():
         'preexisting_annotations': None,
         'hidden_by_item_option_id': None,
         'shown_by_item_option_id': None,
+        'holistic': True
     }]
 
     project = Project(id="ABC1234", name="Hello World")
