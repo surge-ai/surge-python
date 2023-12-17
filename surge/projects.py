@@ -160,11 +160,14 @@ class Project(APIResource):
         Lists blueprint projects for your organization.
 
         Returns:
-            projects (list): list of Project objects.
+            projects (list): list of Blueprint objects.
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/blueprints"
         response_json = cls.get(endpoint)
-        projects = [cls(**project_json) for project_json in response_json]
+
+        # Avoid circular dependency with deferred import.
+        from surge import Blueprint
+        projects = [Blueprint(**project_json) for project_json in response_json]
         return projects
 
     @classmethod
