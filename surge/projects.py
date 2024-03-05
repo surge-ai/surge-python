@@ -62,7 +62,8 @@ class Project(APIResource):
                tags=[],
                carousel=None,
                template_id: str = None,
-               description: str = None):
+               description: str = None,
+               api_key: str = None):
         '''
         Creates a new Project.
 
@@ -114,11 +115,11 @@ class Project(APIResource):
             params["payment_per_response"] = payment_per_response
         if template_id is not None:
             params["template_id"] = template_id
-        response_json = cls.post(PROJECTS_ENDPOINT, params)
+        response_json = cls.post(PROJECTS_ENDPOINT, params, api_key=api_key)
         return cls(**response_json)
 
     @classmethod
-    def list(cls, page: int = 1):
+    def list(cls, page: int = 1, api_key: str = None):
         '''
         Lists all projects you have created.
         Projects are returned in descending order of created_at.
@@ -131,12 +132,12 @@ class Project(APIResource):
             projects (list): list of Project objects.
         '''
         params = {"page": page}
-        response_json = cls.get(PROJECTS_ENDPOINT, params)
+        response_json = cls.get(PROJECTS_ENDPOINT, params, api_key=api_key)
         projects = [cls(**project_json) for project_json in response_json]
         return projects
 
     @classmethod
-    def list_shared(cls, page: int = 1):
+    def list_shared(cls, page: int = 1, api_key: str = None):
         '''
         Lists all projects created by anyone in your organization.
         Projects are returned in descending order of created_at.
@@ -150,12 +151,12 @@ class Project(APIResource):
         '''
         params = {"page": page}
         endpoint = f"{PROJECTS_ENDPOINT}/shared"
-        response_json = cls.get(endpoint, params)
+        response_json = cls.get(endpoint, params, api_key=api_key)
         projects = [cls(**project_json) for project_json in response_json]
         return projects
 
     @classmethod
-    def list_blueprints(cls):
+    def list_blueprints(cls, api_key: str = None):
         '''
         Lists blueprint projects for your organization.
 
@@ -163,12 +164,12 @@ class Project(APIResource):
             projects (list): list of Project objects.
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/blueprints"
-        response_json = cls.get(endpoint)
+        response_json = cls.get(endpoint, api_key=api_key)
         projects = [cls(**project_json) for project_json in response_json]
         return projects
 
     @classmethod
-    def retrieve(cls, project_id: str):
+    def retrieve(cls, project_id: str, api_key: str = None):
         '''
         Retrieves a specific project you have created.
 
@@ -179,10 +180,10 @@ class Project(APIResource):
             project: Project object
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}"
-        response_json = cls.get(endpoint)
+        response_json = cls.get(endpoint, api_key=api_key)
         return cls(**response_json)
 
-    def list_copies(self):
+    def list_copies(self, api_key: str = None):
         '''
         Lists copies made from the current project.
 
@@ -190,11 +191,11 @@ class Project(APIResource):
             projects (list): list of Project objects.
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/copies"
-        response_json = self.get(endpoint)
+        response_json = self.get(endpoint, api_key=api_key)
         projects = [Project(**project_json) for project_json in response_json]
         return projects
 
-    def launch(self):
+    def launch(self, api_key: str = None):
         '''
         Launches a project.
         If work is being completed by the Surge workforce, you will be charged when the project launches
@@ -204,9 +205,9 @@ class Project(APIResource):
             project: new Project object with updated status
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/launch"
-        return self.put(endpoint)
+        return self.put(endpoint, api_key=api_key)
 
-    def pause(self):
+    def pause(self, api_key: str = None):
         '''
         Pauses a project.
         Tasks added to the project will not be worked on until you resume the project.
@@ -215,9 +216,9 @@ class Project(APIResource):
             project: new Project object with updated status
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/pause"
-        return self.put(endpoint)
+        return self.put(endpoint, api_key=api_key)
 
-    def resume(self):
+    def resume(self, api_key: str = None):
         '''
         Resumes a paused project.
 
@@ -225,9 +226,9 @@ class Project(APIResource):
             project: new Project object with updated status
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/resume"
-        return self.put(endpoint)
+        return self.put(endpoint, api_key=api_key)
 
-    def cancel(self):
+    def cancel(self, api_key: str = None):
         '''
         Cancels a project.
 
@@ -235,9 +236,9 @@ class Project(APIResource):
             project: new Project object with updated status
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/cancel"
-        return self.put(endpoint)
+        return self.put(endpoint, api_key=api_key)
 
-    def delete(self):
+    def delete(self, api_key: str = None):
         '''
         Permanently delete the project, including the input data and all responses.
 
@@ -245,9 +246,9 @@ class Project(APIResource):
             {"success": True}
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/delete"
-        return self.get(endpoint)
+        return self.get(endpoint, api_key=api_key)
 
-    def list_tasks(self, page: int = 1, per_page: int = 100):
+    def list_tasks(self, page: int = 1, per_page: int = 100, api_key: str = None):
         '''
         Lists all tasks belonging to this project.
         Tasks are returned in ascending order of created_at.
@@ -259,9 +260,9 @@ class Project(APIResource):
         Returns:
             tasks (list): list of Task objects.
         '''
-        return Task.list(self.id, page=page, per_page=per_page)
+        return Task.list(self.id, page=page, per_page=per_page, api_key=api_key)
 
-    def create_tasks(self, tasks_data: list, launch=False):
+    def create_tasks(self, tasks_data: list, launch=False, api_key: str = None):
         '''
         Creates new Task objects for this project.
 
@@ -272,9 +273,9 @@ class Project(APIResource):
         Returns:
             tasks (list): list of Task objects
         '''
-        return Task.create_many(self.id, tasks_data, launch)
+        return Task.create_many(self.id, tasks_data, launch, api_key=api_key)
 
-    def create_tasks_from_csv(self, file_path: str):
+    def create_tasks_from_csv(self, file_path: str, api_key: str = None):
         '''
         Creates new Task objects for this project from a local CSV file.
         The header of the CSV file must specify the fields that are used in your Tasks.
@@ -286,7 +287,7 @@ class Project(APIResource):
             tasks (list): list of Task objects
         '''
         tasks_data = utils.load_tasks_data_from_csv(file_path)
-        return self.create_tasks(tasks_data)
+        return self.create_tasks(tasks_data, api_key=api_key)
 
     def update(self,
                name: str = None,
@@ -295,7 +296,8 @@ class Project(APIResource):
                callback_url: str = None,
                fields_template: str = None,
                num_workers_per_task: int = 0,
-               description: str = None):
+               description: str = None,
+               api_key: str = None):
         '''
         Update an existing project
 
@@ -329,10 +331,10 @@ class Project(APIResource):
             params["num_workers_per_task"] = num_workers_per_task
 
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}"
-        response_json = self.put(endpoint, params)
+        response_json = self.put(endpoint, params, api_key=api_key)
         return Project(**response_json)
 
-    def workable_by_surger(self, surger_id):
+    def workable_by_surger(self, surger_id, api_key: str = None):
         '''
         Checks if a specific Surger can work on this project.
 
@@ -344,5 +346,5 @@ class Project(APIResource):
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/workable_by_surger"
         params = {"surger_id": surger_id}
-        response_json = self.get(endpoint, params)
+        response_json = self.get(endpoint, params, api_key=api_key)
         return response_json.get("workable", False)

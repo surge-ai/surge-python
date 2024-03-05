@@ -28,7 +28,8 @@ class Report(APIResource):
                     project_id: str,
                     type: str,
                     filepath=None,
-                    poll_time=30):
+                    poll_time=30,
+                    api_key: str = None):
         '''
         Request creation of a report, poll until the report is generated, and save the data to a file all in one call.
         Args:
@@ -43,7 +44,7 @@ class Report(APIResource):
         poll_time (int): Number of seconds to poll for the report
       '''
         for _ in range(poll_time // 2):
-            response = cls.request(project_id=project_id, type=type)
+            response = cls.request(project_id=project_id, type=type, api_key=api_key)
             # Download zipped project results if ready
             if response.status == "READY":
                 file_ext = "csv" if "csv" in type else "json"
@@ -72,7 +73,7 @@ class Report(APIResource):
                     poll_time=poll_time))
 
     @classmethod
-    def request(cls, project_id: str, type: str):
+    def request(cls, project_id: str, type: str, api_key: str = None):
         '''
         Request creation of a report for the given type. Note that reports are generated
         asychronously so the response may include a `job_id` which needs to be used with
@@ -113,11 +114,11 @@ class Report(APIResource):
         '''
         endpoint = f"{REPORTS_ENDPOINT}/{project_id}/report"
         params = {"report_type": type}
-        response_json = cls.post(endpoint, params)
+        response_json = cls.post(endpoint, params, api_key=api_key)
         return cls(**response_json)
 
     @classmethod
-    def status(cls, project_id: str, job_id: str):
+    def status(cls, project_id: str, job_id: str, api_key: str = None):
         '''
         Checks the status of a given report job. The response will be of one of these shapes:
 
@@ -158,5 +159,5 @@ class Report(APIResource):
         '''
         endpoint = f"{REPORTS_ENDPOINT}/{project_id}/report_status"
         params = {"job_id": job_id}
-        response_json = cls.get(endpoint, params)
+        response_json = cls.get(endpoint, params, api_key=api_key)
         return cls(**response_json)

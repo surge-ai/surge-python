@@ -30,7 +30,7 @@ class Team(APIResource):
     def attrs_repr(self):
         return self.print_attrs(forbid_list=["id"])
 
-    def update(self, name=None, description=None):
+    def update(self, name=None, description=None, api_key: str = None):
         '''
         Update an existing team
 
@@ -49,10 +49,10 @@ class Team(APIResource):
             params["description"] = description
 
         endpoint = f"{TEAMS_ENDPOINT}/{self.id}"
-        response_json = self.put(endpoint, params)
+        response_json = self.put(endpoint, params, api_key=api_key)
         return Team(**response_json)
 
-    def add_surgers(self, surger_ids):
+    def add_surgers(self, surger_ids, api_key: str = None):
         '''
         Add Surgers to the team
 
@@ -64,10 +64,10 @@ class Team(APIResource):
         '''
         endpoint = f"{TEAMS_ENDPOINT}/{self.id}/add_surgers"
         params = {"surger_ids": surger_ids}
-        response_json = self.post(endpoint, params)
+        response_json = self.post(endpoint, params, api_key=api_key)
         return Team(**response_json)
 
-    def remove_surgers(self, surger_ids):
+    def remove_surgers(self, surger_ids, api_key: str = None):
         '''
         Remove Surgers from the team
 
@@ -79,11 +79,11 @@ class Team(APIResource):
         '''
         endpoint = f"{TEAMS_ENDPOINT}/{self.id}/remove_surgers"
         params = {"surger_ids": surger_ids}
-        response_json = self.post(endpoint, params)
+        response_json = self.post(endpoint, params, api_key=api_key)
         return Team(**response_json)
 
     @classmethod
-    def create(cls, name: str, members: list, description=None):
+    def create(cls, name: str, members: list, description=None, api_key: str = None):
         '''
         Creates a new Team.
 
@@ -99,23 +99,23 @@ class Team(APIResource):
         data = {"name": name, "members": members}
         if description:
             data["description"] = description
-        response_json = cls.post(endpoint, data)
+        response_json = cls.post(endpoint, data, api_key=api_key)
         return cls(**response_json)
 
     @classmethod
-    def list(cls):
+    def list(cls, api_key: str = None):
         '''
         Lists all of your teams.
         Returns:
             teams (list): list of Team objects.
         '''
         endpoint = f"{TEAMS_ENDPOINT}/list"
-        response_json = cls.get(endpoint)
+        response_json = cls.get(endpoint, api_key=api_key)
         tasks = [Team(**team_data) for team_data in response_json]
         return tasks
 
     @classmethod
-    def retrieve(cls, team_id: str):
+    def retrieve(cls, team_id: str, api_key: str = None):
         '''
         Retrieves a specific team you have created.
 
@@ -126,11 +126,11 @@ class Team(APIResource):
             team: Team object
         '''
         endpoint = f"{TEAMS_ENDPOINT}/{team_id}"
-        response_json = cls.get(endpoint)
+        response_json = cls.get(endpoint, api_key=api_key)
         return cls(**response_json)
 
     @classmethod
-    def delete(cls, team_id: str):
+    def delete(cls, team_id: str, api_key: str = None):
         '''
         Delete the team with the given ID. This is an irreversible operation.
         
@@ -141,5 +141,5 @@ class Team(APIResource):
             { "success": boolean }
         '''
         endpoint = f"{TEAMS_ENDPOINT}/{team_id}"
-        response_json = cls.delete_request(endpoint)
+        response_json = cls.delete_request(endpoint, api_key=api_key)
         return response_json

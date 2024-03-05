@@ -40,7 +40,8 @@ class Task(APIResource):
     def set_gold_standard(self,
                           gold_standard_answers=None,
                           is_gold_standard=True,
-                          explanations=None):
+                          explanations=None,
+                          api_key: str = None):
         '''
         Set gold standard answers for this task.
 
@@ -61,11 +62,11 @@ class Task(APIResource):
             'explanations': explanations,
             'answers': gold_standard_answers
         }
-        response_json = self.post(endpoint, data)
+        response_json = self.post(endpoint, data, api_key=api_key)
         self.__dict__.update(response_json)
         return self
 
-    def create_response(self, answers, worker_id=None):
+    def create_response(self, answers, worker_id=None, api_key: str = None):
         '''
         Add a worker response for this task.
 
@@ -77,10 +78,10 @@ class Task(APIResource):
             raise SurgeMissingIDError
         endpoint = f"{TASKS_ENDPOINT}/{self.id}/create-response"
         data = {'answers': answers, 'worker_id': worker_id}
-        return self.post(endpoint, data)
+        return self.post(endpoint, data, api_key=api_key)
 
     @classmethod
-    def create(cls, project_id: str, **params):
+    def create(cls, project_id: str, api_key: str = None, **params):
         '''
         Creates a new Task object for a given project.
 
@@ -93,11 +94,11 @@ class Task(APIResource):
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}"
         data = {"fields": params}
-        response_json = cls.post(endpoint, data)
+        response_json = cls.post(endpoint, data, api_key=api_key)
         return cls(**response_json)
 
     @classmethod
-    def create_many(cls, project_id: str, tasks_data: list, launch: bool):
+    def create_many(cls, project_id: str, tasks_data: list, launch: bool, api_key: str = None):
         '''
         Creates new Task objects for a given project.
 
@@ -117,12 +118,12 @@ class Task(APIResource):
 
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}/create_tasks"
         data = {"tasks": tasks_data, "launch": launch}
-        response_json = cls.post(endpoint, data)
+        response_json = cls.post(endpoint, data, api_key=api_key)
         tasks = [cls(**task_json) for task_json in response_json]
         return tasks
 
     @classmethod
-    def list(cls, project_id: str, page: int = 1, per_page: int = 100):
+    def list(cls, project_id: str, page: int = 1, per_page: int = 100, api_key: str = None):
         '''
         Lists all tasks belonging to a given project.
         Tasks are returned in ascending order of created_at.
@@ -137,12 +138,12 @@ class Task(APIResource):
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}"
         params = {"page": page, "per_page": per_page}
-        response_json = cls.get(endpoint, params)
+        response_json = cls.get(endpoint, params, api_key=api_key)
         tasks = [cls(**task_json) for task_json in response_json]
         return tasks
 
     @classmethod
-    def retrieve(cls, task_id: str):
+    def retrieve(cls, task_id: str, api_key: str = None):
         '''
         Retrieves a specific task you have created.
 
@@ -153,5 +154,5 @@ class Task(APIResource):
             task: Task object
         '''
         endpoint = f"{TASKS_ENDPOINT}/{task_id}"
-        response_json = cls.get(endpoint)
+        response_json = cls.get(endpoint, api_key=api_key)
         return cls(**response_json)

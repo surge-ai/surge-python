@@ -134,7 +134,8 @@ class Question(APIResource):
     def update(self,
                text: str = None,
                hidden_by_option_id: str = None,
-               shown_by_option_id: str = None):
+               shown_by_option_id: str = None,
+               api_key: str = None):
         params = {}
 
         if text is not None:
@@ -145,7 +146,7 @@ class Question(APIResource):
             params["shown_by_item_option_id"] = shown_by_option_id
 
         endpoint = f"{QUESTIONS_ENDPOINT}/{self.id}"
-        response_json = self.put(endpoint, params)
+        response_json = self.put(endpoint, params, api_key=api_key)
         return Question.from_params(response_json)
 
 

@@ -22,8 +22,9 @@ class APIResource(object):
         ])
 
     @classmethod
-    def _base_request(cls, method, api_endpoint, params=None):
-        if surge.api_key is None:
+    def _base_request(cls, method, api_endpoint, params=None, api_key=None):
+        api_key_to_use = api_key or surge.api_key
+        if api_key_to_use is None:
             raise SurgeMissingAPIKeyError
 
         try:
@@ -32,26 +33,26 @@ class APIResource(object):
             # GET request
             if method == "get":
                 response = requests.get(url,
-                                        auth=(surge.api_key, ""),
+                                        auth=(api_key_to_use, ""),
                                         data=params)
 
             # POST request
             elif method == "post":
                 response = requests.post(url,
-                                         auth=(surge.api_key, ""),
+                                         auth=(api_key_to_use, ""),
                                          json=params)
 
             # PUT request
             elif method == "put":
                 if params is not None and len(params):
                     response = requests.put(url,
-                                            auth=(surge.api_key, ""),
+                                            auth=(api_key_to_use, ""),
                                             data=params)
                 else:
-                    response = requests.put(url, auth=(surge.api_key, ""))
+                    response = requests.put(url, auth=(api_key_to_use, ""))
 
             elif method == "delete":
-                response = requests.delete(url, auth=(surge.api_key, ""))
+                response = requests.delete(url, auth=(api_key_to_use, ""))
 
             else:
                 raise SurgeRequestError("Invalid HTTP method.")
@@ -72,21 +73,21 @@ class APIResource(object):
             raise SurgeRequestError
 
     @classmethod
-    def get(cls, api_endpoint, params=None):
+    def get(cls, api_endpoint, params=None, api_key=None):
         method = "get"
-        return cls._base_request(method, api_endpoint, params=params)
+        return cls._base_request(method, api_endpoint, params=params, api_key=api_key)
 
     @classmethod
-    def post(cls, api_endpoint, params=None):
+    def post(cls, api_endpoint, params=None, api_key=None):
         method = "post"
-        return cls._base_request(method, api_endpoint, params=params)
+        return cls._base_request(method, api_endpoint, params=params, api_key=api_key)
 
     @classmethod
-    def put(cls, api_endpoint, params=None):
+    def put(cls, api_endpoint, params=None, api_key=None):
         method = "put"
-        return cls._base_request(method, api_endpoint, params=params)
+        return cls._base_request(method, api_endpoint, params=params, api_key=api_key)
 
     @classmethod
-    def delete_request(cls, api_endpoint):
+    def delete_request(cls, api_endpoint, api_key=None):
         method = "delete"
-        return cls._base_request(method, api_endpoint)
+        return cls._base_request(method, api_endpoint, api_key=api_key)
