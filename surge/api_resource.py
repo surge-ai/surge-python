@@ -34,7 +34,7 @@ class APIResource(object):
             if method == "get":
                 response = requests.get(url,
                                         auth=(api_key_to_use, ""),
-                                        data=params)
+                                        params=params)
 
             # POST request
             elif method == "post":
