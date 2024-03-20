@@ -169,7 +169,7 @@ class Project(APIResource):
         return projects
 
     @classmethod
-    def retrieve(cls, project_id: str, api_key: str = None):
+    def retrieve(cls, project_id: str, include_tasks: bool=False, api_key: str = None):
         '''
         Retrieves a specific project you have created.
 
@@ -180,7 +180,8 @@ class Project(APIResource):
             project: Project object
         '''
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}"
-        response_json = cls.get(endpoint, api_key=api_key)
+        response_json = cls.get(
+            endpoint, params={ "exclude_tasks": str(include_tasks).lower()}, api_key=api_key)
         return cls(**response_json)
 
     def list_copies(self, api_key: str = None):
