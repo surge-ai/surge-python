@@ -1,20 +1,20 @@
 import json
 from surge.api_resource import QUESTIONS_ENDPOINT, APIResource
 
-
 class Question(APIResource):
-
     def __init__(self,
                  id,
                  text,
                  type_=None,
                  required=True,
-                 column_header=None):
+                 column_header=None,
+                 question_category=None):
         self.id = id
         self.text = text
         self.type = type_
         self.required = required
         self.column_header = column_header
+        self.question_category = question_category
 
     def to_dict(self):
         return self.__dict__
@@ -38,7 +38,8 @@ class Question(APIResource):
                 preexisting_annotations=q["preexisting_annotations"],
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
-                holistic=q["holistic"])
+                holistic=q["holistic"],
+                question_category=q.get("question_category"))
         elif q["type"] == "multiple_choice":
             return MultipleChoiceQuestion(
                 q["text"],
@@ -50,7 +51,8 @@ class Question(APIResource):
                 require_tiebreaker=q["require_tie_breaker"],
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
-                holistic=q["holistic"])
+                holistic=q["holistic"],
+                question_category=q.get("question_category"))
 
         elif q["type"] == "checkbox":
             return CheckboxQuestion(
@@ -63,7 +65,8 @@ class Question(APIResource):
                 require_tiebreaker=q["require_tie_breaker"],
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
-                holistic=q["holistic"])
+                holistic=q["holistic"],
+                question_category=q.get("question_category"))
         elif q["type"] == "text_tagging":
             return TextTaggingQuestion(
                 q["text"],
@@ -78,7 +81,8 @@ class Question(APIResource):
                 require_tiebreaker=q["require_tie_breaker"],
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
-                holistic=q["holistic"])
+                holistic=q["holistic"],
+                question_category=q.get("question_category"))
 
         elif q["type"] == "tree_selection":
             return TreeSelectionQuestion(
@@ -91,7 +95,8 @@ class Question(APIResource):
                 require_tiebreaker=q["require_tie_breaker"],
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
-                holistic=q["holistic"])
+                holistic=q["holistic"],
+                question_category=q.get("question_category"))
         elif q["type"] == "ranking":
             return RankingQuestion(
                 q["text"],
@@ -103,7 +108,8 @@ class Question(APIResource):
                 allow_ranking_ties=q["allow_ranking_ties"],
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
-                holistic=q["holistic"])
+                holistic=q["holistic"],
+                question_category=q.get("question_category"))
         elif q["type"] == "file_upload":
             return FileUpload(
                 q["text"],
@@ -111,13 +117,15 @@ class Question(APIResource):
                 required=q["required"],
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
-                holistic=q["holistic"])
+                holistic=q["holistic"],
+                question_category=q.get("question_category"))
         elif q["type"] == "text":
             return TextArea(q["text"],
                             id=q["id"],
                             shown_by_option_id=q["shown_by_item_option_id"],
                             hidden_by_option_id=q["hidden_by_item_option_id"],
-                            holistic=q["holistic"])
+                            holistic=q["holistic"],
+                            question_category=q.get("question_category"))
         elif q["type"] == "chat":
             return ChatBot(
                 q["text"],
@@ -129,7 +137,8 @@ class Question(APIResource):
                 preexisting_annotations=q["preexisting_annotations"],
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
-                holistic=q["holistic"])
+                holistic=q["holistic"],
+                question_category=q.get("question_category"))
 
     def update(self,
                text: str = None,
@@ -151,7 +160,6 @@ class Question(APIResource):
 
 
 class FreeResponseQuestion(Question):
-
     def __init__(self,
                  text,
                  id=None,
@@ -161,7 +169,8 @@ class FreeResponseQuestion(Question):
                  column_header=None,
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
-                 holistic=False):
+                 holistic=False,
+                 question_category=None):
         '''
         Create a free response question.
 
@@ -176,18 +185,19 @@ class FreeResponseQuestion(Question):
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
+            question_category (string): The question category for the relevant workstream.
         '''
         super().__init__(id,
                          text,
                          type_="free_response",
                          required=required,
-                         column_header=column_header)
+                         column_header=column_header,
+                         question_category=question_category)
         self.preexisting_annotations = preexisting_annotations
         self.use_for_serial_collection = use_for_serial_collection
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic
-
 
 class MultipleChoiceQuestion(Question):
 
@@ -203,7 +213,8 @@ class MultipleChoiceQuestion(Question):
                  column_header=None,
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
-                 holistic=False):
+                 holistic=False,
+                 question_category=None):
         '''
         Create a multiple choice radio question.
 
@@ -222,12 +233,14 @@ class MultipleChoiceQuestion(Question):
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
+            question_category (string): The question category for the relevant workstream.
         '''
         super().__init__(id,
                          text,
                          type_="multiple_choice",
                          required=required,
-                         column_header=column_header)
+                         column_header=column_header,
+                         question_category=question_category)
         self.options = options
         self.options_info = options_info
         self.descriptions = descriptions
@@ -252,7 +265,8 @@ class CheckboxQuestion(Question):
                  column_header=None,
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
-                 holistic=False):
+                 holistic=False,
+                 question_category=None):
         '''
         Create a checkbox question. Unlike a multiple choice question, it's possible to select multiple checkboxes.
 
@@ -271,12 +285,14 @@ class CheckboxQuestion(Question):
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
+            question_category (string): The question category for the relevant workstream.
         '''
         super().__init__(id,
                          text,
                          type_="checkbox",
                          required=required,
-                         column_header=column_header)
+                         column_header=column_header,
+                         question_category=question_category)
         self.options = options
         self.options_info = options_info
         self.descriptions = descriptions
@@ -303,7 +319,8 @@ class TextTaggingQuestion(Question):
                  column_header=None,
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
-                 holistic=False):
+                 holistic=False,
+                 question_category=None):
         '''
         Create a text tagging (NER) question. Unlikely a multiple choice question, it's possible to select multiple checkboxes
 
@@ -323,12 +340,14 @@ class TextTaggingQuestion(Question):
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
+            question_category (string): The question category for the relevant workstream.
         '''
         super().__init__(id,
                          text,
                          type_="text_tagging",
                          required=required,
-                         column_header=column_header)
+                         column_header=column_header,
+                         question_category=question_category)
         self.options = options
         self.options_info = options_info
         self.preexisting_annotations = preexisting_annotations
@@ -355,7 +374,8 @@ class TreeSelectionQuestion(Question):
                  column_header=None,
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
-                 holistic=False):
+                 holistic=False,
+                 question_category=None):
         '''
         Create a hierarchical multiple choice question. This is useful if you have a lot of options in a nested format.
 
@@ -375,12 +395,14 @@ class TreeSelectionQuestion(Question):
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
+            question_category (string): The question category for the relevant workstream.
         '''
         super().__init__(id,
                          text,
                          type_="tree_selection",
                          required=required,
-                         column_header=column_header)
+                         column_header=column_header,
+                         question_category=question_category)
         self.options = options
         self.options_info = options_info
         self.descriptions = descriptions
@@ -400,7 +422,8 @@ class FileUpload(Question):
                  column_header=None,
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
-                 holistic=False):
+                 holistic=False,
+                 question_category=None):
         '''
         Add a file upload widget where workers can upload images, documents, or other files.
 
@@ -411,12 +434,14 @@ class FileUpload(Question):
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
+            question_category (string): The question category for the relevant workstream.
         '''
         super().__init__(id,
                          text,
                          type_="file_upload",
                          required=required,
-                         column_header=column_header)
+                         column_header=column_header,
+                         question_category=question_category)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic
@@ -435,7 +460,8 @@ class RankingQuestion(Question):
                  column_header=None,
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
-                 holistic=False):
+                 holistic=False,
+                 question_category=None):
         '''
         Create a ranking widget. Workers can drag and drop the option to specify their ranking.
 
@@ -451,12 +477,14 @@ class RankingQuestion(Question):
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
+            question_category (string): The question category for the relevant workstream.
         '''
         super().__init__(id,
                          text,
                          type_="ranking",
                          required=required,
-                         column_header=column_header)
+                         column_header=column_header,
+                         question_category=question_category)
         self.options = options
         self.options_info = options_info
         self.allow_ranking_ties = allow_ranking_ties
@@ -479,7 +507,8 @@ class ChatBot(Question):
                  column_header=None,
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
-                 holistic=False):
+                 holistic=False,
+                 question_category=None):
         '''
         Create an interactive chatbot on the labeling page. This is an advanced item type.
 
@@ -493,12 +522,14 @@ class ChatBot(Question):
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
             hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
             shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
+            question_category (string): The question category for the relevant workstream.
         '''
         super().__init__(id,
                          text,
                          type_="chat",
                          required=required,
-                         column_header=column_header)
+                         column_header=column_header,
+                         question_category=question_category)
         self.options = options
         self.options_info = options_info
         self.endpoint_url = endpoint_url
@@ -516,8 +547,9 @@ class TextArea(Question):
                  id=None,
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
-                 holistic=False):
-        super().__init__(id, text, type_="text", required=False)
+                 holistic=False,
+                 question_category=None):
+        super().__init__(id, text, type_="text", required=False, question_category=question_category)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic
