@@ -53,6 +53,7 @@ class Report(APIResource):
                 with urllib.request.urlopen(response.url) as response:
                     with tempfile.NamedTemporaryFile() as tmp_file:
                         shutil.copyfileobj(response, tmp_file)
+                        tmp_file.flush()
                         # Unzip and save results
                         data = gzip.open(tmp_file.name, "r").read()
                         open(filepath or default_file_name.rstrip('.gzip'),
