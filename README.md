@@ -79,14 +79,17 @@ from surge.questions import FreeResponseQuestion, MultipleChoiceQuestion, Checkb
 
 # Create a new Project
 free_response_q = FreeResponseQuestion(
-    text="What is this company's website?")
+    text="What is this company's website?",
+    label="")
 
 multiple_choice_q = MultipleChoiceQuestion(
     text="What category does this company belong to?",
+    label="Category",
     options=["Tech", "Sports", "Gaming"])
 
 checkbox_q = CheckboxQuestion(
     text="Check all the social media accounts this company has",
+    label="",
     options=["Facebook", "Twitter", "Pinterest", "Google+"])
 
 fields_template_text = '''
