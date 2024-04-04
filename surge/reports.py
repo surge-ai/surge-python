@@ -44,7 +44,9 @@ class Report(APIResource):
         poll_time (int): Number of seconds to poll for the report
       '''
         for _ in range(poll_time // 2):
-            response = cls.request(project_id=project_id, type=type, api_key=api_key)
+            response = cls.request(project_id=project_id,
+                                   type=type,
+                                   api_key=api_key)
             # Download zipped project results if ready
             if response.status == "READY":
                 file_ext = "csv" if "csv" in type else "json"

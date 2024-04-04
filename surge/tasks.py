@@ -98,7 +98,11 @@ class Task(APIResource):
         return cls(**response_json)
 
     @classmethod
-    def create_many(cls, project_id: str, tasks_data: list, launch: bool, api_key: str = None):
+    def create_many(cls,
+                    project_id: str,
+                    tasks_data: list,
+                    launch: bool,
+                    api_key: str = None):
         '''
         Creates new Task objects for a given project.
 
@@ -123,7 +127,11 @@ class Task(APIResource):
         return tasks
 
     @classmethod
-    def list(cls, project_id: str, page: int = 1, per_page: int = 100, api_key: str = None):
+    def list(cls,
+             project_id: str,
+             page: int = 1,
+             per_page: int = 100,
+             api_key: str = None):
         '''
         Lists all tasks belonging to a given project.
         Tasks are returned in ascending order of created_at.

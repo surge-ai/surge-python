@@ -1,7 +1,9 @@
 import json
 from surge.api_resource import QUESTIONS_ENDPOINT, APIResource
 
+
 class Question(APIResource):
+
     def __init__(self,
                  id,
                  text,
@@ -180,6 +182,7 @@ class Question(APIResource):
 
 
 class FreeResponseQuestion(Question):
+
     def __init__(self,
                  text,
                  label,
@@ -221,6 +224,7 @@ class FreeResponseQuestion(Question):
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic
+
 
 class MultipleChoiceQuestion(Question):
 
@@ -594,7 +598,12 @@ class TextArea(Question):
                  shown_by_option_id=None,
                  holistic=False,
                  question_category=None):
-        super().__init__(id, text, label, type_="text", required=False, question_category=question_category)
+        super().__init__(id,
+                         text,
+                         label,
+                         type_="text",
+                         required=False,
+                         question_category=question_category)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic

@@ -45,8 +45,7 @@ class Project(APIResource):
     def to_dict(self):
         return {
             key: self._to_dict_value(key, value)
-            for key, value in self.__dict__.items()
-            if not key.startswith('_')
+            for key, value in self.__dict__.items() if not key.startswith('_')
         }
 
     def _to_dict_value(self, key, value):
@@ -59,7 +58,6 @@ class Project(APIResource):
 
     def to_json(self):
         return json.dumps(self.to_dict())
-
 
     @staticmethod
     def _validate_questions(questions):
@@ -269,7 +267,10 @@ class Project(APIResource):
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/delete"
         return self.get(endpoint, api_key=api_key)
 
-    def list_tasks(self, page: int = 1, per_page: int = 100, api_key: str = None):
+    def list_tasks(self,
+                   page: int = 1,
+                   per_page: int = 100,
+                   api_key: str = None):
         '''
         Lists all tasks belonging to this project.
         Tasks are returned in ascending order of created_at.
@@ -281,9 +282,15 @@ class Project(APIResource):
         Returns:
             tasks (list): list of Task objects.
         '''
-        return Task.list(self.id, page=page, per_page=per_page, api_key=api_key)
+        return Task.list(self.id,
+                         page=page,
+                         per_page=per_page,
+                         api_key=api_key)
 
-    def create_tasks(self, tasks_data: list, launch=False, api_key: str = None):
+    def create_tasks(self,
+                     tasks_data: list,
+                     launch=False,
+                     api_key: str = None):
         '''
         Creates new Task objects for this project.
 
