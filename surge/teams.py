@@ -83,7 +83,11 @@ class Team(APIResource):
         return Team(**response_json)
 
     @classmethod
-    def create(cls, name: str, members: list, description=None, api_key: str = None):
+    def create(cls,
+               name: str,
+               members: list,
+               description=None,
+               api_key: str = None):
         '''
         Creates a new Team.
 
