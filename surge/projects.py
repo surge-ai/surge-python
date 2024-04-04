@@ -1,4 +1,6 @@
 import dateutil.parser
+import datetime
+import json
 
 from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError, SurgeMissingAttributeError
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
@@ -39,6 +41,25 @@ class Project(APIResource):
     def _convert_questions_to_objects(self, questions_data):
         return list(
             map(lambda params: Question.from_params(params), questions_data))
+
+    def to_dict(self):
+        return {
+            key: self._to_dict_value(key, value)
+            for key, value in self.__dict__.items()
+            if not key.startswith('_')
+        }
+
+    def _to_dict_value(self, key, value):
+        if key == 'questions':
+            return [item.to_dict() for item in value if item]
+        elif isinstance(value, datetime.datetime):
+            return value.isoformat()
+        else:
+            return value
+
+    def to_json(self):
+        return json.dumps(self.to_dict())
+
 
     @staticmethod
     def _validate_questions(questions):

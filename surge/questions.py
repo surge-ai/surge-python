@@ -5,12 +5,14 @@ class Question(APIResource):
     def __init__(self,
                  id,
                  text,
+                 label,
                  type_=None,
                  required=True,
                  column_header=None,
                  question_category=None):
         self.id = id
         self.text = text
+        self.label = label
         self.type = type_
         self.required = required
         self.column_header = column_header
@@ -33,6 +35,7 @@ class Question(APIResource):
         if q["type"] == "free_response":
             return FreeResponseQuestion(
                 q["text"],
+                q["label"],
                 id=q["id"],
                 required=q["required"],
                 preexisting_annotations=q["preexisting_annotations"],
@@ -43,6 +46,7 @@ class Question(APIResource):
         elif q["type"] == "multiple_choice":
             return MultipleChoiceQuestion(
                 q["text"],
+                q["label"],
                 id=q["id"],
                 options=q["options"],
                 options_info=options_info,
@@ -57,6 +61,7 @@ class Question(APIResource):
         elif q["type"] == "checkbox":
             return CheckboxQuestion(
                 q["text"],
+                q["label"],
                 id=q["id"],
                 options=q["options"],
                 options_info=options_info,
@@ -70,6 +75,7 @@ class Question(APIResource):
         elif q["type"] == "text_tagging":
             return TextTaggingQuestion(
                 q["text"],
+                q["label"],
                 id=q["id"],
                 required=q["required"],
                 options=q["options"],
@@ -87,6 +93,7 @@ class Question(APIResource):
         elif q["type"] == "tree_selection":
             return TreeSelectionQuestion(
                 q["text"],
+                q["label"],
                 id=q["id"],
                 options=q["options"],
                 options_info=options_info,
@@ -100,6 +107,7 @@ class Question(APIResource):
         elif q["type"] == "ranking":
             return RankingQuestion(
                 q["text"],
+                q["label"],
                 id=q["id"],
                 options=q["options"],
                 options_info=options_info,
@@ -113,6 +121,7 @@ class Question(APIResource):
         elif q["type"] == "file_upload":
             return FileUpload(
                 q["text"],
+                q["label"],
                 id=q["id"],
                 required=q["required"],
                 shown_by_option_id=q["shown_by_item_option_id"],
@@ -121,6 +130,7 @@ class Question(APIResource):
                 question_category=q.get("question_category"))
         elif q["type"] == "text":
             return TextArea(q["text"],
+                            q["label"],
                             id=q["id"],
                             shown_by_option_id=q["shown_by_item_option_id"],
                             hidden_by_option_id=q["hidden_by_item_option_id"],
@@ -129,6 +139,7 @@ class Question(APIResource):
         elif q["type"] == "chat":
             return ChatBot(
                 q["text"],
+                q["label"],
                 id=q["id"],
                 options=q["options"],
                 options_info=options_info,
@@ -162,6 +173,7 @@ class Question(APIResource):
 class FreeResponseQuestion(Question):
     def __init__(self,
                  text,
+                 label,
                  id=None,
                  required=True,
                  preexisting_annotations=None,
@@ -176,6 +188,7 @@ class FreeResponseQuestion(Question):
 
         Args:
             text (string): Required. The instructions above the free text box, e.g. "Please explain your reasoning".
+            label (string): Required. The label of the question being asked, e.g. "Overall Quality: Model A"
             id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             required (boolean): Defaults to true. Whether or not workers must fill out this question before moving on to the next task.
             preexisting_annotations (string): You can use preexisting annotations to prepopulate text box an option specified in the task data.
@@ -189,6 +202,7 @@ class FreeResponseQuestion(Question):
         '''
         super().__init__(id,
                          text,
+                         label,
                          type_="free_response",
                          required=required,
                          column_header=column_header,
@@ -203,6 +217,7 @@ class MultipleChoiceQuestion(Question):
 
     def __init__(self,
                  text,
+                 label,
                  id=None,
                  options=[],
                  options_info=None,
@@ -220,6 +235,7 @@ class MultipleChoiceQuestion(Question):
 
         Args:
             text (string): Required. The text of the question being asked, e.g. "Is the sentiment of this text positive or negative?"
+            label (string): Required. The label of the question being asked, e.g. "Overall Quality: Model A"
             id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             options (list of strings): Required. A list of the options for the radios, e.g. ["Yes", "No"].
             options_info (list of objects): Additional information about the options if the question has already been created. Otherwise, it will be None.
@@ -237,6 +253,7 @@ class MultipleChoiceQuestion(Question):
         '''
         super().__init__(id,
                          text,
+                         label,
                          type_="multiple_choice",
                          required=required,
                          column_header=column_header,
@@ -255,6 +272,7 @@ class CheckboxQuestion(Question):
 
     def __init__(self,
                  text,
+                 label,
                  id=None,
                  options=[],
                  options_info=None,
@@ -272,6 +290,7 @@ class CheckboxQuestion(Question):
 
         Args:
             text (string): Required. The text of the question being asked, e.g. "Check all the apply."
+            label (string): Required. The label of the question being asked, e.g. "Model A - Factuality"
             id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             options (list of strings): Required. A list of the options for the checkboxes.
             options_info (list of objects): Additional information about the options if the question has already been created. Otherwise, it will be None.
@@ -289,6 +308,7 @@ class CheckboxQuestion(Question):
         '''
         super().__init__(id,
                          text,
+                         label,
                          type_="checkbox",
                          required=required,
                          column_header=column_header,
@@ -307,6 +327,7 @@ class TextTaggingQuestion(Question):
 
     def __init__(self,
                  text,
+                 label,
                  id=None,
                  options=[],
                  options_info=None,
@@ -326,6 +347,7 @@ class TextTaggingQuestion(Question):
 
         Args:
             text (string): Required. The text that needs to be tagged.
+            label (string): Required. "Model A - tags"
             id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             required (boolean): If true, worker must tag at least element.
             options (list of strings): Required. A list of tags that can be used to tag spans of text, e.g. ["Person", "Place"].
@@ -344,6 +366,7 @@ class TextTaggingQuestion(Question):
         '''
         super().__init__(id,
                          text,
+                         label,
                          type_="text_tagging",
                          required=required,
                          column_header=column_header,
@@ -364,6 +387,7 @@ class TreeSelectionQuestion(Question):
 
     def __init__(self,
                  text,
+                 label,
                  id=None,
                  options=[],
                  options_info=None,
@@ -381,6 +405,7 @@ class TreeSelectionQuestion(Question):
 
         Args:
             text (string): Required. The text of the question being asked, e.g. "Which category does this example belong to?"
+            label (string): Required. The label of the question being asked, e.g. "Prompt Category"
             id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             options (list of strings): Required. A list of the options for the tree. Each level of hierarchy should be separate by a " / ".
                 For example, one valid set of options would be ["1A / 2A", "1A / 2B", "1B / 2C", "1B / 2D"].
@@ -399,6 +424,7 @@ class TreeSelectionQuestion(Question):
         '''
         super().__init__(id,
                          text,
+                         label,
                          type_="tree_selection",
                          required=required,
                          column_header=column_header,
@@ -417,6 +443,7 @@ class FileUpload(Question):
 
     def __init__(self,
                  text,
+                 label,
                  id=None,
                  required=False,
                  column_header=None,
@@ -429,6 +456,7 @@ class FileUpload(Question):
 
         Args:
             text (string): This text will appear above the file upload and can be used to specify any instructions.
+            label (string): Required. The label of the question being asked, e.g. "Overall Quality: Model A"
             id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             required (boolean): If true, Surgers will be required to upload a file before moving on to the next task.
             column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
@@ -438,6 +466,7 @@ class FileUpload(Question):
         '''
         super().__init__(id,
                          text,
+                         label,
                          type_="file_upload",
                          required=required,
                          column_header=column_header,
@@ -451,6 +480,7 @@ class RankingQuestion(Question):
 
     def __init__(self,
                  text,
+                 label,
                  id=None,
                  options=[],
                  options_info=None,
@@ -468,6 +498,7 @@ class RankingQuestion(Question):
         Args:
             required (boolean): If true, worker must rank at least one element.
             text (string): Required. The text of the question being asked, e.g. "Please rank these search results from best to worst"
+            label (string): Required. The label of the question being asked, e.g. "Overall Quality: Model A"
             id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             options (list of strings): Required. A list of the options being ranked.
             options_info (list of objects): Additional information about the options if the question has already been created. Otherwise, it will be None.
@@ -481,6 +512,7 @@ class RankingQuestion(Question):
         '''
         super().__init__(id,
                          text,
+                         label,
                          type_="ranking",
                          required=required,
                          column_header=column_header,
@@ -497,6 +529,7 @@ class ChatBot(Question):
 
     def __init__(self,
                  text,
+                 label,
                  id=None,
                  options=[],
                  options_info=None,
@@ -514,6 +547,7 @@ class ChatBot(Question):
 
         Args:
             text (string): This text will appear above the chatbot and can be used to specify any instructions.
+            label (string): Required. The label of the question being asked, e.g. "Overall Quality: Model A"
             id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
             options (list of strings): Options for rating chatbot responses.
             options_info (list of objects): Additional information about the options if the question has already been created. Otherwise, it will be None.
@@ -526,6 +560,7 @@ class ChatBot(Question):
         '''
         super().__init__(id,
                          text,
+                         label,
                          type_="chat",
                          required=required,
                          column_header=column_header,
@@ -544,12 +579,13 @@ class TextArea(Question):
 
     def __init__(self,
                  text,
+                 label,
                  id=None,
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
                  question_category=None):
-        super().__init__(id, text, type_="text", required=False, question_category=question_category)
+        super().__init__(id, text, label, type_="text", required=False, question_category=question_category)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic
