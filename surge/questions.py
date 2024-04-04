@@ -18,6 +18,15 @@ class Question(APIResource):
         self.column_header = column_header
         self.question_category = question_category
 
+    def __str__(self):
+        return f"<surge.{self.__class__.__name__}#{self.id} label=\"{self.label}\">"
+
+    def __repr__(self):
+        return f"<surge.{self.__class__.__name__}#{self.id} {self.attrs_repr()}>"
+
+    def attrs_repr(self):
+        return self.print_attrs(forbid_list=["text", "id"])
+
     def to_dict(self):
         return self.__dict__
 
