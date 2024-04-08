@@ -68,7 +68,20 @@ class Question(APIResource):
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
                 question_category=q.get("question_category"))
-
+        elif q["type"] == "likert":
+            return LikertQuestion(
+                q["text"],
+                q["label"],
+                id=q["id"],
+                options=q["options"],
+                options_info=options_info,
+                required=q["required"],
+                preexisting_annotations=q["preexisting_annotations"],
+                require_tiebreaker=q["require_tie_breaker"],
+                shown_by_option_id=q["shown_by_item_option_id"],
+                hidden_by_option_id=q["hidden_by_item_option_id"],
+                holistic=q["holistic"],
+                question_category=q.get("question_category"))
         elif q["type"] == "checkbox":
             return CheckboxQuestion(
                 q["text"],
@@ -268,6 +281,61 @@ class MultipleChoiceQuestion(Question):
                          text,
                          label,
                          type_="multiple_choice",
+                         required=required,
+                         column_header=column_header,
+                         question_category=question_category)
+        self.options = options
+        self.options_info = options_info
+        self.descriptions = descriptions
+        self.preexisting_annotations = preexisting_annotations
+        self.require_tiebreaker = require_tiebreaker
+        self.hidden_by_option_id = hidden_by_option_id
+        self.shown_by_option_id = shown_by_option_id
+        self.holistic = holistic
+
+
+class LikertQuestion(Question):
+
+    def __init__(self,
+                 text,
+                 label,
+                 id=None,
+                 options=[],
+                 options_info=None,
+                 descriptions=[],
+                 required=True,
+                 preexisting_annotations=None,
+                 require_tiebreaker=False,
+                 column_header=None,
+                 hidden_by_option_id=None,
+                 shown_by_option_id=None,
+                 holistic=False,
+                 question_category=None):
+        '''
+        Create a likert radio question.
+
+        Args:
+            text (string): Required. The text of the question being asked, e.g. "Is the sentiment of this text positive or negative?"
+            label (string): Required. The label of the question being asked, e.g. "Overall Quality: Model A"
+            id (string): The UUID of this question, if it has been created. Otherwise, it will be None.
+            options (list of strings): Required. A list of the options for the radios, e.g. ["Yes", "No"].
+            options_info (list of objects): Additional information about the options if the question has already been created. Otherwise, it will be None.
+            descriptions(list of strings): Tooltip text for the options. This should have the same length as the options.
+                You can substitute in empty strings if one option doesn't have a tooltip.
+            required (boolean): Defaults to true. Whether or not workers must fill out this question before moving on to the next task.
+            preexisting_annotations (string): You can use preexisting annotations to prepopulate the radio selection with an option specified in the task data.
+                The preexisting_annotations param should contain the task data key you are loading the default values from.
+            require_tiebreaker (boolean): If set to true, more workers will be assigned to this task if fewer than 50% agree on an answer.
+                For example, imagine you are using two workers per task. If one selects Option A and the second one selections Option B a third will be assigned to the task to break the tie.
+            column_header (string): This value will be used as the column header for the results table on the Surge AI site and in results CSV and JSON files.
+            hidden_by_option_id (string): If set, this question will be visible by default but hidden when the option with the provided id is selected.
+            shown_by_option_id (string). If set, this question will be hidden by default but shown when the option with the provided id is selected.
+            question_category (string): The question category for the relevant workstream.
+        '''
+        super().__init__(id,
+                         text,
+                         label,
+                         type_="likert",
                          required=required,
                          column_header=column_header,
                          question_category=question_category)
