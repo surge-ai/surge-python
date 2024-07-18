@@ -703,7 +703,7 @@ class TextArea(Question):
                          type_="text",
                          required=False,
                          question_category=question_category,
-                         narousel_round=carousel_round)
+                         carousel_round=carousel_round)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic
