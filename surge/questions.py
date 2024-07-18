@@ -11,7 +11,8 @@ class Question(APIResource):
                  type_=None,
                  required=True,
                  column_header=None,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         self.id = id
         self.text = text
         self.label = label
@@ -19,6 +20,7 @@ class Question(APIResource):
         self.required = required
         self.column_header = column_header
         self.question_category = question_category
+        self.carousel_round = carousel_round
 
     def __str__(self):
         return f"<surge.{self.__class__.__name__}#{self.id} label=\"{self.label}\">"
@@ -53,7 +55,8 @@ class Question(APIResource):
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
-                question_category=q.get("question_category"))
+                question_category=q.get("question_category"),
+                carousel_round=q.get("carousel_round"))
         elif q["type"] == "multiple_choice":
             return MultipleChoiceQuestion(
                 q["text"],
@@ -67,7 +70,8 @@ class Question(APIResource):
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
-                question_category=q.get("question_category"))
+                question_category=q.get("question_category"),
+                carousel_round=q.get("carousel_round"))
         elif q["type"] == "likert":
             return LikertQuestion(
                 q["text"],
@@ -81,7 +85,8 @@ class Question(APIResource):
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
-                question_category=q.get("question_category"))
+                question_category=q.get("question_category"),
+                carousel_round=q.get("carousel_round"))
         elif q["type"] == "checkbox":
             return CheckboxQuestion(
                 q["text"],
@@ -95,7 +100,8 @@ class Question(APIResource):
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
-                question_category=q.get("question_category"))
+                question_category=q.get("question_category"),
+                carousel_round=q.get("carousel_round"))
         elif q["type"] == "text_tagging":
             return TextTaggingQuestion(
                 q["text"],
@@ -112,7 +118,8 @@ class Question(APIResource):
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
-                question_category=q.get("question_category"))
+                question_category=q.get("question_category"),
+                carousel_round=q.get("carousel_round"))
 
         elif q["type"] == "tree_selection":
             return TreeSelectionQuestion(
@@ -127,7 +134,8 @@ class Question(APIResource):
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
-                question_category=q.get("question_category"))
+                question_category=q.get("question_category"),
+                carousel_round=q.get("carousel_round"))
         elif q["type"] == "ranking":
             return RankingQuestion(
                 q["text"],
@@ -141,7 +149,8 @@ class Question(APIResource):
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
-                question_category=q.get("question_category"))
+                question_category=q.get("question_category"),
+                carousel_round=q.get("carousel_round"))
         elif q["type"] == "file_upload":
             return FileUpload(
                 q["text"],
@@ -151,7 +160,8 @@ class Question(APIResource):
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
-                question_category=q.get("question_category"))
+                question_category=q.get("question_category"),
+                carousel_round=q.get("carousel_round"))
         elif q["type"] == "text":
             return TextArea(q["text"],
                             q["label"],
@@ -159,7 +169,8 @@ class Question(APIResource):
                             shown_by_option_id=q["shown_by_item_option_id"],
                             hidden_by_option_id=q["hidden_by_item_option_id"],
                             holistic=q["holistic"],
-                            question_category=q.get("question_category"))
+                            question_category=q.get("question_category"),
+                            carousel_round=q.get("carousel_round"))
         elif q["type"] == "chat":
             return ChatBot(
                 q["text"],
@@ -173,7 +184,8 @@ class Question(APIResource):
                 shown_by_option_id=q["shown_by_item_option_id"],
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
-                question_category=q.get("question_category"))
+                question_category=q.get("question_category"),
+                carousel_round=q.get("carousel_round"))
 
     def update(self,
                text: str = None,
@@ -207,7 +219,8 @@ class FreeResponseQuestion(Question):
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         '''
         Create a free response question.
 
@@ -231,7 +244,8 @@ class FreeResponseQuestion(Question):
                          type_="free_response",
                          required=required,
                          column_header=column_header,
-                         question_category=question_category)
+                         question_category=question_category,
+                         carousel_round=carousel_round)
         self.preexisting_annotations = preexisting_annotations
         self.use_for_serial_collection = use_for_serial_collection
         self.hidden_by_option_id = hidden_by_option_id
@@ -255,7 +269,8 @@ class MultipleChoiceQuestion(Question):
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         '''
         Create a multiple choice radio question.
 
@@ -283,7 +298,8 @@ class MultipleChoiceQuestion(Question):
                          type_="multiple_choice",
                          required=required,
                          column_header=column_header,
-                         question_category=question_category)
+                         question_category=question_category,
+                         carousel_round=carousel_round)
         self.options = options
         self.options_info = options_info
         self.descriptions = descriptions
@@ -310,7 +326,8 @@ class LikertQuestion(Question):
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         '''
         Create a likert radio question.
 
@@ -338,7 +355,8 @@ class LikertQuestion(Question):
                          type_="likert",
                          required=required,
                          column_header=column_header,
-                         question_category=question_category)
+                         question_category=question_category,
+                         carousel_round=carousel_round)
         self.options = options
         self.options_info = options_info
         self.descriptions = descriptions
@@ -365,7 +383,8 @@ class CheckboxQuestion(Question):
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         '''
         Create a checkbox question. Unlike a multiple choice question, it's possible to select multiple checkboxes.
 
@@ -393,7 +412,8 @@ class CheckboxQuestion(Question):
                          type_="checkbox",
                          required=required,
                          column_header=column_header,
-                         question_category=question_category)
+                         question_category=question_category,
+                         carousel_round=carousel_round)
         self.options = options
         self.options_info = options_info
         self.descriptions = descriptions
@@ -422,7 +442,8 @@ class TextTaggingQuestion(Question):
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         '''
         Create a text tagging (NER) question. Unlikely a multiple choice question, it's possible to select multiple checkboxes
 
@@ -451,7 +472,8 @@ class TextTaggingQuestion(Question):
                          type_="text_tagging",
                          required=required,
                          column_header=column_header,
-                         question_category=question_category)
+                         question_category=question_category,
+                         carousel_round=carousel_round)
         self.options = options
         self.options_info = options_info
         self.preexisting_annotations = preexisting_annotations
@@ -480,7 +502,8 @@ class TreeSelectionQuestion(Question):
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         '''
         Create a hierarchical multiple choice question. This is useful if you have a lot of options in a nested format.
 
@@ -509,7 +532,8 @@ class TreeSelectionQuestion(Question):
                          type_="tree_selection",
                          required=required,
                          column_header=column_header,
-                         question_category=question_category)
+                         question_category=question_category,
+                         carousel_round=carousel_round)
         self.options = options
         self.options_info = options_info
         self.descriptions = descriptions
@@ -531,7 +555,8 @@ class FileUpload(Question):
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         '''
         Add a file upload widget where workers can upload images, documents, or other files.
 
@@ -551,7 +576,8 @@ class FileUpload(Question):
                          type_="file_upload",
                          required=required,
                          column_header=column_header,
-                         question_category=question_category)
+                         question_category=question_category,
+                         carousel_round=carousel_round)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic
@@ -572,7 +598,8 @@ class RankingQuestion(Question):
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         '''
         Create a ranking widget. Workers can drag and drop the option to specify their ranking.
 
@@ -597,7 +624,8 @@ class RankingQuestion(Question):
                          type_="ranking",
                          required=required,
                          column_header=column_header,
-                         question_category=question_category)
+                         question_category=question_category,
+                         carousel_round=carousel_round)
         self.options = options
         self.options_info = options_info
         self.allow_ranking_ties = allow_ranking_ties
@@ -622,7 +650,8 @@ class ChatBot(Question):
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         '''
         Create an interactive chatbot on the labeling page. This is an advanced item type.
 
@@ -645,7 +674,8 @@ class ChatBot(Question):
                          type_="chat",
                          required=required,
                          column_header=column_header,
-                         question_category=question_category)
+                         question_category=question_category,
+                         carousel_round=carousel_round)
         self.options = options
         self.options_info = options_info
         self.endpoint_url = endpoint_url
@@ -665,13 +695,15 @@ class TextArea(Question):
                  hidden_by_option_id=None,
                  shown_by_option_id=None,
                  holistic=False,
-                 question_category=None):
+                 question_category=None,
+                 carousel_round=None):
         super().__init__(id,
                          text,
                          label,
                          type_="text",
                          required=False,
-                         question_category=question_category)
+                         question_category=question_category,
+                         narousel_round=carousel_round)
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic
