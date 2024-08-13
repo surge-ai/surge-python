@@ -16,10 +16,9 @@ class APIResource(object):
         self.id = id
 
     def print_attrs(self, forbid_list: list = []):
-        return " ".join([
-            f"{k}=\"{v}\"" for k, v in self.__dict__.items()
-            if not k in forbid_list
-        ])
+        return " ".join(
+            [f'{k}="{v}"' for k, v in self.__dict__.items() if not k in forbid_list]
+        )
 
     @classmethod
     def _base_request(cls, method, api_endpoint, params=None, api_key=None):
@@ -32,22 +31,16 @@ class APIResource(object):
 
             # GET request
             if method == "get":
-                response = requests.get(url,
-                                        auth=(api_key_to_use, ""),
-                                        params=params)
+                response = requests.get(url, auth=(api_key_to_use, ""), params=params)
 
             # POST request
             elif method == "post":
-                response = requests.post(url,
-                                         auth=(api_key_to_use, ""),
-                                         json=params)
+                response = requests.post(url, auth=(api_key_to_use, ""), json=params)
 
             # PUT request
             elif method == "put":
                 if params is not None and len(params):
-                    response = requests.put(url,
-                                            auth=(api_key_to_use, ""),
-                                            data=params)
+                    response = requests.put(url, auth=(api_key_to_use, ""), data=params)
                 else:
                     response = requests.put(url, auth=(api_key_to_use, ""))
 
@@ -66,6 +59,10 @@ class APIResource(object):
         except requests.exceptions.HTTPError as err:
             message = err.args[0]
             message = f"{message}. {err.response.text}"
+            raise SurgeRequestError(message) from None
+
+        except requests.exceptions.JSONDecodeError as err:
+            message = err.args[0]
             raise SurgeRequestError(message) from None
 
         except Exception:
