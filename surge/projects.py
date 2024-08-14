@@ -138,7 +138,7 @@ class Project(APIResource):
         return cls(**response_json)
 
     @classmethod
-    def list(cls, page: int = 1, api_key: str = None):
+    def list(cls, page: int = 1, statuses: list[str] = [], api_key: str = None):
         '''
         Lists all projects you have created.
         Projects are returned in descending order of created_at.
@@ -150,13 +150,13 @@ class Project(APIResource):
         Returns:
             projects (list): list of Project objects.
         '''
-        params = {"page": page}
+        params = {"page": page, "statuses": statuses}
         response_json = cls.get(PROJECTS_ENDPOINT, params, api_key=api_key)
         projects = [cls(**project_json) for project_json in response_json]
         return projects
 
     @classmethod
-    def list_shared(cls, page: int = 1, api_key: str = None):
+    def list_shared(cls, page: int = 1, statuses: list[str] = [], api_key: str = None):
         '''
         Lists all projects created by anyone in your organization.
         Projects are returned in descending order of created_at.
@@ -168,7 +168,7 @@ class Project(APIResource):
         Returns:
             projects (list): list of Project objects.
         '''
-        params = {"page": page}
+        params = {"page": page, "statuses": statuses}
         endpoint = f"{PROJECTS_ENDPOINT}/shared"
         response_json = cls.get(endpoint, params, api_key=api_key)
         projects = [cls(**project_json) for project_json in response_json]
