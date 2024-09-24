@@ -180,15 +180,16 @@ class Project(APIResource):
         return projects
 
     @classmethod
-    def list_blueprints(cls, api_key: str = None):
+    def list_blueprints(cls, page: int = 1, api_key: str = None):
         '''
         Lists blueprint projects for your organization.
 
         Returns:
             projects (list): list of Project objects.
         '''
+        params = {"page": page}
         endpoint = f"{PROJECTS_ENDPOINT}/blueprints"
-        response_json = cls.get(endpoint, api_key=api_key)
+        response_json = cls.get(endpoint, params, api_key=api_key)
         projects = [cls(**project_json) for project_json in response_json]
         return projects
 
