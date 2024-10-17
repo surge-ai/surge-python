@@ -3,7 +3,11 @@ import dateutil.parser
 import datetime
 import json
 
-from surge.errors import SurgeMissingIDError, SurgeProjectQuestionError, SurgeMissingAttributeError
+from surge.errors import (
+    SurgeMissingIDError,
+    SurgeProjectQuestionError,
+    SurgeMissingAttributeError,
+)
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
 from surge.questions import Question
 from surge.tasks import Task
@@ -31,26 +35,26 @@ class Project(APIResource):
             self.questions = self._convert_questions_to_objects(self.questions)
 
     def __str__(self):
-        return f"<surge.Project#{self.id} name=\"{self.name}\">"
+        return f'<surge.Project#{self.id} name="{self.name}">'
 
     def __repr__(self):
-        return f"<surge.Project#{self.id} name=\"{self.name}\" {self.attrs_repr()}>"
+        return f'<surge.Project#{self.id} name="{self.name}" {self.attrs_repr()}>'
 
     def attrs_repr(self):
         return self.print_attrs(forbid_list=["name", "id"])
 
     def _convert_questions_to_objects(self, questions_data):
-        return list(
-            map(lambda params: Question.from_params(params), questions_data))
+        return list(map(lambda params: Question.from_params(params), questions_data))
 
     def to_dict(self):
         return {
             key: self._to_dict_value(key, value)
-            for key, value in self.__dict__.items() if not key.startswith('_')
+            for key, value in self.__dict__.items()
+            if not key.startswith("_")
         }
 
     def _to_dict_value(self, key, value):
-        if key == 'questions':
+        if key == "questions":
             return [item.to_dict() for item in value if item]
         elif isinstance(value, datetime.datetime):
             return value.isoformat()
@@ -68,23 +72,27 @@ class Project(APIResource):
             raise SurgeProjectQuestionError
 
     @classmethod
-    def create(cls,
-               name: str,
-               payment_per_response: float = None,
-               private_workforce: bool = False,
-               instructions: str = None,
-               questions: list = [],
-               qualifications_required: list = [],
-               teams_required: list = [],
-               callback_url: str = None,
-               fields_template: str = None,
-               num_workers_per_task: int = 1,
-               tags=[],
-               carousel=None,
-               template_id: str = None,
-               description: str = None,
-               api_key: str = None):
-        '''
+    def create(
+        cls,
+        name: str,
+        payment_per_response: float = None,
+        private_workforce: bool = False,
+        instructions: str = None,
+        questions: list = [],
+        qualifications_required: list = [],
+        teams_required: list = [],
+        teams_forbidden: list = [],
+        callback_url: str = None,
+        fields_template: str = None,
+        num_workers_per_task: int = 1,
+        tags=[],
+        carousel=None,
+        template_id: str = None,
+        description: str = None,
+        params: dict = {},
+        api_key: str = None,
+    ):
+        """
         Creates a new Project.
 
         Arguments:
@@ -97,6 +105,7 @@ class Project(APIResource):
             questions (list, optional): An array of question objects describing the questions to be answered.
             qualifications_required (list, optional): Deprecated in favor of teams_required.
             teams_required (list, optional): If you have created custom teams, you can pass a list of team ids Surgers must have to work on the project here.
+            teams_forbidden (list, optional): If you have created custom teams, you can pass a list of team ids Surgers must not have to work on the project here.
             callback_url (str, optional): url that receives a POST request with the project's data.
             fields_template (str, optional): A template describing how fields are shown to workers working on the task.
                 For example, if fields_template is "{{company_name}}", then workers will be shown a link to the company.
@@ -106,7 +115,7 @@ class Project(APIResource):
             template_id (str, optional): ID of project to copy from. If you are using a template, you can omit all other parameters besides the name of the copy.
         Returns:
             project: new Project object
-        '''
+        """
 
         Project._validate_questions(questions)
 
@@ -123,11 +132,13 @@ class Project(APIResource):
             "instructions": instructions,
             "questions": questions_json,
             "qualifications_required": teams_required,
+            "qualifications_forbidden": teams_forbidden,
             "callback_url": callback_url,
             "fields_template": fields_template,
             "num_workers_per_task": num_workers_per_task,
             "tags": tags,
             "description": description,
+            **params,
         }
         if carousel is not None:
             params = {**params, **carousel.to_dict()}
@@ -140,7 +151,7 @@ class Project(APIResource):
 
     @classmethod
     def list(cls, page: int = 1, statuses: List[str] = None, api_key: str = None):
-        '''
+        """
         Lists all projects you have created.
         Projects are returned in descending order of created_at.
         Each page contains a maximum of 100 projects.
@@ -150,7 +161,7 @@ class Project(APIResource):
 
         Returns:
             projects (list): list of Project objects.
-        '''
+        """
         params = {"page": page}
         if statuses:
             params["statuses[]"] = statuses
@@ -159,8 +170,10 @@ class Project(APIResource):
         return projects
 
     @classmethod
-    def list_shared(cls, page: int = 1, statuses: List[str] = None, api_key: str = None):
-        '''
+    def list_shared(
+        cls, page: int = 1, statuses: List[str] = None, api_key: str = None
+    ):
+        """
         Lists all projects created by anyone in your organization.
         Projects are returned in descending order of created_at.
         Each page contains a maximum of 100 projects.
@@ -170,7 +183,7 @@ class Project(APIResource):
 
         Returns:
             projects (list): list of Project objects.
-        '''
+        """
         params = {"page": page}
         if statuses:
             params["statuses[]"] = statuses
@@ -181,12 +194,12 @@ class Project(APIResource):
 
     @classmethod
     def list_blueprints(cls, page: int = 1, api_key: str = None):
-        '''
+        """
         Lists blueprint projects for your organization.
 
         Returns:
             projects (list): list of Project objects.
-        '''
+        """
         params = {"page": page}
         endpoint = f"{PROJECTS_ENDPOINT}/blueprints"
         response_json = cls.get(endpoint, params, api_key=api_key)
@@ -195,7 +208,7 @@ class Project(APIResource):
 
     @classmethod
     def retrieve(cls, project_id: str, api_key: str = None):
-        '''
+        """
         Retrieves a specific project you have created.
 
         Arguments:
@@ -203,81 +216,78 @@ class Project(APIResource):
 
         Returns:
             project: Project object
-        '''
+        """
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}"
         response_json = cls.get(endpoint, api_key=api_key)
         return cls(**response_json)
 
     def list_copies(self, api_key: str = None):
-        '''
+        """
         Lists copies made from the current project.
 
         Returns:
             projects (list): list of Project objects.
-        '''
+        """
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/copies"
         response_json = self.get(endpoint, api_key=api_key)
         projects = [Project(**project_json) for project_json in response_json]
         return projects
 
     def launch(self, api_key: str = None):
-        '''
+        """
         Launches a project.
         If work is being completed by the Surge workforce, you will be charged when the project launches
         and your accounts neeeds to have sufficient funds before launching.
 
         Returns:
             project: new Project object with updated status
-        '''
+        """
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/launch"
         return self.put(endpoint, api_key=api_key)
 
     def pause(self, api_key: str = None):
-        '''
+        """
         Pauses a project.
         Tasks added to the project will not be worked on until you resume the project.
 
         Returns:
             project: new Project object with updated status
-        '''
+        """
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/pause"
         return self.put(endpoint, api_key=api_key)
 
     def resume(self, api_key: str = None):
-        '''
+        """
         Resumes a paused project.
 
         Returns:
             project: new Project object with updated status
-        '''
+        """
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/resume"
         return self.put(endpoint, api_key=api_key)
 
     def cancel(self, api_key: str = None):
-        '''
+        """
         Cancels a project.
 
         Returns:
             project: new Project object with updated status
-        '''
+        """
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/cancel"
         return self.put(endpoint, api_key=api_key)
 
     def delete(self, api_key: str = None):
-        '''
+        """
         Permanently delete the project, including the input data and all responses.
 
         Returns:
             {"success": True}
-        '''
+        """
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/delete"
         return self.get(endpoint, api_key=api_key)
 
-    def list_tasks(self,
-                   page: int = 1,
-                   per_page: int = 100,
-                   api_key: str = None):
-        '''
+    def list_tasks(self, page: int = 1, per_page: int = 100, api_key: str = None):
+        """
         Lists all tasks belonging to this project.
         Tasks are returned in ascending order of created_at.
         Each page contains a maximum of 25 tasks.
@@ -287,17 +297,11 @@ class Project(APIResource):
 
         Returns:
             tasks (list): list of Task objects.
-        '''
-        return Task.list(self.id,
-                         page=page,
-                         per_page=per_page,
-                         api_key=api_key)
+        """
+        return Task.list(self.id, page=page, per_page=per_page, api_key=api_key)
 
-    def create_tasks(self,
-                     tasks_data: list,
-                     launch=False,
-                     api_key: str = None):
-        '''
+    def create_tasks(self, tasks_data: list, launch=False, api_key: str = None):
+        """
         Creates new Task objects for this project.
 
         Arguments:
@@ -306,11 +310,11 @@ class Project(APIResource):
 
         Returns:
             tasks (list): list of Task objects
-        '''
+        """
         return Task.create_many(self.id, tasks_data, launch, api_key=api_key)
 
     def create_tasks_from_csv(self, file_path: str, api_key: str = None):
-        '''
+        """
         Creates new Task objects for this project from a local CSV file.
         The header of the CSV file must specify the fields that are used in your Tasks.
 
@@ -319,20 +323,22 @@ class Project(APIResource):
 
         Returns:
             tasks (list): list of Task objects
-        '''
+        """
         tasks_data = utils.load_tasks_data_from_csv(file_path)
         return self.create_tasks(tasks_data, api_key=api_key)
 
-    def update(self,
-               name: str = None,
-               payment_per_response: float = None,
-               instructions: str = None,
-               callback_url: str = None,
-               fields_template: str = None,
-               num_workers_per_task: int = 0,
-               description: str = None,
-               api_key: str = None):
-        '''
+    def update(
+        self,
+        name: str = None,
+        payment_per_response: float = None,
+        instructions: str = None,
+        callback_url: str = None,
+        fields_template: str = None,
+        num_workers_per_task: int = 0,
+        description: str = None,
+        api_key: str = None,
+    ):
+        """
         Update an existing project
 
         Arguments:
@@ -347,7 +353,7 @@ class Project(APIResource):
 
         Returns:
             project: new Project object
-        '''
+        """
 
         params = {}
 
@@ -369,7 +375,7 @@ class Project(APIResource):
         return Project(**response_json)
 
     def workable_by_surger(self, surger_id, api_key: str = None):
-        '''
+        """
         Checks if a specific Surger can work on this project.
 
         Arguments:
@@ -377,7 +383,7 @@ class Project(APIResource):
 
         Returns:
             workable (bool): True if surger can work on this project, False otherwise.
-        '''
+        """
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/workable_by_surger"
         params = {"surger_id": surger_id}
         response_json = self.get(endpoint, params, api_key=api_key)
