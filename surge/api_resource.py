@@ -21,10 +21,13 @@ class APIResource(object):
         )
 
     @classmethod
-    def _base_request(cls, method, api_endpoint, params=None, api_key=None):
+    def _base_request(cls, method, api_endpoint, params=None, files=None, api_key=None):
         api_key_to_use = api_key or surge.api_key
         if api_key_to_use is None:
             raise SurgeMissingAPIKeyError
+
+        if files is not None and method != "post":
+            raise SurgeRequestError("Can only uploadfiles to a POST request")
 
         try:
             url = f"{surge.base_url}/{api_endpoint}"
@@ -35,7 +38,9 @@ class APIResource(object):
 
             # POST request
             elif method == "post":
-                response = requests.post(url, auth=(api_key_to_use, ""), json=params)
+                response = requests.post(
+                    url, auth=(api_key_to_use, ""), files=files, json=params
+                )
 
             # PUT request
             elif method == "put":
@@ -65,33 +70,24 @@ class APIResource(object):
             message = err.args[0]
             raise SurgeRequestError(message) from None
 
-        except Exception:
+        except Exception as err:
             # Generic exception handling
             raise SurgeRequestError
 
     @classmethod
     def get(cls, api_endpoint, params=None, api_key=None):
         method = "get"
-        return cls._base_request(method,
-                                 api_endpoint,
-                                 params=params,
-                                 api_key=api_key)
+        return cls._base_request(method, api_endpoint, params=params, api_key=api_key)
 
     @classmethod
     def post(cls, api_endpoint, params=None, api_key=None):
         method = "post"
-        return cls._base_request(method,
-                                 api_endpoint,
-                                 params=params,
-                                 api_key=api_key)
+        return cls._base_request(method, api_endpoint, params=params, api_key=api_key)
 
     @classmethod
     def put(cls, api_endpoint, params=None, api_key=None):
         method = "put"
-        return cls._base_request(method,
-                                 api_endpoint,
-                                 params=params,
-                                 api_key=api_key)
+        return cls._base_request(method, api_endpoint, params=params, api_key=api_key)
 
     @classmethod
     def delete_request(cls, api_endpoint, api_key=None):
