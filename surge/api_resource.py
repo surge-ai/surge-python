@@ -80,9 +80,11 @@ class APIResource(object):
         return cls._base_request(method, api_endpoint, params=params, api_key=api_key)
 
     @classmethod
-    def post(cls, api_endpoint, params=None, api_key=None):
+    def post(cls, api_endpoint, params=None, api_key=None, files=None):
         method = "post"
-        return cls._base_request(method, api_endpoint, params=params, api_key=api_key)
+        return cls._base_request(
+            method, api_endpoint, params=params, api_key=api_key, files=files
+        )
 
     @classmethod
     def put(cls, api_endpoint, params=None, api_key=None):
