@@ -38,9 +38,14 @@ class APIResource(object):
 
             # POST request
             elif method == "post":
-                response = requests.post(
-                    url, auth=(api_key_to_use, ""), files=files, json=params
-                )
+                if files is not None:
+                    response = requests.post(
+                        url, auth=(api_key_to_use, ""), files=files, data=params
+                    )
+                else:
+                    response = requests.post(
+                        url, auth=(api_key_to_use, ""), json=params
+                    )
 
             # PUT request
             elif method == "put":
