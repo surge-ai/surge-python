@@ -9,7 +9,7 @@ version: 2.1
 # See: https://circleci.com/docs/orb-intro/
 orbs:
   # See the Python orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
-  python: circleci/python@2.1.1
+  python: circleci/python@2.2.0
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
