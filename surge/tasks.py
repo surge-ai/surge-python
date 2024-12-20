@@ -24,7 +24,7 @@ class Task(APIResource):
             task_responses = [
                 TaskResponse(r["id"], r["data"],
                              dateutil.parser.parse(r["completed_at"]),
-                             r["worker_id"]) for r in self.responses
+                             r.get("worker_id", None)) for r in self.responses
             ]
             self.responses = task_responses
 
