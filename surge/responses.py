@@ -23,11 +23,12 @@ class Response(object):
 class TaskResponse(Response):
 
     def __init__(self, id: str, data: dict, completed_at: datetime,
-                 worker_id: str):
+                 worker_id: str = None):
         super().__init__(id)
         self.data = data
         self.completed_at = completed_at
-        self.worker_id = worker_id
+        if worker_id is not None:
+            self.worker_id = worker_id
 
     def __str__(self):
         return f"<surge.TaskResponse#{self.id}>"
