@@ -76,7 +76,7 @@ class Project(APIResource):
         cls,
         name: str,
         payment_per_response: float = None,
-        private_workforce: bool = False,
+        private_workforce: bool = False, # Deprecated.
         instructions: str = None,
         questions: list = [],
         qualifications_required: list = [],
@@ -99,8 +99,7 @@ class Project(APIResource):
             name (str): Name of the project.
             payment_per_response (float, optional):
                 How much a worker is paid (in US dollars) for an individual response.
-            private_workforce (bool, optional):
-                Indicates if the project's tasks will be done by a private workforce.
+            private_workforce (bool, optional): Deprecated
             instructions (str, optional): Instructions shown to workers describing how they should complete the task.
             questions (list, optional): An array of question objects describing the questions to be answered.
             qualifications_required (list, optional): Deprecated in favor of teams_required.
@@ -128,7 +127,7 @@ class Project(APIResource):
 
         params = {
             "name": name,
-            "private_workforce": private_workforce,
+            "private_workforce": False,
             "instructions": instructions,
             "questions": questions_json,
             "qualifications_required": teams_required,

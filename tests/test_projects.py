@@ -53,7 +53,6 @@ def test_init_complete():
         "link_to_work_on_task": "https://app.surgehq.ai/workers/tasks?project_id=A1B2C3-abcd-1234-wxyz-5823gd2238ac",
         "avg_gold_standard_score": 65.09,
         "interrater_agreement": {"What is this video?": 0.859154078549849},
-        "private_workforce": False,
         "num_tasks_in_progress": 0,
         "payment_per_response": 0.12,
         "questions": [
