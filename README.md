@@ -32,7 +32,7 @@ Or set the API key as an environment variable:
 export SURGE_API_KEY=<YOUR API KEY>
 ```
 
-### Projects
+### Downloading project results
 
 Once the API key has been set, you can list all of the Projects under your Surge account or retrieve a specific Project by its ID.
 
@@ -46,16 +46,25 @@ print(projects[0].name)
 # Retrieve a specific Project
 project = surge.Project.retrieve("076d207b-c207-41ca-b73a-5822fe2248ab")
 
-# print the number of tasks in that Project
-print(project.num_tasks)
+# Download the results for that project
+results = project.download_json()
+
+# Alternatively, download the results to a file
+project.save_report("export_csv", "results.csv")
 ```
-If you have an existing project, you can use it as a template to get a new batch of data annotated.
+
+### Creating projects
+
+If you have a blueprint, you can use it as a template to get a new batch of data annotated.
 You can add new labeling tasks from a CSV or with a list of dictionaries.
 
 ```python
-# Create a project from a template
-template_project_id = "076d207b-c207-41ca-b73a-5822fe2248ab"
-project = surge.Project.create("My Labeling Project (July 2023 Batch)", template_id=template_project_id)
+# List blueprint projects
+blueprint_projects = surge.Project.list_blueprints()
+blueprint = blueprint_projects[0]
+
+# Create a project from a blueprint
+project = surge.Project.create("My Labeling Project (July 2023 Batch)", template_id=blueprint.id)
 
 # Add data from a CSV file
 project.create_tasks_from_csv('my_data.csv')
@@ -66,46 +75,9 @@ tasks = project.create_tasks([{
     "city": "San Francisco",
     "state": "CA"
 }])
-
-# Launch the project to send it to the Surge workforce
-project.launch()
 ```
 
-
-Or you can create a new project from scratch by creating your own template and list of Question:
-
-```python
-from surge.questions import FreeResponseQuestion, MultipleChoiceQuestion, CheckboxQuestion
-
-# Create a new Project
-free_response_q = FreeResponseQuestion(
-    text="What is this company's website?",
-    label="")
-
-multiple_choice_q = MultipleChoiceQuestion(
-    text="What category does this company belong to?",
-    label="Category",
-    options=["Tech", "Sports", "Gaming"])
-
-checkbox_q = CheckboxQuestion(
-    text="Check all the social media accounts this company has",
-    label="",
-    options=["Facebook", "Twitter", "Pinterest", "Google+"])
-
-fields_template_text = '''
-    <p>Company: {{company}}</p>
-'''
-
-project = surge.Project.create(
-    name="Categorize this company",
-    instructions="You will be asked to categorize a company.",
-    questions=[free_response_q, multiple_choice_q, checkbox_q],
-    callback_url="https://customer-callback-url/",
-    fields_template=fields_template_text,
-    num_workers_per_task=3)
-```
-
-### Tasks
+### Creating tasks
 
 You can create new Tasks for a project, list all of the Tasks in a given project, or retrieve a specific Task given its ID.
 

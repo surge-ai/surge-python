@@ -10,6 +10,7 @@ from surge.errors import (
 )
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
 from surge.questions import Question
+from surge.reports import Report
 from surge.tasks import Task
 from surge import utils
 
@@ -388,3 +389,39 @@ class Project(APIResource):
         params = {"surger_id": surger_id}
         response_json = self.get(endpoint, params, api_key=api_key)
         return response_json.get("workable", False)
+
+    def save_report(
+        self,
+        type: str,
+        filepath=None,
+        poll_time=5 * 60,
+        api_key: str = None,
+    ):
+        """
+        Request creation of a report, poll until the report is generated, and save the data to a file all in one call.
+        Arguments:
+            type (string): Must be one of these types:
+              * `export_json`
+              * `export_json_aggregated`
+              * `export_csv`
+              * `export_csv_aggregated`
+              * `export_csv_flattened`
+            filepath (string or IO or None): Location to save the results file. If not specified, will save to "project_{project_id}_results.{csv/json}
+            poll_time (int): Number of seconds to poll for the report
+        """
+        return Report.save_report(
+            self.id,
+            type,
+            filepath=filepath,
+            poll_time=poll_time,
+            api_key=api_key,
+        )
+
+    def download_json(self, poll_time=5 * 60, api_key: str = None):
+        """
+        Download and parse the results JSON for a project
+
+        Arguments:
+            poll_time (int): Number of seconds to poll for the report
+        """
+        return Report.download_json(self.id, poll_time=poll_time, api_key=api_key)
