@@ -1,4 +1,5 @@
 import dateutil.parser
+import json
 
 from surge.errors import SurgeMissingIDError, SurgeTaskDataError
 from surge.api_resource import PROJECTS_ENDPOINT, TASKS_ENDPOINT, APIResource
@@ -92,6 +93,11 @@ class Task(APIResource):
         Returns:
             task: new Task object
         '''
+        try:
+            json.dumps(params)
+        except (TypeError, ValueError):
+            raise SurgeTaskDataError("All task data must be JSON-serializable")
+
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}"
         data = {"fields": params}
         response_json = cls.post(endpoint, data, api_key=api_key)
@@ -110,6 +116,7 @@ class Task(APIResource):
             project_id (str): ID of the project to which the tasks are added.
             tasks_data (list): list of dicts that map each task field to its value.
                 e.g. [{"website": "surgehq.ai"}, {"website":"twitch.tv"}]
+                All values must be JSON-serializable.
 
         Returns:
             tasks (list): list of Task objects
@@ -119,6 +126,11 @@ class Task(APIResource):
 
         if not all(isinstance(t, dict) for t in tasks_data):
             raise SurgeTaskDataError
+        
+        try:
+            json.dumps(tasks_data)
+        except (TypeError, ValueError):
+            raise SurgeTaskDataError("All task data must be JSON-serializable")
 
         endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/{TASKS_ENDPOINT}/create_tasks"
         data = {"tasks": tasks_data, "launch": launch}
