@@ -337,6 +337,7 @@ class Project(APIResource):
         fields_template: str = None,
         num_workers_per_task: int = 0,
         description: str = None,
+        params: dict = {},
         api_key: str = None,
     ):
         """
@@ -356,7 +357,7 @@ class Project(APIResource):
             project: new Project object
         """
 
-        params = {}
+        params = {**params}
 
         if name is not None and len(name) > 0:
             params["name"] = name
@@ -368,6 +369,8 @@ class Project(APIResource):
             params["description"] = description
         if callback_url is not None and len(callback_url) > 0:
             params["callback_url"] = callback_url
+        if fields_template is not None and len(fields_template) > 0:
+            params["fields_text"] = fields_template
         if num_workers_per_task > 0:
             params["num_workers_per_task"] = num_workers_per_task
 
