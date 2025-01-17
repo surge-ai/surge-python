@@ -1,9 +1,11 @@
+from unittest import mock
+from unittest.mock import MagicMock, patch
 from datetime import datetime
 from dateutil.tz import tzutc
 import pytest
 
 import surge
-from surge.api_resource import APIResource
+from surge.api_resource import APIResource, PROJECTS_ENDPOINT
 from surge.projects import Project
 from surge.questions import (
     Question,
@@ -344,3 +346,29 @@ def test_convert_questions_to_objects():
     assert questions[5].label == "chat"
     assert questions[5].required == False
     assert questions[5].endpoint_url == "https://google.com"
+
+def test_update_with_arbitrary_parameters():
+    project = Project(id="UPDATE_ARBITRARY", name="Project to update")
+
+    with patch.object(Project, "put") as mock_put:
+        mock_put.return_value = {**project.to_dict(), "allow_purgatory_users": True}
+        project.update(params={"allow_purgatory_users": True})
+        mock_put.assert_called_once_with(
+            f"{PROJECTS_ENDPOINT}/{project.id}",
+            {"allow_purgatory_users": True},
+            api_key=None,
+        )
+
+def test_update_with_fields_template():
+    project = Project(id="UPDATE_FIELDS_TEMPLATE", name="Project to update")
+
+    with patch.object(Project, "put") as mock_put:
+        assert not hasattr(project, "fields_template")
+        assert not hasattr(project, "fields_text")
+        mock_put.return_value = {**project.to_dict(), "fields_text": "ABC"}
+        updated = project.update(fields_template="ABC")
+        mock_put.assert_called_once_with(
+            f"{PROJECTS_ENDPOINT}/{project.id}",
+            {"fields_text": "ABC"},
+            api_key=None,
+        )
