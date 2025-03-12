@@ -39,7 +39,6 @@ class Question(APIResource):
 
     @classmethod
     def from_params(cls, q):
-        print("Q: ", q)
         options_info = q["options_objects"] if "options_objects" in q else None
         if options_info:
             for info in options_info:
@@ -208,9 +207,7 @@ class Question(APIResource):
             params["chat_advanced_options"] = chat_advanced_options
 
         endpoint = f"{QUESTIONS_ENDPOINT}/{self.id}"
-        print("Params: ", params)
         response_json = self.put(endpoint, params, api_key=api_key)
-        print("Response: ", response_json)
         return Question.from_params(response_json)
 
 
