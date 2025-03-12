@@ -40,7 +40,7 @@ class APIResource(object):
             elif method == "post":
                 if files is not None:
                     response = requests.post(
-                        url, auth=(api_key_to_use, ""), files=files, data=params
+                        url, auth=(api_key_to_use, ""), files=files, json=params
                     )
                 else:
                     response = requests.post(
@@ -50,7 +50,7 @@ class APIResource(object):
             # PUT request
             elif method == "put":
                 if params is not None and len(params):
-                    response = requests.put(url, auth=(api_key_to_use, ""), data=params)
+                    response = requests.put(url, auth=(api_key_to_use, ""), json=params)
                 else:
                     response = requests.put(url, auth=(api_key_to_use, ""))
 

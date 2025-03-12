@@ -9,7 +9,6 @@ from surge.errors import (
     SurgeMissingAttributeError,
 )
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
-from surge.questions import Question
 from surge.reports import Report
 from surge.tasks import Task
 from surge import utils
@@ -45,7 +44,7 @@ class Project(APIResource):
         return self.print_attrs(forbid_list=["name", "id"])
 
     def _convert_questions_to_objects(self, questions_data):
-        return list(map(lambda params: Question.from_params(params), questions_data))
+        return questions_data
 
     def to_dict(self):
         return {

@@ -7,15 +7,6 @@ import pytest
 import surge
 from surge.api_resource import APIResource, PROJECTS_ENDPOINT
 from surge.projects import Project
-from surge.questions import (
-    Question,
-    FreeResponseQuestion,
-    MultipleChoiceQuestion,
-    CheckboxQuestion,
-    TextTaggingQuestion,
-    TextArea,
-    ChatBot,
-)
 from surge.errors import SurgeMissingIDError, SurgeMissingAttributeError
 
 

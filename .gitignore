@@ -135,3 +135,6 @@ dmypy.json
 # VS Code
 .vscode
 .idea
+
+# local notebooks
+local_notebooks/
