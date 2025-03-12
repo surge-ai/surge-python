@@ -39,6 +39,7 @@ class Question(APIResource):
 
     @classmethod
     def from_params(cls, q):
+        print("Q: ", q)
         options_info = q["options_objects"] if "options_objects" in q else None
         if options_info:
             for info in options_info:
@@ -185,12 +186,15 @@ class Question(APIResource):
                 hidden_by_option_id=q["hidden_by_item_option_id"],
                 holistic=q["holistic"],
                 question_category=q.get("question_category"),
-                carousel_round=q.get("carousel_round"))
+                carousel_round=q.get("carousel_round"),
+                chat_advanced_options=q.get("chat_advanced_options")
+                )
 
     def update(self,
                text: str = None,
                hidden_by_option_id: str = None,
                shown_by_option_id: str = None,
+               chat_advanced_options: any = None,
                api_key: str = None):
         params = {}
 
@@ -200,9 +204,13 @@ class Question(APIResource):
             params["hidden_by_item_option_id"] = hidden_by_option_id
         if shown_by_option_id is not None:
             params["shown_by_item_option_id"] = shown_by_option_id
+        if chat_advanced_options is not None:
+            params["chat_advanced_options"] = chat_advanced_options
 
         endpoint = f"{QUESTIONS_ENDPOINT}/{self.id}"
+        print("Params: ", params)
         response_json = self.put(endpoint, params, api_key=api_key)
+        print("Response: ", response_json)
         return Question.from_params(response_json)
 
 
@@ -651,7 +659,8 @@ class ChatBot(Question):
                  shown_by_option_id=None,
                  holistic=False,
                  question_category=None,
-                 carousel_round=None):
+                 carousel_round=None,
+                 chat_advanced_options=None):
         '''
         Create an interactive chatbot on the labeling page. This is an advanced item type.
 
@@ -684,7 +693,7 @@ class ChatBot(Question):
         self.hidden_by_option_id = hidden_by_option_id
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic
-
+        self.chat_advanced_options = chat_advanced_options
 
 class TextArea(Question):
 
