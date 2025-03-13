@@ -6,7 +6,6 @@ from surge.errors import SurgeRequestError, SurgeMissingAPIKeyError
 PROJECTS_ENDPOINT = "projects"
 TASKS_ENDPOINT = "tasks"
 REPORTS_ENDPOINT = "projects"
-QUESTIONS_ENDPOINT = "items"
 TEAMS_ENDPOINT = "teams"
 
 

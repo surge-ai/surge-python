@@ -5,7 +5,6 @@ import json
 
 from surge.errors import (
     SurgeMissingIDError,
-    SurgeProjectQuestionError,
     SurgeMissingAttributeError,
 )
 from surge.api_resource import PROJECTS_ENDPOINT, APIResource
@@ -30,9 +29,6 @@ class Project(APIResource):
             # Convert timestamp str into datetime
             self.created_at = dateutil.parser.parse(self.created_at)
 
-        # If the Project has Questions, convert each into a Question object
-        if hasattr(self, "questions"):
-            self.questions = self._convert_questions_to_objects(self.questions)
 
     def __str__(self):
         return f'<surge.Project#{self.id} name="{self.name}">'
@@ -42,9 +38,6 @@ class Project(APIResource):
 
     def attrs_repr(self):
         return self.print_attrs(forbid_list=["name", "id"])
-
-    def _convert_questions_to_objects(self, questions_data):
-        return questions_data
 
     def to_dict(self):
         return {
@@ -64,12 +57,6 @@ class Project(APIResource):
     def to_json(self):
         return json.dumps(self.to_dict())
 
-    @staticmethod
-    def _validate_questions(questions):
-        # Convert list of question objects into dicts in valid json format
-        # If this isn't a list of Question objects, throw an exception
-        if not all(isinstance(q, Question) for q in questions):
-            raise SurgeProjectQuestionError
 
     @classmethod
     def create(
@@ -78,7 +65,6 @@ class Project(APIResource):
         payment_per_response: float = None,
         private_workforce: bool = False,
         instructions: str = None,
-        questions: list = [],
         qualifications_required: list = [],
         teams_required: list = [],
         teams_forbidden: list = [],
@@ -102,7 +88,6 @@ class Project(APIResource):
             private_workforce (bool, optional):
                 Indicates if the project's tasks will be done by a private workforce.
             instructions (str, optional): Instructions shown to workers describing how they should complete the task.
-            questions (list, optional): An array of question objects describing the questions to be answered.
             qualifications_required (list, optional): Deprecated in favor of teams_required.
             teams_required (list, optional): If you have created custom teams, you can pass a list of team ids Surgers must have to work on the project here.
             teams_forbidden (list, optional): If you have created custom teams, you can pass a list of team ids Surgers must not have to work on the project here.
@@ -117,9 +102,7 @@ class Project(APIResource):
             project: new Project object
         """
 
-        Project._validate_questions(questions)
 
-        questions_json = [q.to_dict() for q in questions]
 
         # qualifications_required still needs to work for backwards
         # compatibility
@@ -130,7 +113,6 @@ class Project(APIResource):
             "name": name,
             "private_workforce": private_workforce,
             "instructions": instructions,
-            "questions": questions_json,
             "qualifications_required": teams_required,
             "qualifications_forbidden": teams_forbidden,
             "callback_url": callback_url,
