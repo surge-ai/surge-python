@@ -53,7 +53,7 @@ def test_passed_in_file():
             "https://app.surgehq.ai/api/projects",
             auth=("passed_api_key", ""),
             files=files,
-            data=None,
+            json=None,
         )
 
 
