@@ -22,7 +22,10 @@ class Response(object):
 
 class TaskResponse(Response):
 
-    def __init__(self, id: str, data: dict, completed_at: datetime,
+    def __init__(self,
+                 id: str,
+                 data: dict,
+                 completed_at: datetime,
                  worker_id: str = None):
         super().__init__(id)
         self.data = data

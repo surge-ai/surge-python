@@ -47,26 +47,27 @@ class Report(APIResource):
             poll_time (int): Number of seconds to poll for the report
         """
         for _ in range(poll_time // 2):
-            response = cls.request(project_id=project_id, type=type, api_key=api_key)
+            response = cls.request(project_id=project_id,
+                                   type=type,
+                                   api_key=api_key)
             # Download zipped project results if ready
             if response.status == "READY":
                 file_ext = "csv" if "csv" in type else "json"
                 default_file_name = (
                     "project_{project_id}_results.{file_ext}.gzip".format(
-                        project_id=project_id, file_ext=file_ext
-                    )
-                )
+                        project_id=project_id, file_ext=file_ext))
                 with urllib.request.urlopen(response.url) as response:
                     with tempfile.NamedTemporaryFile() as tmp_file:
                         shutil.copyfileobj(response, tmp_file)
                         tmp_file.flush()
                         # Unzip and save results
                         data = gzip.open(tmp_file.name, "r").read()
-                        filepath = filepath or default_file_name.rstrip(".gzip")
+                        filepath = filepath or default_file_name.rstrip(
+                            ".gzip")
                         if isinstance(filepath, str):
                             file = open(
-                                filepath or default_file_name.rstrip(".gzip"), "wb"
-                            )
+                                filepath or default_file_name.rstrip(".gzip"),
+                                "wb")
                         else:
                             file = filepath
                         file.write(data)
@@ -80,17 +81,18 @@ class Report(APIResource):
                 continue
             else:
                 raise ValueError(
-                    "Report failed to generate with status {}".format(response.status)
-                )
+                    "Report failed to generate with status {}".format(
+                        response.status))
 
         raise Exception(
             "Report failed to generate within {poll_time} seconds".format(
-                poll_time=poll_time
-            )
-        )
+                poll_time=poll_time))
 
     @classmethod
-    def download_json(cls, project_id: str, poll_time=5 * 60, api_key: str = None):
+    def download_json(cls,
+                      project_id: str,
+                      poll_time=5 * 60,
+                      api_key: str = None):
         """
         Download and parse the results JSON for a project
 
