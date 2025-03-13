@@ -186,8 +186,7 @@ class Question(APIResource):
                 holistic=q["holistic"],
                 question_category=q.get("question_category"),
                 carousel_round=q.get("carousel_round"),
-                chat_advanced_options=q.get("chat_advanced_options")
-                )
+                chat_advanced_options=q.get("chat_advanced_options"))
 
     def update(self,
                text: str = None,
@@ -691,6 +690,7 @@ class ChatBot(Question):
         self.shown_by_option_id = shown_by_option_id
         self.holistic = holistic
         self.chat_advanced_options = chat_advanced_options
+
 
 class TextArea(Question):
 

@@ -30,77 +30,114 @@ def test_raise_exception_if_missing_name():
 
 
 def test_init_basic():
-    p = Project(id="ABC1234", name="Hello World", created_at="2021-01-22T19:49:03.185Z")
+    p = Project(id="ABC1234",
+                name="Hello World",
+                created_at="2021-01-22T19:49:03.185Z")
 
     assert isinstance(p, APIResource)
     assert isinstance(p, Project)
     assert p.id == "ABC1234"
     assert p.name == "Hello World"
-    assert p.created_at == datetime(2021, 1, 22, 19, 49, 3, 185000, tzinfo=tzutc())
+    assert p.created_at == datetime(2021,
+                                    1,
+                                    22,
+                                    19,
+                                    49,
+                                    3,
+                                    185000,
+                                    tzinfo=tzutc())
 
 
 def test_init_complete():
     response_json = {
-        "fields_template": '<p><iframe src="{{video}}" width="560" height="315"></iframe><br></p>',
-        "id": "A1B2C3-abcd-1234-wxyz-5823gd2238ac",
-        "slug": "aJlz0Vr2ozdX",
-        "name": "Identifying video results",
-        "num_workers_per_task": 3,
-        "status": "paused",
-        "created_at": "2021-01-22T19:49:03.185Z",
-        "num_tasks_completed": 176,
-        "num_responses_completed": 177,
-        "instructions": "<p><b>Instructions: Categorize the following video.</b></p>",
-        "num_tasks": 177,
-        "link_to_work_on_task": "https://app.surgehq.ai/workers/tasks?project_id=A1B2C3-abcd-1234-wxyz-5823gd2238ac",
-        "avg_gold_standard_score": 65.09,
-        "interrater_agreement": {"What is this video?": 0.859154078549849},
-        "private_workforce": False,
-        "num_tasks_in_progress": 0,
-        "payment_per_response": 0.12,
-        "questions": [
-            {
-                "id": "c6ee667c-b260-415d-a200-f34250793b81",
-                "text": "What is this video?",
-                "label": "video",
-                "required": True,
-                "ner_allow_overlapping_tags": None,
-                "ner_allow_relationship_tags": None,
-                "preexisting_annotations": None,
-                "require_tie_breaker": False,
-                "type": "multiple_choice",
-                "options": ["Option A", "Option B", "Option C"],
-                "options_objects": [
-                    {
-                        "id": "a1aex762-8b06-5xce-zd28-3fac8c4245b0",
-                        "text": "Option A",
-                        "item_id": "xyz123c-h260-415l-a999-g34250793b80",
-                        "created_at": "2021-01-22T19:53:04.552Z",
-                        "updated_at": "2021-01-22T19:53:04.552Z",
-                        "order": 1,
-                    },
-                    {
-                        "id": "d77k9c91-9d9c-463c-87o7-b153eb89dfle",
-                        "text": "Option B",
-                        "item_id": "xyz123c-h260-415l-a999-g34250793b80",
-                        "created_at": "2021-01-22T19:53:04.557Z",
-                        "updated_at": "2021-01-22T19:53:04.557Z",
-                        "order": 2,
-                    },
-                    {
-                        "id": "r79682ds-5cc4-4e54-8c6f-7ef06olo3c79",
-                        "text": "Option C",
-                        "item_id": "xyz123c-h260-415l-a999-g34250793b80",
-                        "created_at": "2021-01-22T19:53:04.560Z",
-                        "updated_at": "2021-01-22T19:53:04.560Z",
-                        "order": 3,
-                    },
-                ],
-                "hidden_by_item_option_id": None,
-                "shown_by_item_option_id": None,
-                "holistic": False,
-            }
-        ],
+        "fields_template":
+        '<p><iframe src="{{video}}" width="560" height="315"></iframe><br></p>',
+        "id":
+        "A1B2C3-abcd-1234-wxyz-5823gd2238ac",
+        "slug":
+        "aJlz0Vr2ozdX",
+        "name":
+        "Identifying video results",
+        "num_workers_per_task":
+        3,
+        "status":
+        "paused",
+        "created_at":
+        "2021-01-22T19:49:03.185Z",
+        "num_tasks_completed":
+        176,
+        "num_responses_completed":
+        177,
+        "instructions":
+        "<p><b>Instructions: Categorize the following video.</b></p>",
+        "num_tasks":
+        177,
+        "link_to_work_on_task":
+        "https://app.surgehq.ai/workers/tasks?project_id=A1B2C3-abcd-1234-wxyz-5823gd2238ac",
+        "avg_gold_standard_score":
+        65.09,
+        "interrater_agreement": {
+            "What is this video?": 0.859154078549849
+        },
+        "private_workforce":
+        False,
+        "num_tasks_in_progress":
+        0,
+        "payment_per_response":
+        0.12,
+        "questions": [{
+            "id":
+            "c6ee667c-b260-415d-a200-f34250793b81",
+            "text":
+            "What is this video?",
+            "label":
+            "video",
+            "required":
+            True,
+            "ner_allow_overlapping_tags":
+            None,
+            "ner_allow_relationship_tags":
+            None,
+            "preexisting_annotations":
+            None,
+            "require_tie_breaker":
+            False,
+            "type":
+            "multiple_choice",
+            "options": ["Option A", "Option B", "Option C"],
+            "options_objects": [
+                {
+                    "id": "a1aex762-8b06-5xce-zd28-3fac8c4245b0",
+                    "text": "Option A",
+                    "item_id": "xyz123c-h260-415l-a999-g34250793b80",
+                    "created_at": "2021-01-22T19:53:04.552Z",
+                    "updated_at": "2021-01-22T19:53:04.552Z",
+                    "order": 1,
+                },
+                {
+                    "id": "d77k9c91-9d9c-463c-87o7-b153eb89dfle",
+                    "text": "Option B",
+                    "item_id": "xyz123c-h260-415l-a999-g34250793b80",
+                    "created_at": "2021-01-22T19:53:04.557Z",
+                    "updated_at": "2021-01-22T19:53:04.557Z",
+                    "order": 2,
+                },
+                {
+                    "id": "r79682ds-5cc4-4e54-8c6f-7ef06olo3c79",
+                    "text": "Option C",
+                    "item_id": "xyz123c-h260-415l-a999-g34250793b80",
+                    "created_at": "2021-01-22T19:53:04.560Z",
+                    "updated_at": "2021-01-22T19:53:04.560Z",
+                    "order": 3,
+                },
+            ],
+            "hidden_by_item_option_id":
+            None,
+            "shown_by_item_option_id":
+            None,
+            "holistic":
+            False,
+        }],
     }
 
     p = Project(**response_json)
@@ -109,15 +146,21 @@ def test_init_complete():
     assert isinstance(p, Project)
     assert p.id == "A1B2C3-abcd-1234-wxyz-5823gd2238ac"
     assert p.name == "Identifying video results"
-    assert (
-        p.instructions == "<p><b>Instructions: Categorize the following video.</b></p>"
-    )
+    assert (p.instructions ==
+            "<p><b>Instructions: Categorize the following video.</b></p>")
     assert p.num_workers_per_task == 3
     assert p.status == "paused"
     assert p.num_tasks_completed == 176
     assert p.avg_gold_standard_score == 65.09
     assert p.interrater_agreement == {"What is this video?": 0.859154078549849}
-    assert p.created_at == datetime(2021, 1, 22, 19, 49, 3, 185000, tzinfo=tzutc())
+    assert p.created_at == datetime(2021,
+                                    1,
+                                    22,
+                                    19,
+                                    49,
+                                    3,
+                                    185000,
+                                    tzinfo=tzutc())
     assert type(p.questions) == list
     for q in p.questions:
         assert isinstance(q, Question)
@@ -126,44 +169,55 @@ def test_init_complete():
 
 
 def test_print_attrs():
-    attr = Project(
-        id="ABC1234", name="Hello World", created_at="2021-01-22T19:49:03.185Z"
-    ).print_attrs()
+    attr = Project(id="ABC1234",
+                   name="Hello World",
+                   created_at="2021-01-22T19:49:03.185Z").print_attrs()
     assert (
-        attr
-        == 'id="ABC1234" name="Hello World" created_at="2021-01-22 19:49:03.185000+00:00"'
+        attr ==
+        'id="ABC1234" name="Hello World" created_at="2021-01-22 19:49:03.185000+00:00"'
     )
 
 
 def test_repr():
     attr = repr(
-        Project(id="ABC1234", name="Hello World", created_at="2021-01-22T19:49:03.185Z")
-    )
+        Project(id="ABC1234",
+                name="Hello World",
+                created_at="2021-01-22T19:49:03.185Z"))
     assert (
-        attr
-        == '<surge.Project#ABC1234 name="Hello World" created_at="2021-01-22 19:49:03.185000+00:00">'
+        attr ==
+        '<surge.Project#ABC1234 name="Hello World" created_at="2021-01-22 19:49:03.185000+00:00">'
     )
 
 
 def test_str():
     p_str = str(
-        Project(id="ABC1234", name="Hello World", created_at="2021-01-22T19:49:03.185Z")
-    )
+        Project(id="ABC1234",
+                name="Hello World",
+                created_at="2021-01-22T19:49:03.185Z"))
     assert p_str == '<surge.Project#ABC1234 name="Hello World">'
 
 
 def test_convert_questions_to_objects():
     questions_data = [
         {
-            "id": "cd3efdb7-3cf2-4558-b443-486fd09b4cc6",
-            "text": "Checkbox for {{url}}",
-            "required": True,
-            "ner_allow_overlapping_tags": None,
-            "ner_allow_relationship_tags": None,
-            "preexisting_annotations": None,
-            "require_tie_breaker": False,
-            "type": "checkbox",
-            "label": "checkbox",
+            "id":
+            "cd3efdb7-3cf2-4558-b443-486fd09b4cc6",
+            "text":
+            "Checkbox for {{url}}",
+            "required":
+            True,
+            "ner_allow_overlapping_tags":
+            None,
+            "ner_allow_relationship_tags":
+            None,
+            "preexisting_annotations":
+            None,
+            "require_tie_breaker":
+            False,
+            "type":
+            "checkbox",
+            "label":
+            "checkbox",
             "options": ["Option 1", "Option 2"],
             "options_objects": [
                 {
@@ -183,20 +237,32 @@ def test_convert_questions_to_objects():
                     "order": 2,
                 },
             ],
-            "hidden_by_item_option_id": None,
-            "shown_by_item_option_id": None,
-            "holistic": False,
+            "hidden_by_item_option_id":
+            None,
+            "shown_by_item_option_id":
+            None,
+            "holistic":
+            False,
         },
         {
-            "id": "c4b0d6a9-f735-40c1-9b42-0414945ef2db",
-            "text": "Multiple choice for {{url}}",
-            "required": False,
-            "ner_allow_overlapping_tags": None,
-            "ner_allow_relationship_tags": None,
-            "preexisting_annotations": None,
-            "require_tie_breaker": False,
-            "type": "multiple_choice",
-            "label": "multiple_choice",
+            "id":
+            "c4b0d6a9-f735-40c1-9b42-0414945ef2db",
+            "text":
+            "Multiple choice for {{url}}",
+            "required":
+            False,
+            "ner_allow_overlapping_tags":
+            None,
+            "ner_allow_relationship_tags":
+            None,
+            "preexisting_annotations":
+            None,
+            "require_tie_breaker":
+            False,
+            "type":
+            "multiple_choice",
+            "label":
+            "multiple_choice",
             "options": ["Choice 1", "Choice 2"],
             "options_objects": [
                 {
@@ -216,9 +282,12 @@ def test_convert_questions_to_objects():
                     "order": 2,
                 },
             ],
-            "hidden_by_item_option_id": None,
-            "shown_by_item_option_id": None,
-            "holistic": False,
+            "hidden_by_item_option_id":
+            None,
+            "shown_by_item_option_id":
+            None,
+            "holistic":
+            False,
         },
         {
             "id": "6123463e-349e-4450-80d2-6684a28755b3",
@@ -236,16 +305,26 @@ def test_convert_questions_to_objects():
             "holistic": False,
         },
         {
-            "id": "c46e2714-9bf6-44a8-aac3-f01f9fec8ae2",
-            "text": "This is a Named Entity Recognition prompt for {{url}}",
-            "required": False,
-            "ner_allow_overlapping_tags": None,
-            "ner_allow_relationship_tags": None,
-            "preexisting_annotations": None,
-            "ner_token_granularity": True,
-            "require_tie_breaker": False,
-            "type": "text_tagging",
-            "label": "text_tagging",
+            "id":
+            "c46e2714-9bf6-44a8-aac3-f01f9fec8ae2",
+            "text":
+            "This is a Named Entity Recognition prompt for {{url}}",
+            "required":
+            False,
+            "ner_allow_overlapping_tags":
+            None,
+            "ner_allow_relationship_tags":
+            None,
+            "preexisting_annotations":
+            None,
+            "ner_token_granularity":
+            True,
+            "require_tie_breaker":
+            False,
+            "type":
+            "text_tagging",
+            "label":
+            "text_tagging",
             "options": ["Label 1", "Label 2", "Label 3"],
             "options_objects": [
                 {
@@ -273,9 +352,12 @@ def test_convert_questions_to_objects():
                     "order": 3,
                 },
             ],
-            "hidden_by_item_option_id": None,
-            "shown_by_item_option_id": None,
-            "holistic": False,
+            "hidden_by_item_option_id":
+            None,
+            "shown_by_item_option_id":
+            None,
+            "holistic":
+            False,
         },
         {
             "id": "6123463e-349e-4450-80d2-6684a28755b4",
@@ -330,7 +412,8 @@ def test_convert_questions_to_objects():
     assert not hasattr(questions[2], "options")
 
     assert type(questions[3]) == TextTaggingQuestion
-    assert questions[3].text == "This is a Named Entity Recognition prompt for {{url}}"
+    assert questions[
+        3].text == "This is a Named Entity Recognition prompt for {{url}}"
     assert questions[3].label == "text_tagging"
     assert questions[3].required == False
     assert questions[3].options
@@ -347,17 +430,21 @@ def test_convert_questions_to_objects():
     assert questions[5].required == False
     assert questions[5].endpoint_url == "https://google.com"
 
+
 def test_update_with_arbitrary_parameters():
     project = Project(id="UPDATE_ARBITRARY", name="Project to update")
 
     with patch.object(Project, "put") as mock_put:
-        mock_put.return_value = {**project.to_dict(), "allow_purgatory_users": True}
+        mock_put.return_value = {
+            **project.to_dict(), "allow_purgatory_users": True
+        }
         project.update(params={"allow_purgatory_users": True})
         mock_put.assert_called_once_with(
             f"{PROJECTS_ENDPOINT}/{project.id}",
             {"allow_purgatory_users": True},
             api_key=None,
         )
+
 
 def test_update_with_fields_template():
     project = Project(id="UPDATE_FIELDS_TEMPLATE", name="Project to update")

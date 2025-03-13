@@ -45,13 +45,13 @@ class Project(APIResource):
         return self.print_attrs(forbid_list=["name", "id"])
 
     def _convert_questions_to_objects(self, questions_data):
-        return list(map(lambda params: Question.from_params(params), questions_data))
+        return list(
+            map(lambda params: Question.from_params(params), questions_data))
 
     def to_dict(self):
         return {
             key: self._to_dict_value(key, value)
-            for key, value in self.__dict__.items()
-            if not key.startswith("_")
+            for key, value in self.__dict__.items() if not key.startswith("_")
         }
 
     def _to_dict_value(self, key, value):
@@ -151,7 +151,10 @@ class Project(APIResource):
         return cls(**response_json)
 
     @classmethod
-    def list(cls, page: int = 1, statuses: List[str] = None, api_key: str = None):
+    def list(cls,
+             page: int = 1,
+             statuses: List[str] = None,
+             api_key: str = None):
         """
         Lists all projects you have created.
         Projects are returned in descending order of created_at.
@@ -171,9 +174,10 @@ class Project(APIResource):
         return projects
 
     @classmethod
-    def list_shared(
-        cls, page: int = 1, statuses: List[str] = None, api_key: str = None
-    ):
+    def list_shared(cls,
+                    page: int = 1,
+                    statuses: List[str] = None,
+                    api_key: str = None):
         """
         Lists all projects created by anyone in your organization.
         Projects are returned in descending order of created_at.
@@ -287,7 +291,10 @@ class Project(APIResource):
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/delete"
         return self.get(endpoint, api_key=api_key)
 
-    def list_tasks(self, page: int = 1, per_page: int = 100, api_key: str = None):
+    def list_tasks(self,
+                   page: int = 1,
+                   per_page: int = 100,
+                   api_key: str = None):
         """
         Lists all tasks belonging to this project.
         Tasks are returned in ascending order of created_at.
@@ -299,9 +306,15 @@ class Project(APIResource):
         Returns:
             tasks (list): list of Task objects.
         """
-        return Task.list(self.id, page=page, per_page=per_page, api_key=api_key)
+        return Task.list(self.id,
+                         page=page,
+                         per_page=per_page,
+                         api_key=api_key)
 
-    def create_tasks(self, tasks_data: list, launch=False, api_key: str = None):
+    def create_tasks(self,
+                     tasks_data: list,
+                     launch=False,
+                     api_key: str = None):
         """
         Creates new Task objects for this project.
 
@@ -427,4 +440,6 @@ class Project(APIResource):
         Arguments:
             poll_time (int): Number of seconds to poll for the report
         """
-        return Report.download_json(self.id, poll_time=poll_time, api_key=api_key)
+        return Report.download_json(self.id,
+                                    poll_time=poll_time,
+                                    api_key=api_key)
