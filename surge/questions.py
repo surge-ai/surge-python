@@ -208,9 +208,7 @@ class Question(APIResource):
             params["chat_advanced_options"] = chat_advanced_options
 
         endpoint = f"{QUESTIONS_ENDPOINT}/{self.id}"
-        print("Params: ", params)
         response_json = self.put(endpoint, params, api_key=api_key)
-        print("Response: ", response_json)
         return Question.from_params(response_json)
 
 
