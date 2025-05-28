@@ -123,7 +123,7 @@ class APIResource(object):
         return cls._base_request(method, api_endpoint, api_key=api_key)
 
     @classmethod
-    def _format(self, output: str, data: str):
+    def _format(cls, output: str, data: str):
         if output is None:
             return
         if output == "raw":
