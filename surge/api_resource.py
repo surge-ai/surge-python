@@ -1,4 +1,6 @@
 import requests
+import io
+import pandas as pd
 
 import surge
 from surge.errors import SurgeRequestError, SurgeMissingAPIKeyError
@@ -119,3 +121,17 @@ class APIResource(object):
     def delete_request(cls, api_endpoint, api_key=None):
         method = "delete"
         return cls._base_request(method, api_endpoint, api_key=api_key)
+
+    @classmethod
+    def _format(self, output: str, data: str):
+        if output is None:
+            return
+        if output == "raw":
+            return data
+        stringIO = io.StringIO(data)
+        if output == "stringio":
+            return stringIO
+        if output == "dataframe":
+            return pd.read_csv(stringIO)
+        else:
+            raise ValueError("`output` can only be one of: `raw`, `stringio` or `dataframe`")

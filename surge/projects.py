@@ -412,6 +412,7 @@ class Project(APIResource):
         filepath=None,
         poll_time=5 * 60,
         api_key: str = None,
+        output: str = "dataframe"
     ):
         """
         Request creation of a report, poll until the report is generated, and save the data to a file all in one call.
@@ -431,6 +432,7 @@ class Project(APIResource):
             filepath=filepath,
             poll_time=poll_time,
             api_key=api_key,
+            output=output
         )
 
     def download_json(self, poll_time=5 * 60, api_key: str = None):

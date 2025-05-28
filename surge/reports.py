@@ -7,6 +7,7 @@ import io
 import json
 
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
+from surge.errors import SurgeRequestError
 
 
 class Report(APIResource):
@@ -32,6 +33,7 @@ class Report(APIResource):
         filepath=None,
         poll_time=5 * 60,
         api_key: str = None,
+        output: str = "dataframe"
     ):
         """
         Request creation of a report, poll until the report is generated, and save the data to a file all in one call.
@@ -73,7 +75,7 @@ class Report(APIResource):
                         file.write(data)
                         if isinstance(filepath, str):
                             file.close()
-                return
+                return cls._format(output, data.decode("utf-8"))
 
             # Wait two seconds before polling again
             elif response.status == "CREATING":
