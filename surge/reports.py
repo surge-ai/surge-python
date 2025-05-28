@@ -160,7 +160,7 @@ class Report(APIResource):
         return cls(**response_json)
 
     @classmethod
-    def status(cls, project_id: str, job_id: str, api_key: str = None):
+    def check_status(cls, project_id: str, job_id: str, api_key: str = None):
         """
         Checks the status of a given report job. The response will be of one of these shapes:
 
