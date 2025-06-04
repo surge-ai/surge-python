@@ -7,7 +7,7 @@ import io
 import json
 
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
-
+from surge.errors import SurgeRequestError
 
 class Report(APIResource):
 
@@ -157,6 +157,8 @@ class Report(APIResource):
         endpoint = f"{REPORTS_ENDPOINT}/{project_id}/report"
         params = {"report_type": type}
         response_json = cls.post(endpoint, params, api_key=api_key)
+        if "error" in response_json:
+            raise SurgeRequestError(response_json["error"])
         return cls(**response_json)
 
     @classmethod
