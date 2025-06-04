@@ -7,7 +7,7 @@ import io
 import json
 
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
-
+from surge.errors import SurgeRequestError
 
 class Report(APIResource):
 
