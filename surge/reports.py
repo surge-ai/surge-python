@@ -5,6 +5,7 @@ import tempfile
 import shutil
 import io
 import json
+import warnings
 
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
 
@@ -158,6 +159,49 @@ class Report(APIResource):
         params = {"report_type": type}
         response_json = cls.post(endpoint, params, api_key=api_key)
         return cls(**response_json)
+    
+    @classmethod
+    def status(cls, project_id: str, job_id: str, api_key: str = None):
+        """
+        Deprecated (use `check_status` instead). Checks the status of a given report job. The response will be of one of these shapes:
+
+        1) Report is still being generated (HTTP 202):
+
+          {
+            status: "IN_PROGRESS",
+          }
+
+        2) Report is completed:
+
+          {
+            status: "COMPLETED",
+            url: ...,
+            expires_in_seconds: ...,
+          }
+
+        3) Retrying generation of report (can consider this to be same as in progress):
+
+          {
+            status: "RETRYING",
+            job_id: ...,
+          }
+
+        4) Error (HTTP 400 or 500):
+
+          {
+            status: "ERROR",
+            type: ...
+          }
+
+        Arguments:
+          project_id (str): ID of project.
+          job_id (str): ID of the report job
+
+        Returns:
+            status: Report status object
+        """
+        warnings.warn("Use check_status instead", DeprecationWarning)
+        return cls.check_status(project_id, job_id, api_key=api_key)
 
     @classmethod
     def check_status(cls, project_id: str, job_id: str, api_key: str = None):
