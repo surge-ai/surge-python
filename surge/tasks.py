@@ -7,6 +7,8 @@ from surge.responses import TaskResponse
 
 class Task(APIResource):
 
+    TaskResponse = TaskResponse
+
     def __init__(self, **kwargs):
         super().__init__()
         self.__dict__.update(kwargs)
@@ -22,7 +24,7 @@ class Task(APIResource):
         # If Task has responses, convert each into a TaskResponse object
         if hasattr(self, "responses"):
             task_responses = [
-                TaskResponse(r["id"], r["data"],
+                self.TaskResponse(r["id"], r["data"],
                              dateutil.parser.parse(r["completed_at"]),
                              r.get("worker_id", None)) for r in self.responses
             ]
