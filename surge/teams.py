@@ -1,8 +1,7 @@
 import dateutil.parser
 
-from surge.errors import SurgeMissingIDError, SurgeTaskDataError
-from surge.api_resource import TEAMS_ENDPOINT, TASKS_ENDPOINT, APIResource
-from surge.responses import TaskResponse
+from surge.errors import SurgeMissingIDError
+from surge.api_resource import TEAMS_ENDPOINT, APIResource
 
 
 class Team(APIResource):

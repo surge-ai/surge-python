@@ -68,6 +68,11 @@ class APIResource(object):
             elif method == "delete":
                 response = requests.delete(url, auth=(api_key_to_use, ""))
 
+            elif method == "patch":
+                response = requests.patch(url,
+                                          auth=(api_key_to_use, ""),
+                                          json=params)
+
             else:
                 raise SurgeRequestError("Invalid HTTP method.")
 
@@ -110,6 +115,14 @@ class APIResource(object):
     @classmethod
     def put(cls, api_endpoint, params=None, api_key=None):
         method = "put"
+        return cls._base_request(method,
+                                 api_endpoint,
+                                 params=params,
+                                 api_key=api_key)
+    
+    @classmethod
+    def patch(cls, api_endpoint, params=None, api_key=None):
+        method = "patch"
         return cls._base_request(method,
                                  api_endpoint,
                                  params=params,

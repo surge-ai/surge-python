@@ -17,6 +17,10 @@ from surge import utils
 
 class Project(APIResource):
 
+    Question = Question
+    Report = Report
+    Task = Task
+
     def __init__(self, **kwargs):
         super().__init__()
         self.__dict__.update(kwargs)
@@ -46,7 +50,7 @@ class Project(APIResource):
 
     def _convert_questions_to_objects(self, questions_data):
         return list(
-            map(lambda params: Question.from_params(params), questions_data))
+            map(lambda params: self.Question.from_params(params), questions_data))
 
     def to_dict(self):
         return {
@@ -306,7 +310,7 @@ class Project(APIResource):
         Returns:
             tasks (list): list of Task objects.
         """
-        return Task.list(self.id,
+        return self.Task.list(self.id,
                          page=page,
                          per_page=per_page,
                          api_key=api_key)
@@ -325,7 +329,7 @@ class Project(APIResource):
         Returns:
             tasks (list): list of Task objects
         """
-        return Task.create_many(self.id, tasks_data, launch, api_key=api_key)
+        return self.Task.create_many(self.id, tasks_data, launch, api_key=api_key)
 
     def create_tasks_from_csv(self, file_path: str, api_key: str = None):
         """
@@ -425,7 +429,7 @@ class Project(APIResource):
             filepath (string or IO or None): Location to save the results file. If not specified, will save to "project_{project_id}_results.{csv/json}
             poll_time (int): Number of seconds to poll for the report
         """
-        return Report.save_report(
+        return self.Report.save_report(
             self.id,
             type,
             filepath=filepath,
@@ -440,6 +444,6 @@ class Project(APIResource):
         Arguments:
             poll_time (int): Number of seconds to poll for the report
         """
-        return Report.download_json(self.id,
+        return self.Report.download_json(self.id,
                                     poll_time=poll_time,
                                     api_key=api_key)
