@@ -50,7 +50,8 @@ class Project(APIResource):
 
     def _convert_questions_to_objects(self, questions_data):
         return list(
-            map(lambda params: self.Question.from_params(params), questions_data))
+            map(lambda params: self.Question.from_params(params),
+                questions_data))
 
     def to_dict(self):
         return {
@@ -311,9 +312,9 @@ class Project(APIResource):
             tasks (list): list of Task objects.
         """
         return self.Task.list(self.id,
-                         page=page,
-                         per_page=per_page,
-                         api_key=api_key)
+                              page=page,
+                              per_page=per_page,
+                              api_key=api_key)
 
     def create_tasks(self,
                      tasks_data: list,
@@ -329,7 +330,10 @@ class Project(APIResource):
         Returns:
             tasks (list): list of Task objects
         """
-        return self.Task.create_many(self.id, tasks_data, launch, api_key=api_key)
+        return self.Task.create_many(self.id,
+                                     tasks_data,
+                                     launch,
+                                     api_key=api_key)
 
     def create_tasks_from_csv(self, file_path: str, api_key: str = None):
         """
@@ -445,5 +449,5 @@ class Project(APIResource):
             poll_time (int): Number of seconds to poll for the report
         """
         return self.Report.download_json(self.id,
-                                    poll_time=poll_time,
-                                    api_key=api_key)
+                                         poll_time=poll_time,
+                                         api_key=api_key)

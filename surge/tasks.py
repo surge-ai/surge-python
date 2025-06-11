@@ -25,8 +25,9 @@ class Task(APIResource):
         if hasattr(self, "responses"):
             task_responses = [
                 self.TaskResponse(r["id"], r["data"],
-                             dateutil.parser.parse(r["completed_at"]),
-                             r.get("worker_id", None)) for r in self.responses
+                                  dateutil.parser.parse(r["completed_at"]),
+                                  r.get("worker_id", None))
+                for r in self.responses
             ]
             self.responses = task_responses
 

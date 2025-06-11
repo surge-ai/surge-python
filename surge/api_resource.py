@@ -119,7 +119,7 @@ class APIResource(object):
                                  api_endpoint,
                                  params=params,
                                  api_key=api_key)
-    
+
     @classmethod
     def patch(cls, api_endpoint, params=None, api_key=None):
         method = "patch"
