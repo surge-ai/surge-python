@@ -74,7 +74,7 @@ class Report(APIResource):
                         file.write(data)
                         if isinstance(filepath, str):
                             file.close()
-                return
+                return data
 
             # Wait two seconds before polling again
             elif response.status == "CREATING":
