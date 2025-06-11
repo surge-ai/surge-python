@@ -10,6 +10,7 @@ import warnings
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
 from surge.errors import SurgeRequestError
 
+
 class Report(APIResource):
 
     def __init__(self, **kwargs):
@@ -161,7 +162,7 @@ class Report(APIResource):
         if "error" in response_json:
             raise SurgeRequestError(response_json["error"])
         return cls(**response_json)
-    
+
     @classmethod
     def status(cls, project_id: str, job_id: str, api_key: str = None):
         """
