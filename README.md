@@ -16,7 +16,7 @@ pip install --upgrade surge-api
 
 ## Usage
 
-Documentation and and examples are available [here](https://app.surgehq.ai/docs/api#).
+Documentation and examples are available [here](https://app.surgehq.ai/docs/api#).
 
 ### Authentication
 
