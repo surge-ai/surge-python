@@ -23,7 +23,6 @@ class Project(APIResource):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self.__dict__.update(kwargs)
 
         if self.id is None:
             raise SurgeMissingIDError
@@ -35,9 +34,15 @@ class Project(APIResource):
             # Convert timestamp str into datetime
             self.created_at = dateutil.parser.parse(self.created_at)
 
+        self._update(**kwargs)
+
+    def _update(self, **kwargs):
+        self.__dict__.update(kwargs)
+
         # If the Project has Questions, convert each into a Question object
         if hasattr(self, "questions"):
             self.questions = self._convert_questions_to_objects(self.questions)
+
 
     def __str__(self):
         return f'<surge.Project#{self.id} name="{self.name}">'
@@ -397,7 +402,7 @@ class Project(APIResource):
 
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}"
         response_json = self.put(endpoint, params, api_key=api_key)
-        return cls(**response_json)
+        return self._update(**response_json)
 
     def workable_by_surger(self, surger_id, api_key: str = None):
         """
