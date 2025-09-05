@@ -397,7 +397,7 @@ class Project(APIResource):
 
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}"
         response_json = self.put(endpoint, params, api_key=api_key)
-        return Project(**response_json)
+        return cls(**response_json)
 
     def workable_by_surger(self, surger_id, api_key: str = None):
         """
