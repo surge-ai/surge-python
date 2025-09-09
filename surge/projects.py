@@ -23,6 +23,7 @@ class Project(APIResource):
 
     def __init__(self, **kwargs):
         super().__init__()
+        self._update(**kwargs)
 
         if self.id is None:
             raise SurgeMissingIDError
@@ -34,7 +35,6 @@ class Project(APIResource):
             # Convert timestamp str into datetime
             self.created_at = dateutil.parser.parse(self.created_at)
 
-        self._update(**kwargs)
 
     def _update(self, **kwargs):
         self.__dict__.update(kwargs)
