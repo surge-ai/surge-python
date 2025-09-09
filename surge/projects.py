@@ -367,7 +367,7 @@ class Project(APIResource):
         api_key: str = None,
     ) -> 'Project':
         """
-        Update an existing project
+        Update an existing project, and updates the project object in-place
 
         Arguments:
             name (str): Name of the project.
@@ -380,7 +380,7 @@ class Project(APIResource):
             num_workers_per_task (int, optional): How many workers work on each task (i.e., how many responses per task).
 
         Returns:
-            project: new Project object
+            project: updated Project object
         """
 
         params = {**params}
