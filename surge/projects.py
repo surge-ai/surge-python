@@ -31,13 +31,13 @@ class Project(APIResource):
         if not (hasattr(self, "name") and self.name):
             raise SurgeMissingAttributeError
 
-        if hasattr(self, "created_at") and self.created_at:
-            # Convert timestamp str into datetime
-            self.created_at = dateutil.parser.parse(self.created_at)
-
 
     def _update(self, **kwargs):
         self.__dict__.update(kwargs)
+
+        if hasattr(self, "created_at") and self.created_at:
+            # Convert timestamp str into datetime
+            self.created_at = dateutil.parser.parse(self.created_at)
 
         # If the Project has Questions, convert each into a Question object
         if hasattr(self, "questions"):
