@@ -365,7 +365,7 @@ class Project(APIResource):
         description: str = None,
         params: dict = {},
         api_key: str = None,
-    ):
+    ) -> 'Project':
         """
         Update an existing project
 
@@ -402,7 +402,8 @@ class Project(APIResource):
 
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}"
         response_json = self.put(endpoint, params, api_key=api_key)
-        return self._update(**response_json)
+        self._update(**response_json)
+        return self
 
     def workable_by_surger(self, surger_id, api_key: str = None):
         """
