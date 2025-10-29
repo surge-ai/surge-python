@@ -23,13 +23,17 @@ class Project(APIResource):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self.__dict__.update(kwargs)
+        self._update(**kwargs)
 
         if self.id is None:
             raise SurgeMissingIDError
 
         if not (hasattr(self, "name") and self.name):
             raise SurgeMissingAttributeError
+
+
+    def _update(self, **kwargs):
+        self.__dict__.update(kwargs)
 
         if hasattr(self, "created_at") and self.created_at:
             # Convert timestamp str into datetime
@@ -38,6 +42,7 @@ class Project(APIResource):
         # If the Project has Questions, convert each into a Question object
         if hasattr(self, "questions"):
             self.questions = self._convert_questions_to_objects(self.questions)
+
 
     def __str__(self):
         return f'<surge.Project#{self.id} name="{self.name}">'
@@ -360,9 +365,9 @@ class Project(APIResource):
         description: str = None,
         params: dict = {},
         api_key: str = None,
-    ):
+    ) -> 'Project':
         """
-        Update an existing project
+        Update an existing project, and updates the project object in-place
 
         Arguments:
             name (str): Name of the project.
@@ -375,7 +380,7 @@ class Project(APIResource):
             num_workers_per_task (int, optional): How many workers work on each task (i.e., how many responses per task).
 
         Returns:
-            project: new Project object
+            project: updated Project object
         """
 
         params = {**params}
@@ -397,7 +402,8 @@ class Project(APIResource):
 
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}"
         response_json = self.put(endpoint, params, api_key=api_key)
-        return Project(**response_json)
+        self._update(**response_json)
+        return self
 
     def workable_by_surger(self, surger_id, api_key: str = None):
         """

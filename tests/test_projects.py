@@ -459,3 +459,57 @@ def test_update_with_fields_template():
             {"fields_text": "ABC"},
             api_key=None,
         )
+
+
+def test_update_modifies_project_in_place():
+    """Test that update() modifies the project object in-place based on PUT response."""
+    project = Project(
+        id="UPDATE_IN_PLACE", 
+        name="Original Name",
+        status="draft",
+        payment_per_response=0.10
+    )
+    
+    # Store original object id to verify same instance is returned
+    original_object_id = id(project)
+    
+    # Mock the PUT response with updated attributes
+    put_response = {
+        "id": "UPDATE_IN_PLACE",
+        "name": "Updated Name",
+        "status": "launched", 
+        "payment_per_response": 0.25,
+        "description": "New description added",
+        "instructions": "Updated instructions"
+    }
+    
+    with patch.object(Project, "put") as mock_put:
+        mock_put.return_value = put_response
+        
+        # Verify initial state
+        assert project.name == "Original Name"
+        assert project.status == "draft"
+        assert project.payment_per_response == 0.10
+        assert not hasattr(project, "description")
+        assert not hasattr(project, "instructions")
+        
+        # Call update
+        updated_project = project.update(name="Updated Name")
+        
+        # Verify the same object instance is returned
+        assert updated_project is project
+        assert id(updated_project) == original_object_id
+        
+        # Verify project attributes were updated in-place from PUT response
+        assert project.name == "Updated Name"
+        assert project.status == "launched"
+        assert project.payment_per_response == 0.25
+        assert project.description == "New description added"
+        assert project.instructions == "Updated instructions"
+        
+        # Verify PUT was called correctly
+        mock_put.assert_called_once_with(
+            f"{PROJECTS_ENDPOINT}/{project.id}",
+            {"name": "Updated Name"},
+            api_key=None,
+        )
