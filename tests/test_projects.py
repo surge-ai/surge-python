@@ -459,3 +459,49 @@ def test_update_with_fields_template():
             {"fields_text": "ABC"},
             api_key=None,
         )
+
+
+def test_update_with_teams_required_and_forbidden():
+    project = Project(id="UPDATE_TEAMS", name="Project to update")
+
+    with patch.object(Project, "put") as mock_put:
+        mock_put.return_value = {
+            **project.to_dict(),
+            "qualifications_required": ["team1", "team2"],
+            "qualifications_forbidden": ["team3", "team4"]
+        }
+        updated = project.update(
+            teams_required=["team1", "team2"],
+            teams_forbidden=["team3", "team4"]
+        )
+        mock_put.assert_called_once_with(
+            f"{PROJECTS_ENDPOINT}/{project.id}",
+            {
+                "qualifications_required": ["team1", "team2"],
+                "qualifications_forbidden": ["team3", "team4"]
+            },
+            api_key=None,
+        )
+
+
+def test_update_with_empty_teams_to_clear():
+    project = Project(id="UPDATE_TEAMS_CLEAR", name="Project to update")
+
+    with patch.object(Project, "put") as mock_put:
+        mock_put.return_value = {
+            **project.to_dict(),
+            "qualifications_required": [],
+            "qualifications_forbidden": []
+        }
+        updated = project.update(
+            teams_required=[],
+            teams_forbidden=[]
+        )
+        mock_put.assert_called_once_with(
+            f"{PROJECTS_ENDPOINT}/{project.id}",
+            {
+                "qualifications_required": [],
+                "qualifications_forbidden": []
+            },
+            api_key=None,
+        )

@@ -358,6 +358,8 @@ class Project(APIResource):
         fields_template: str = None,
         num_workers_per_task: int = 0,
         description: str = None,
+        teams_required: list = None,
+        teams_forbidden: list = None,
         params: dict = {},
         api_key: str = None,
     ):
@@ -373,6 +375,9 @@ class Project(APIResource):
             fields_template (str, optional): A template describing how fields are shown to workers working on the task.
                 For example, if fields_template is "{{company_name}}", then workers will be shown a link to the company.
             num_workers_per_task (int, optional): How many workers work on each task (i.e., how many responses per task).
+            description (str, optional): Description of the project.
+            teams_required (list, optional): Sets the required qualifications (team ids). Pass an empty list to clear.
+            teams_forbidden (list, optional): Sets the forbidden qualifications (team ids). Pass an empty list to clear.
 
         Returns:
             project: new Project object
@@ -394,6 +399,10 @@ class Project(APIResource):
             params["fields_text"] = fields_template
         if num_workers_per_task > 0:
             params["num_workers_per_task"] = num_workers_per_task
+        if teams_required is not None:
+            params["qualifications_required"] = teams_required
+        if teams_forbidden is not None:
+            params["qualifications_forbidden"] = teams_forbidden
 
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}"
         response_json = self.put(endpoint, params, api_key=api_key)
