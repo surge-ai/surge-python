@@ -40,38 +40,38 @@ class APIResource(object):
 
             # GET request
             if method == "get":
-                response = requests.get(url,
-                                        auth=(api_key_to_use, ""),
-                                        params=params)
+                response = surge.session.get(url,
+                                             auth=(api_key_to_use, ""),
+                                             params=params)
 
             # POST request
             elif method == "post":
                 if files is not None:
-                    response = requests.post(url,
-                                             auth=(api_key_to_use, ""),
-                                             files=files,
-                                             json=params)
+                    response = surge.session.post(url,
+                                                  auth=(api_key_to_use, ""),
+                                                  files=files,
+                                                  json=params)
                 else:
-                    response = requests.post(url,
-                                             auth=(api_key_to_use, ""),
-                                             json=params)
+                    response = surge.session.post(url,
+                                                  auth=(api_key_to_use, ""),
+                                                  json=params)
 
             # PUT request
             elif method == "put":
                 if params is not None and len(params):
-                    response = requests.put(url,
-                                            auth=(api_key_to_use, ""),
-                                            json=params)
+                    response = surge.session.put(url,
+                                                 auth=(api_key_to_use, ""),
+                                                 json=params)
                 else:
-                    response = requests.put(url, auth=(api_key_to_use, ""))
+                    response = surge.session.put(url, auth=(api_key_to_use, ""))
 
             elif method == "delete":
-                response = requests.delete(url, auth=(api_key_to_use, ""))
+                response = surge.session.delete(url, auth=(api_key_to_use, ""))
 
             elif method == "patch":
-                response = requests.patch(url,
-                                          auth=(api_key_to_use, ""),
-                                          json=params)
+                response = surge.session.patch(url,
+                                               auth=(api_key_to_use, ""),
+                                               json=params)
 
             else:
                 raise SurgeRequestError("Invalid HTTP method.")
