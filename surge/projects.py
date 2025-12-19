@@ -84,18 +84,18 @@ class Project(APIResource):
         payment_per_response: float = None,
         private_workforce: bool = False,
         instructions: str = None,
-        questions: list = [],
-        qualifications_required: list = [],
-        teams_required: list = [],
-        teams_forbidden: list = [],
+        questions: list = None,
+        qualifications_required: list = None,
+        teams_required: list = None,
+        teams_forbidden: list = None,
         callback_url: str = None,
         fields_template: str = None,
         num_workers_per_task: int = 1,
-        tags=[],
+        tags=None,
         carousel=None,
         template_id: str = None,
         description: str = None,
-        params: dict = {},
+        params: dict = None,
         api_key: str = None,
     ):
         """
@@ -122,6 +122,20 @@ class Project(APIResource):
         Returns:
             project: new Project object
         """
+
+        # Initialize mutable defaults to avoid shared state between calls
+        if questions is None:
+            questions = []
+        if qualifications_required is None:
+            qualifications_required = []
+        if teams_required is None:
+            teams_required = []
+        if teams_forbidden is None:
+            teams_forbidden = []
+        if tags is None:
+            tags = []
+        if params is None:
+            params = {}
 
         Project._validate_questions(questions)
 
@@ -358,7 +372,7 @@ class Project(APIResource):
         fields_template: str = None,
         num_workers_per_task: int = 0,
         description: str = None,
-        params: dict = {},
+        params: dict = None,
         api_key: str = None,
     ):
         """
@@ -378,6 +392,8 @@ class Project(APIResource):
             project: new Project object
         """
 
+        if params is None:
+            params = {}
         params = {**params}
 
         if name is not None and len(name) > 0:
