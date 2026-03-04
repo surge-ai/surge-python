@@ -14,27 +14,73 @@ pip install --upgrade surge-api
 
 * Python 3.6+
 
-## Usage
+## Getting Your API Key
 
-Documentation and examples are available [here](https://app.surgehq.ai/docs/api#).
+Before using the SDK, you need to obtain an API key:
+
+1. **Log in to Surge AI**
+   - Go to https://app.surgehq.ai
+   - Sign in with your account
+
+2. **Navigate to Profile Settings**
+   - Click your profile picture (top right)
+   - Select "Profile" from the dropdown
+
+3. **Get Your API Key**
+   - Look for the "API Key" section
+   - Click "Reveal" or "Copy" to get your key
+   - It will look like: `surge_xxxxxxxxxxxxxxxxxxxxxxxx`
+
+4. **Keep it secure!**
+   - Never commit your API key to version control
+   - Use environment variables in production
+
+## Usage
 
 ### Authentication
 
-The library needs to be configured with your account's API key which is available in your Surge Profile. Set `surge.api_key` to its value:
+There are two ways to authenticate:
+
+#### Option 1: Environment Variable (Recommended)
+
+```bash
+export SURGE_API_KEY=surge_xxxxxxxxxxxxxxxxxxxxxxxx
+```
 
 ```python
 import surge
-surge.api_key = "YOUR API KEY"
-```
-Or set the API key as an environment variable:
-
-```bash
-export SURGE_API_KEY=<YOUR API KEY>
+# API key is automatically loaded from environment
 ```
 
-### Downloading project results
+#### Option 2: Direct Configuration
 
-Once the API key has been set, you can list all of the Projects under your Surge account or retrieve a specific Project by its ID.
+```python
+import surge
+surge.api_key = "surge_xxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+### Quick Start Example
+
+```python
+import surge
+
+# Set your API key
+surge.api_key = "YOUR_API_KEY"
+
+# List your projects
+projects = surge.Project.list()
+print(f"You have {len(projects)} projects")
+
+# Get a specific project
+project = surge.Project.retrieve("project-id-here")
+print(project.name)
+```
+
+## Common Operations
+
+### Downloading Project Results
+
+Once authenticated, you can list all Projects or retrieve a specific Project by its ID:
 
 ```python
 # List your Projects
@@ -53,7 +99,7 @@ results = project.download_json()
 project.save_report("export_csv", "results.csv")
 ```
 
-### Creating projects
+### Creating Projects
 
 If you have a blueprint, you can use it as a template to get a new batch of data annotated.
 You can add new labeling tasks from a CSV or with a list of dictionaries.
@@ -77,7 +123,7 @@ tasks = project.create_tasks([{
 }])
 ```
 
-### Creating tasks
+### Creating Tasks
 
 You can create new Tasks for a project, list all of the Tasks in a given project, or retrieve a specific Task given its ID.
 
@@ -109,6 +155,37 @@ file_path = "./companies_to_classify.csv"
 tasks = project.create_tasks_from_csv(file_path)
 ```
 
+## Error Handling
+
+```python
+import surge
+from surge.errors import SurgeRequestError
+
+try:
+    project = surge.Project.retrieve("invalid-id")
+except SurgeRequestError as e:
+    print(f"API Error: {e}")
+```
+
+## Troubleshooting
+
+### "Cannot seem to get API Key"
+
+1. Make sure you're logged in to https://app.surgehq.ai
+2. Check that you have a valid Surge AI account
+3. The API key section is in your Profile page
+4. If you still can't find it, contact support@surgehq.ai
+
+### "Authentication failed"
+
+1. Verify your API key is correct
+2. Check that the key hasn't been revoked
+3. Ensure no extra spaces when copying
+4. Try using environment variable instead of hardcoding
+
+## Full API Documentation
+
+Complete API documentation is available at: https://app.surgehq.ai/docs/api#
 
 ## Development
 
@@ -130,3 +207,13 @@ pytest tests/test_projects.py
 # Run a specific test
 pytest tests/test_projects.py::test_init_complete
 ```
+
+## License
+
+MIT License - See LICENSE file for details
+
+## Support
+
+- Documentation: https://app.surgehq.ai/docs/api#
+- Email: support@surgehq.ai
+- Issues: https://github.com/surge-ai/surge-python/issues
