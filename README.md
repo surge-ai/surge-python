@@ -159,12 +159,17 @@ tasks = project.create_tasks_from_csv(file_path)
 
 ```python
 import surge
-from surge.errors import SurgeRequestError
+from surge.errors import SurgeRequestError, SurgeMissingAPIKeyError
+
+# Set your API key first
+surge.api_key = "YOUR_API_KEY"
 
 try:
     project = surge.Project.retrieve("invalid-id")
 except SurgeRequestError as e:
     print(f"API Error: {e}")
+except SurgeMissingAPIKeyError as e:
+    print(f"Authentication Error: {e}")
 ```
 
 ## Troubleshooting
