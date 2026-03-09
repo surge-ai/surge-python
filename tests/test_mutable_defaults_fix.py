@@ -24,22 +24,35 @@ def test_create_multiple_projects_with_template_no_shared_state():
 
         # Setup mock responses for project creation
         mock_post.side_effect = [
-            {"id": "project-1", "name": "Test Project 1"},
-            {"id": "project-2", "name": "Test Project 2"},
+            {
+                "id": "project-1",
+                "name": "Test Project 1"
+            },
+            {
+                "id": "project-2",
+                "name": "Test Project 2"
+            },
         ]
 
         # Setup mock responses for project retrieval
         mock_get.side_effect = [
-            {"id": "project-1", "name": "Test Project 1"},
-            {"id": "project-2", "name": "Test Project 2"},
-            {"id": "project-1", "name": "Test Project 1"},  # Third retrieve of project 1
+            {
+                "id": "project-1",
+                "name": "Test Project 1"
+            },
+            {
+                "id": "project-2",
+                "name": "Test Project 2"
+            },
+            {
+                "id": "project-1",
+                "name": "Test Project 1"
+            },  # Third retrieve of project 1
         ]
 
         # Create first project
-        project1 = Project.create(
-            name="Test Project 1",
-            template_id="template-123"
-        )
+        project1 = Project.create(name="Test Project 1",
+                                  template_id="template-123")
         assert project1.name == "Test Project 1"
         assert project1.id == "project-1"
 
@@ -48,10 +61,8 @@ def test_create_multiple_projects_with_template_no_shared_state():
         assert project1_retrieved.name == "Test Project 1"
 
         # Create second project
-        project2 = Project.create(
-            name="Test Project 2",
-            template_id="template-123"
-        )
+        project2 = Project.create(name="Test Project 2",
+                                  template_id="template-123")
         assert project2.name == "Test Project 2"
         assert project2.id == "project-2"
 
@@ -70,8 +81,10 @@ def test_create_multiple_projects_with_template_no_shared_state():
         assert mock_post.call_count == 2
 
         # Get the params from each call
-        call1_params = mock_post.call_args_list[0][0][1]  # First call, second argument (params)
-        call2_params = mock_post.call_args_list[1][0][1]  # Second call, second argument (params)
+        call1_params = mock_post.call_args_list[0][0][
+            1]  # First call, second argument (params)
+        call2_params = mock_post.call_args_list[1][0][
+            1]  # Second call, second argument (params)
 
         # Verify each call had correct name
         assert call1_params["name"] == "Test Project 1"
@@ -88,21 +101,22 @@ def test_params_dict_not_shared_between_calls():
     """
     with patch.object(Project, 'post') as mock_post:
         mock_post.side_effect = [
-            {"id": "p1", "name": "Project 1"},
-            {"id": "p2", "name": "Project 2"},
+            {
+                "id": "p1",
+                "name": "Project 1"
+            },
+            {
+                "id": "p2",
+                "name": "Project 2"
+            },
         ]
 
         # Create first project with custom params
-        Project.create(
-            name="Project 1",
-            params={"custom_field": "value1"}
-        )
+        Project.create(name="Project 1", params={"custom_field": "value1"})
 
         # Create second project without custom params
         # Bug: If params dict is shared, it would still contain custom_field
-        Project.create(
-            name="Project 2"
-        )
+        Project.create(name="Project 2")
 
         # Verify second call doesn't have custom_field from first call
         second_call_params = mock_post.call_args_list[1][0][1]
@@ -121,8 +135,14 @@ def test_list_defaults_not_shared():
     """
     with patch.object(Project, 'post') as mock_post:
         mock_post.side_effect = [
-            {"id": "p1", "name": "Project 1"},
-            {"id": "p2", "name": "Project 2"},
+            {
+                "id": "p1",
+                "name": "Project 1"
+            },
+            {
+                "id": "p2",
+                "name": "Project 2"
+            },
         ]
 
         # Create first project
@@ -138,7 +158,8 @@ def test_list_defaults_not_shared():
         # Verify that the lists are different objects
         assert call1_params["questions"] is not call2_params["questions"]
         assert call1_params["tags"] is not call2_params["tags"]
-        assert call1_params["qualifications_required"] is not call2_params["qualifications_required"]
+        assert call1_params["qualifications_required"] is not call2_params[
+            "qualifications_required"]
 
 
 def test_update_params_not_shared():
@@ -149,8 +170,14 @@ def test_update_params_not_shared():
 
     with patch.object(Project, 'put') as mock_put:
         mock_put.side_effect = [
-            {"id": "test-id", "name": "Updated 1"},
-            {"id": "test-id", "name": "Updated 2"},
+            {
+                "id": "test-id",
+                "name": "Updated 1"
+            },
+            {
+                "id": "test-id",
+                "name": "Updated 2"
+            },
         ]
 
         # First update

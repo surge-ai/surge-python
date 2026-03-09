@@ -254,7 +254,9 @@ class Project(APIResource):
         """
         endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/copies"
         response_json = self.get(endpoint, api_key=api_key)
-        projects = [self.__class__(**project_json) for project_json in response_json]
+        projects = [
+            self.__class__(**project_json) for project_json in response_json
+        ]
         return projects
 
     def launch(self, api_key: str = None):
