@@ -8,8 +8,10 @@ def test_evaluate_with_all_params():
     """Test evaluate method with all parameters provided"""
     with patch.object(Rubric, "post") as mock_post:
         mock_post.return_value = {
-            "answer": True,
-            "explanation": 'The text explicitly mentions two animals: "fox" and "dog." Therefore, it contains an animal, satisfying the rubric.',
+            "answer":
+            True,
+            "explanation":
+            'The text explicitly mentions two animals: "fox" and "dog." Therefore, it contains an animal, satisfying the rubric.',
         }
 
         result = Rubric.evaluate(
@@ -22,7 +24,8 @@ def test_evaluate_with_all_params():
         mock_post.assert_called_once_with(
             "evaluate_rubric",
             {
-                "text_for_grading": "The quick brown fox jumps over the lazy dog",
+                "text_for_grading":
+                "The quick brown fox jumps over the lazy dog",
                 "rubric_text": "Check if the text contains an animal",
                 "prompt": "Grade this text based on the rubric",
             },
@@ -62,11 +65,13 @@ def test_evaluate_without_prompt():
 def test_evaluate_returns_dict():
     """Test that evaluate returns a dictionary with expected keys"""
     with patch.object(Rubric, "post") as mock_post:
-        mock_post.return_value = {"answer": True, "explanation": "Test explanation"}
+        mock_post.return_value = {
+            "answer": True,
+            "explanation": "Test explanation"
+        }
 
-        result = Rubric.evaluate(
-            text_for_grading="Sample text", rubric_text="Sample rubric"
-        )
+        result = Rubric.evaluate(text_for_grading="Sample text",
+                                 rubric_text="Sample rubric")
 
         assert isinstance(result, dict)
         assert "answer" in result
