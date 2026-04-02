@@ -37,7 +37,7 @@ class APIResource(object):
 
         try:
             url = f"{surge.base_url}/{api_endpoint}"
-            headers = dict(getattr(surge, 'default_headers', None) or {})
+            headers = dict(surge.default_headers)
 
             # GET request
             if method == "get":
