@@ -37,12 +37,14 @@ class APIResource(object):
 
         try:
             url = f"{surge.base_url}/{api_endpoint}"
+            headers = dict(getattr(surge, 'default_headers', None) or {})
 
             # GET request
             if method == "get":
                 response = requests.get(url,
                                         auth=(api_key_to_use, ""),
-                                        params=params)
+                                        params=params,
+                                        headers=headers)
 
             # POST request
             elif method == "post":
@@ -50,28 +52,36 @@ class APIResource(object):
                     response = requests.post(url,
                                              auth=(api_key_to_use, ""),
                                              files=files,
-                                             json=params)
+                                             json=params,
+                                             headers=headers)
                 else:
                     response = requests.post(url,
                                              auth=(api_key_to_use, ""),
-                                             json=params)
+                                             json=params,
+                                             headers=headers)
 
             # PUT request
             elif method == "put":
                 if params is not None and len(params):
                     response = requests.put(url,
                                             auth=(api_key_to_use, ""),
-                                            json=params)
+                                            json=params,
+                                            headers=headers)
                 else:
-                    response = requests.put(url, auth=(api_key_to_use, ""))
+                    response = requests.put(url,
+                                            auth=(api_key_to_use, ""),
+                                            headers=headers)
 
             elif method == "delete":
-                response = requests.delete(url, auth=(api_key_to_use, ""))
+                response = requests.delete(url,
+                                           auth=(api_key_to_use, ""),
+                                           headers=headers)
 
             elif method == "patch":
                 response = requests.patch(url,
                                           auth=(api_key_to_use, ""),
-                                          json=params)
+                                          json=params,
+                                          headers=headers)
 
             else:
                 raise SurgeRequestError("Invalid HTTP method.")
