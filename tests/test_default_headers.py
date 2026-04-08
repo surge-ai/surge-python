@@ -24,7 +24,7 @@ class TestDefaultHeaders(unittest.TestCase):
         APIResource._base_request("get", "projects/123")
 
         call_kwargs = mock_get.call_args
-        assert call_kwargs.kwargs["headers"] == {}
+        assert "headers" not in call_kwargs.kwargs
 
     @patch("requests.get")
     def test_actor_type_header_injected(self, mock_get):
