@@ -12,7 +12,7 @@ pip install --upgrade surge-api
 
 ### Requirements
 
-* Python 3.6+
+* Python 3.10+
 
 ## Usage
 

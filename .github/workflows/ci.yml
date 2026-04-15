@@ -17,11 +17,11 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install 'setuptools>=78.1.1' -r requirements.txt
 
       - name: Check formatting
         run: |
-          pip install yapf
+          pip install yapf==0.43.0
           yapf -d -r -e '.cci_pycache/**' .
 
       - name: Run tests
