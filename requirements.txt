@@ -1,6 +1,6 @@
 certifi==2026.2.25
 charset-normalizer==3.4.7
-idna==3.11
+idna==3.13
 iniconfig==2.3.0
 packaging==26.1
 pluggy==1.6.0
