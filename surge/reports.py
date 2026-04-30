@@ -61,6 +61,11 @@ class Report(APIResource):
         response = cls.request(project_id=project_id,
                                type=type,
                                api_key=api_key)
+        # Capture the job_id from the initial CREATING response and
+        # reuse it across polls. check_status's IN_PROGRESS response
+        # does not include job_id; only RETRYING does (and means the
+        # server kicked off a new underlying job).
+        job_id = getattr(response, "job_id", None)
         deadline = monotonic() + poll_time
         while response.status in ("CREATING", "IN_PROGRESS", "RETRYING"):
             if monotonic() >= deadline:
@@ -68,9 +73,9 @@ class Report(APIResource):
                     "Report failed to generate within {poll_time} seconds".
                     format(poll_time=poll_time))
             sleep(poll_interval)
-            response = cls.check_status(project_id,
-                                        response.job_id,
-                                        api_key=api_key)
+            response = cls.check_status(project_id, job_id, api_key=api_key)
+            if response.status == "RETRYING":
+                job_id = response.job_id
 
         if response.status not in ("READY", "COMPLETED"):
             raise ValueError("Report failed to generate with status {}".format(

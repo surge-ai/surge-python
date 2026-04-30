@@ -39,10 +39,15 @@ def test_save_report_downloads_when_request_returns_ready():
 
 
 def test_save_report_polls_check_status_for_returned_job_id():
-    """When request returns CREATING, poll check_status against that job_id."""
+    """When request returns CREATING, poll check_status against that job_id.
+
+    IN_PROGRESS responses from check_status do not include a job_id —
+    we have to remember the one from the initial CREATING response
+    rather than re-reading it on each iteration.
+    """
     payload = b"a,b\n1,2\n"
     creating = Report(status="CREATING", job_id="job-abc")
-    in_progress = Report(status="IN_PROGRESS", job_id="job-abc")
+    in_progress = Report(status="IN_PROGRESS")
     completed = Report(status="COMPLETED",
                        url="https://signed.example/report.gz")
     sink = io.BytesIO()
@@ -61,6 +66,27 @@ def test_save_report_polls_check_status_for_returned_job_id():
         assert call.args[:2] == ("proj-123", "job-abc")
     assert mock_sleep.call_count == 2
     assert sink.getvalue() == payload
+
+
+def test_save_report_switches_job_id_on_retrying():
+    """RETRYING responses include a new job_id; subsequent polls use it."""
+    payload = b'[]'
+    creating = Report(status="CREATING", job_id="job-abc")
+    retrying = Report(status="RETRYING", job_id="job-xyz")
+    in_progress = Report(status="IN_PROGRESS")
+    completed = Report(status="COMPLETED",
+                       url="https://signed.example/report.gz")
+    sink = io.BytesIO()
+    with mock.patch.object(Report, "request", return_value=creating), \
+            mock.patch.object(Report, "check_status",
+                              side_effect=[retrying, in_progress, completed]) as mock_check, \
+            mock.patch("urllib.request.urlopen") as mock_urlopen, \
+            mock.patch("surge.reports.sleep"):
+        mock_urlopen.return_value.__enter__.return_value = io.BytesIO(
+            _gzipped(payload))
+        Report.save_report("proj-123", "export_json", filepath=sink)
+    job_ids = [call.args[1] for call in mock_check.call_args_list]
+    assert job_ids == ["job-abc", "job-xyz", "job-xyz"]
 
 
 def test_save_report_raises_on_unexpected_status():
