@@ -89,7 +89,11 @@ class Report(APIResource):
             with tempfile.NamedTemporaryFile() as tmp_file:
                 shutil.copyfileobj(remote, tmp_file)
                 tmp_file.flush()
-                with gzip.open(tmp_file.name, "r") as gz:
+                tmp_file.seek(0)
+                # Read via the open file handle rather than reopening
+                # tmp_file.name — NamedTemporaryFile cannot be reopened
+                # by path on Windows while the original handle is open.
+                with gzip.GzipFile(fileobj=tmp_file, mode="rb") as gz:
                     data = gz.read()
         if isinstance(target, str):
             with open(target, "wb") as f:
