@@ -89,7 +89,8 @@ class Report(APIResource):
             with tempfile.NamedTemporaryFile() as tmp_file:
                 shutil.copyfileobj(remote, tmp_file)
                 tmp_file.flush()
-                data = gzip.open(tmp_file.name, "r").read()
+                with gzip.open(tmp_file.name, "r") as gz:
+                    data = gz.read()
         if isinstance(target, str):
             with open(target, "wb") as f:
                 f.write(data)
