@@ -1,5 +1,5 @@
 import gzip
-from time import sleep
+from time import sleep, monotonic
 import urllib
 import tempfile
 import shutil
@@ -34,9 +34,18 @@ class Report(APIResource):
         filepath=None,
         poll_time=5 * 60,
         api_key: str = None,
+        poll_interval: float = 2,
     ):
         """
         Request creation of a report, poll until the report is generated, and save the data to a file all in one call.
+
+        Calls ``request`` once to start (or reuse) a generation job and
+        then polls ``check_status`` against the returned ``job_id``
+        until that specific job finishes. Polling a specific job —
+        rather than re-calling ``request`` in a loop — avoids
+        re-triggering generation on projects that are still receiving
+        responses, which would otherwise cause this call to hang.
+
         Arguments:
             project_id (string): UUID of project to get data for
             type (string): Must be one of these types:
@@ -46,49 +55,52 @@ class Report(APIResource):
               * `export_csv_aggregated`
               * `export_csv_flattened`
             filepath (string or IO or None): Location to save the results file. If not specified, will save to "project_{project_id}_results.{csv/json}
-            poll_time (int): Number of seconds to poll for the report
+            poll_time (int): Maximum number of seconds to wait for the report to be generated
+            poll_interval (int or float): Seconds to wait between status checks
         """
-        for _ in range(poll_time // 2):
-            response = cls.request(project_id=project_id,
-                                   type=type,
-                                   api_key=api_key)
-            # Download zipped project results if ready
-            if response.status == "READY":
-                file_ext = "csv" if "csv" in type else "json"
-                default_file_name = (
-                    "project_{project_id}_results.{file_ext}.gzip".format(
-                        project_id=project_id, file_ext=file_ext))
-                with urllib.request.urlopen(response.url) as response:
-                    with tempfile.NamedTemporaryFile() as tmp_file:
-                        shutil.copyfileobj(response, tmp_file)
-                        tmp_file.flush()
-                        # Unzip and save results
-                        data = gzip.open(tmp_file.name, "r").read()
-                        filepath = filepath or default_file_name.rstrip(
-                            ".gzip")
-                        if isinstance(filepath, str):
-                            file = open(
-                                filepath or default_file_name.rstrip(".gzip"),
-                                "wb")
-                        else:
-                            file = filepath
-                        file.write(data)
-                        if isinstance(filepath, str):
-                            file.close()
-                return data
+        response = cls.request(project_id=project_id,
+                               type=type,
+                               api_key=api_key)
+        # Capture the job_id from the initial CREATING response and
+        # reuse it across polls. check_status's IN_PROGRESS response
+        # does not include job_id; only RETRYING does (and means the
+        # server kicked off a new underlying job).
+        job_id = getattr(response, "job_id", None)
+        deadline = monotonic() + poll_time
+        while response.status in ("CREATING", "IN_PROGRESS", "RETRYING"):
+            if monotonic() >= deadline:
+                raise Exception(
+                    "Report failed to generate within {poll_time} seconds".
+                    format(poll_time=poll_time))
+            sleep(poll_interval)
+            response = cls.check_status(project_id, job_id, api_key=api_key)
+            if response.status == "RETRYING":
+                job_id = response.job_id
 
-            # Wait two seconds before polling again
-            elif response.status == "CREATING":
-                sleep(2)
-                continue
-            else:
-                raise ValueError(
-                    "Report failed to generate with status {}".format(
-                        response.status))
+        if response.status not in ("READY", "COMPLETED"):
+            raise ValueError("Report failed to generate with status {}".format(
+                response.status))
 
-        raise Exception(
-            "Report failed to generate within {poll_time} seconds".format(
-                poll_time=poll_time))
+        file_ext = "csv" if "csv" in type else "json"
+        default_file_name = "project_{project_id}_results.{file_ext}".format(
+            project_id=project_id, file_ext=file_ext)
+        target = filepath or default_file_name
+        with urllib.request.urlopen(response.url) as remote:
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                shutil.copyfileobj(remote, tmp_file)
+                tmp_file.flush()
+                tmp_file.seek(0)
+                # Read via the open file handle rather than reopening
+                # tmp_file.name — NamedTemporaryFile cannot be reopened
+                # by path on Windows while the original handle is open.
+                with gzip.GzipFile(fileobj=tmp_file, mode="rb") as gz:
+                    data = gz.read()
+        if isinstance(target, str):
+            with open(target, "wb") as f:
+                f.write(data)
+        else:
+            target.write(data)
+        return data
 
     @classmethod
     def download_json(cls,
