@@ -77,6 +77,7 @@ class APIResource(object):
             elif method == "delete":
                 response = requests.delete(url,
                                            auth=(api_key_to_use, ""),
+                                           params=params,
                                            **header_kwargs)
 
             elif method == "patch":
@@ -141,6 +142,9 @@ class APIResource(object):
                                  api_key=api_key)
 
     @classmethod
-    def delete_request(cls, api_endpoint, api_key=None):
+    def delete_request(cls, api_endpoint, api_key=None, params=None):
         method = "delete"
-        return cls._base_request(method, api_endpoint, api_key=api_key)
+        return cls._base_request(method,
+                                 api_endpoint,
+                                 params=params,
+                                 api_key=api_key)
