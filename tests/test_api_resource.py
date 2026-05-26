@@ -71,3 +71,19 @@ def test_get_passed_in_file():
 def test_print_attrs():
     a1 = APIResource(id="ABC1234").print_attrs()
     assert a1 == 'id="ABC1234"'
+
+
+def test_delete_request_forwards_params():
+    with mock.patch.object(requests, "delete") as mock_request:
+        mock_request.return_value = mock.MagicMock()
+        APIResource._base_request(
+            "delete",
+            surge.api_resource.PROJECTS_ENDPOINT,
+            params={"foo": "bar"},
+            api_key="passed_api_key",
+        )
+        mock_request.assert_called_once_with(
+            "https://app.surgehq.ai/api/projects",
+            auth=("passed_api_key", ""),
+            params={"foo": "bar"},
+        )
