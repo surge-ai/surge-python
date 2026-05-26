@@ -143,8 +143,6 @@ class APIResource(object):
 
     @classmethod
     def delete_request(cls, api_endpoint, api_key=None, params=None):
-        # api_key precedes params to preserve positional backward
-        # compatibility with callers that predate the params argument.
         method = "delete"
         return cls._base_request(method,
                                  api_endpoint,
