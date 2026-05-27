@@ -12,6 +12,7 @@ from surge.errors import SurgeRequestError
 
 
 class Report(APIResource):
+
     def __init__(self, **kwargs):
         super().__init__()
         self.__dict__.update(kwargs)
@@ -57,7 +58,9 @@ class Report(APIResource):
             poll_time (int): Maximum number of seconds to wait for the report to be generated
             poll_interval (int or float): Seconds to wait between status checks
         """
-        initial = cls.request(project_id=project_id, type=type, api_key=api_key)
+        initial = cls.request(project_id=project_id,
+                              type=type,
+                              api_key=api_key)
         if initial.status == "READY":
             url = initial.url
         else:
@@ -67,7 +70,9 @@ class Report(APIResource):
             state = {"job_id": getattr(initial, "job_id", None)}
 
             def _check():
-                r = cls.check_status(project_id, state["job_id"], api_key=api_key)
+                r = cls.check_status(project_id,
+                                     state["job_id"],
+                                     api_key=api_key)
                 if r.status == "RETRYING":
                     state["job_id"] = r.job_id
                 return vars(r)
@@ -77,26 +82,22 @@ class Report(APIResource):
                     _check,
                     poll_time=poll_time,
                     poll_interval=poll_interval,
-                    in_progress_statuses=("IN_PROGRESS", "CREATING", "RETRYING"),
+                    in_progress_statuses=("IN_PROGRESS", "CREATING",
+                                          "RETRYING"),
                 )
             except AsyncJobTimeoutError:
                 raise Exception(
-                    "Report failed to generate within {poll_time} seconds".format(
-                        poll_time=poll_time
-                    )
-                )
+                    "Report failed to generate within {poll_time} seconds".
+                    format(poll_time=poll_time))
             except AsyncJobError as e:
                 raise ValueError(
                     "Report failed to generate with status {}".format(
-                        e.status.get("status")
-                    )
-                )
+                        e.status.get("status")))
             url = terminal["url"]
 
         file_ext = "csv" if "csv" in type else "json"
         default_file_name = "project_{project_id}_results.{file_ext}".format(
-            project_id=project_id, file_ext=file_ext
-        )
+            project_id=project_id, file_ext=file_ext)
         target = filepath or default_file_name
         with urllib.request.urlopen(url) as remote:
             with tempfile.NamedTemporaryFile() as tmp_file:
@@ -116,7 +117,10 @@ class Report(APIResource):
         return data
 
     @classmethod
-    def download_json(cls, project_id: str, poll_time=5 * 60, api_key: str = None):
+    def download_json(cls,
+                      project_id: str,
+                      poll_time=5 * 60,
+                      api_key: str = None):
         """
         Download and parse the results JSON for a project
 
