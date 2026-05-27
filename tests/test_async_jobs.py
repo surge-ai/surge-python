@@ -62,3 +62,30 @@ def test_raises_timeout_when_poll_time_elapses():
                 poll_time=0,
                 poll_interval=0,
             )
+
+
+def test_raises_timeout_instead_of_returning_completed_after_deadline():
+    """When poll_interval > poll_time the loop sleeps past the deadline.
+    The second status must not be honored — even if it would be COMPLETED."""
+
+    def fake_sleep(_):
+        # Make the deadline elapse during the first sleep without actually
+        # waiting in the test.
+        import time as _time
+
+        _time.monotonic = lambda: 1e9
+
+    statuses = iter(
+        [
+            {"status": "IN_PROGRESS"},
+            {"status": "COMPLETED", "url": "u"},
+        ]
+    )
+
+    with patch("time.sleep", side_effect=fake_sleep):
+        with pytest.raises(AsyncJobTimeoutError):
+            poll_async_job(
+                lambda: next(statuses),
+                poll_time=1,
+                poll_interval=2,
+            )

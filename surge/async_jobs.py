@@ -46,7 +46,13 @@ def poll_async_job(
     error = set(error_statuses)
 
     deadline = time.monotonic() + poll_time
+    first_iteration = True
     while True:
+        if not first_iteration and time.monotonic() >= deadline:
+            raise AsyncJobTimeoutError(
+                f"async job did not complete within {poll_time} seconds"
+            )
+        first_iteration = False
         status = check_status()
         value = status.get("status")
         if value in completed:
@@ -55,8 +61,4 @@ def poll_async_job(
             raise AsyncJobError(status)
         if value not in in_progress:
             raise AsyncJobError({**status, "error": f"unexpected status {value!r}"})
-        if time.monotonic() >= deadline:
-            raise AsyncJobTimeoutError(
-                f"async job did not complete within {poll_time} seconds"
-            )
         time.sleep(poll_interval)
