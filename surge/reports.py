@@ -160,11 +160,19 @@ class Report(APIResource):
         extra_params: dict = None,
     ):
         """
-        Request creation of a report for the given type. Note that reports are generated
-        asychronously so the response may include a `job_id` which needs to be used with
-        the `status` method to get the job status. In the event that the report has is
-        already generated and current, the report URL will be returned. Note that the URL
-        is a presigned URL which is active for only a limited duration.
+        Request creation of a report for the given type.
+
+        Most callers want `save_report` instead — it kicks off the
+        request, polls the specific job, and saves the result to a
+        file in a single call. Use this raw method for fire-and-forget
+        batches or custom poll loops.
+
+        Reports are generated asychronously so the response may
+        include a `job_id` which needs to be used with `check_status`
+        to get the job status. In the event that the report has is
+        already generated and current, the report URL will be returned.
+        Note that the URL is a presigned URL which is active for only
+        a limited duration.
 
         Type may be one of these types:
           * `export_json`
@@ -259,7 +267,12 @@ class Report(APIResource):
     @classmethod
     def check_status(cls, project_id: str, job_id: str, api_key: str = None):
         """
-        Checks the status of a given report job. The response will be of one of these shapes:
+        Checks the status of a given report job.
+
+        Most callers want `save_report` instead — this method is for
+        custom poll loops over a `job_id` returned by the raw `request`.
+
+        The response will be of one of these shapes:
 
         1) Report is still being generated (HTTP 202):
 
