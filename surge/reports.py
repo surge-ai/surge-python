@@ -201,8 +201,13 @@ class Report(APIResource):
         Returns:
             status: Report status object which includes report id
         """
+        extra = extra_params or {}
+        if "report_type" in extra:
+            raise ValueError(
+                "`report_type` is set via the `type` argument and cannot "
+                "be passed in `extra_params`")
         endpoint = f"{REPORTS_ENDPOINT}/{project_id}/report"
-        params = {"report_type": type, **(extra_params or {})}
+        params = {"report_type": type, **extra}
         response_json = cls.post(endpoint, params, api_key=api_key)
         if "error" in response_json:
             raise SurgeRequestError(response_json["error"])

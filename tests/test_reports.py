@@ -178,6 +178,17 @@ def test_save_report_treats_completed_initial_response_as_terminal():
     assert sink.getvalue() == payload
 
 
+def test_request_rejects_report_type_in_extra_params():
+    """report_type is set via the `type` argument; allowing it in
+    extra_params would silently override the explicit `type`."""
+    with mock.patch.object(Report, "post") as mock_post:
+        with pytest.raises(ValueError, match="report_type"):
+            Report.request("proj-1",
+                           "export_csv",
+                           extra_params={"report_type": "export_json"})
+    mock_post.assert_not_called()
+
+
 def test_save_report_forwards_extra_params_to_request():
     payload = b"[]"
     ready = Report(status="READY", url="https://signed.example/report.gz")
