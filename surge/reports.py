@@ -35,6 +35,8 @@ class Report(APIResource):
         poll_time=5 * 60,
         api_key: str = None,
         poll_interval: float = 2,
+        *,
+        extra_params: dict = None,
     ):
         """
         Request creation of a report, poll until the report is generated, and save the data to a file all in one call.
@@ -57,10 +59,13 @@ class Report(APIResource):
             filepath (string or IO or None): Location to save the results file. If not specified, will save to "project_{project_id}_results.{csv/json}
             poll_time (int): Maximum number of seconds to wait for the report to be generated
             poll_interval (int or float): Seconds to wait between status checks
+            extra_params (dict, optional): Additional params merged into the
+                initial report request body. See ``request``.
         """
         initial = cls.request(project_id=project_id,
                               type=type,
-                              api_key=api_key)
+                              api_key=api_key,
+                              extra_params=extra_params)
         if initial.status == "READY":
             url = initial.url
         else:
@@ -143,7 +148,14 @@ class Report(APIResource):
         return json.load(bytesio)
 
     @classmethod
-    def request(cls, project_id: str, type: str, api_key: str = None):
+    def request(
+        cls,
+        project_id: str,
+        type: str,
+        api_key: str = None,
+        *,
+        extra_params: dict = None,
+    ):
         """
         Request creation of a report for the given type. Note that reports are generated
         asychronously so the response may include a `job_id` which needs to be used with
@@ -178,12 +190,16 @@ class Report(APIResource):
         Arguments:
             project_id (str): ID of project.
             report_type (str): report type
+            extra_params (dict, optional): Additional params merged into the
+                report request body. Use for backend-supported params that
+                aren't first-class kwargs on this method; refer to the API
+                reference for valid keys.
 
         Returns:
             status: Report status object which includes report id
         """
         endpoint = f"{REPORTS_ENDPOINT}/{project_id}/report"
-        params = {"report_type": type}
+        params = {"report_type": type, **(extra_params or {})}
         response_json = cls.post(endpoint, params, api_key=api_key)
         if "error" in response_json:
             raise SurgeRequestError(response_json["error"])

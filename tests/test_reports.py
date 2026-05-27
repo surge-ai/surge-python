@@ -127,3 +127,39 @@ def test_save_report_times_out_when_job_never_completes():
             Report.save_report("proj-123",
                                "export_json",
                                filepath=io.BytesIO())
+
+
+def test_request_merges_extra_params_into_post_body():
+    with mock.patch.object(Report, "post") as mock_post:
+        mock_post.return_value = {"status": "CREATING", "job_id": "j"}
+        Report.request("proj-1", "export_json", extra_params={"item_id": "i"})
+    endpoint, params = mock_post.call_args.args[:2]
+    assert "report" in endpoint
+    assert params == {"report_type": "export_json", "item_id": "i"}
+
+
+def test_request_without_extra_params_sends_only_report_type():
+    with mock.patch.object(Report, "post") as mock_post:
+        mock_post.return_value = {"status": "CREATING", "job_id": "j"}
+        Report.request("proj-1", "export_json")
+    _, params = mock_post.call_args.args[:2]
+    assert params == {"report_type": "export_json"}
+
+
+def test_save_report_forwards_extra_params_to_request():
+    payload = b"[]"
+    ready = Report(status="READY", url="https://signed.example/report.gz")
+    with (
+            mock.patch.object(Report, "request", return_value=ready) as
+            mock_request,
+            mock.patch("urllib.request.urlopen") as mock_urlopen,
+    ):
+        mock_urlopen.return_value.__enter__.return_value = io.BytesIO(
+            _gzipped(payload))
+        Report.save_report(
+            "proj-1",
+            "export_json",
+            filepath=io.BytesIO(),
+            extra_params={"item_id": "i"},
+        )
+    assert mock_request.call_args.kwargs["extra_params"] == {"item_id": "i"}
