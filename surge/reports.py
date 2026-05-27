@@ -68,6 +68,9 @@ class Report(APIResource):
                               extra_params=extra_params)
         if initial.status in ("READY", "COMPLETED"):
             url = initial.url
+        elif initial.status not in ("CREATING", "IN_PROGRESS", "RETRYING"):
+            raise ValueError("Report failed to generate with status {}".format(
+                initial.status))
         else:
             # Capture the initial CREATING job_id; check_status's IN_PROGRESS
             # response does not include one. RETRYING updates job_id mid-poll

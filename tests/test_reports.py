@@ -146,6 +146,18 @@ def test_request_without_extra_params_sends_only_report_type():
     assert params == {"report_type": "export_json"}
 
 
+def test_save_report_raises_when_initial_request_returns_error():
+    """If request() returns ERROR directly, raise without polling check_status."""
+    error = Report(status="ERROR", type="Report generation error")
+    with (
+            mock.patch.object(Report, "request", return_value=error),
+            mock.patch.object(Report, "check_status") as mock_check,
+    ):
+        with pytest.raises(ValueError, match="ERROR"):
+            Report.save_report("proj-e", "export_json", filepath=io.BytesIO())
+    mock_check.assert_not_called()
+
+
 def test_save_report_treats_completed_initial_response_as_terminal():
     """If request() returns COMPLETED (not just READY), skip polling."""
     payload = b"[]"
