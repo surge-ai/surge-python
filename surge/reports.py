@@ -1,5 +1,4 @@
 import gzip
-from time import sleep, monotonic
 import urllib
 import tempfile
 import shutil
@@ -8,17 +7,17 @@ import json
 import warnings
 
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
+from surge.async_jobs import AsyncJobError, AsyncJobTimeoutError, poll_async_job
 from surge.errors import SurgeRequestError
 
 
 class Report(APIResource):
-
     def __init__(self, **kwargs):
         super().__init__()
         self.__dict__.update(kwargs)
 
     def __str__(self):
-        return f"<surge.Report>"
+        return "<surge.Report>"
 
     def __repr__(self):
         return f"<surge.Report {self.attrs_repr()}>"
@@ -58,34 +57,48 @@ class Report(APIResource):
             poll_time (int): Maximum number of seconds to wait for the report to be generated
             poll_interval (int or float): Seconds to wait between status checks
         """
-        response = cls.request(project_id=project_id,
-                               type=type,
-                               api_key=api_key)
-        # Capture the job_id from the initial CREATING response and
-        # reuse it across polls. check_status's IN_PROGRESS response
-        # does not include job_id; only RETRYING does (and means the
-        # server kicked off a new underlying job).
-        job_id = getattr(response, "job_id", None)
-        deadline = monotonic() + poll_time
-        while response.status in ("CREATING", "IN_PROGRESS", "RETRYING"):
-            if monotonic() >= deadline:
-                raise Exception(
-                    "Report failed to generate within {poll_time} seconds".
-                    format(poll_time=poll_time))
-            sleep(poll_interval)
-            response = cls.check_status(project_id, job_id, api_key=api_key)
-            if response.status == "RETRYING":
-                job_id = response.job_id
+        initial = cls.request(project_id=project_id, type=type, api_key=api_key)
+        if initial.status == "READY":
+            url = initial.url
+        else:
+            # Capture the initial CREATING job_id; check_status's IN_PROGRESS
+            # response does not include one. RETRYING updates job_id mid-poll
+            # (server kicked off a new underlying job).
+            state = {"job_id": getattr(initial, "job_id", None)}
 
-        if response.status not in ("READY", "COMPLETED"):
-            raise ValueError("Report failed to generate with status {}".format(
-                response.status))
+            def _check():
+                r = cls.check_status(project_id, state["job_id"], api_key=api_key)
+                if r.status == "RETRYING":
+                    state["job_id"] = r.job_id
+                return vars(r)
+
+            try:
+                terminal = poll_async_job(
+                    _check,
+                    poll_time=poll_time,
+                    poll_interval=poll_interval,
+                    in_progress_statuses=("IN_PROGRESS", "CREATING", "RETRYING"),
+                )
+            except AsyncJobTimeoutError:
+                raise Exception(
+                    "Report failed to generate within {poll_time} seconds".format(
+                        poll_time=poll_time
+                    )
+                )
+            except AsyncJobError as e:
+                raise ValueError(
+                    "Report failed to generate with status {}".format(
+                        e.status.get("status")
+                    )
+                )
+            url = terminal["url"]
 
         file_ext = "csv" if "csv" in type else "json"
         default_file_name = "project_{project_id}_results.{file_ext}".format(
-            project_id=project_id, file_ext=file_ext)
+            project_id=project_id, file_ext=file_ext
+        )
         target = filepath or default_file_name
-        with urllib.request.urlopen(response.url) as remote:
+        with urllib.request.urlopen(url) as remote:
             with tempfile.NamedTemporaryFile() as tmp_file:
                 shutil.copyfileobj(remote, tmp_file)
                 tmp_file.flush()
@@ -103,10 +116,7 @@ class Report(APIResource):
         return data
 
     @classmethod
-    def download_json(cls,
-                      project_id: str,
-                      poll_time=5 * 60,
-                      api_key: str = None):
+    def download_json(cls, project_id: str, poll_time=5 * 60, api_key: str = None):
         """
         Download and parse the results JSON for a project
 
