@@ -146,6 +146,26 @@ def test_request_without_extra_params_sends_only_report_type():
     assert params == {"report_type": "export_json"}
 
 
+def test_save_report_treats_completed_initial_response_as_terminal():
+    """If request() returns COMPLETED (not just READY), skip polling."""
+    payload = b"[]"
+    completed = Report(status="COMPLETED",
+                       url="https://signed.example/report.gz")
+    sink = io.BytesIO()
+    with (
+            mock.patch.object(Report, "request", return_value=completed) as
+            mock_request,
+            mock.patch.object(Report, "check_status") as mock_check,
+            mock.patch("urllib.request.urlopen") as mock_urlopen,
+    ):
+        mock_urlopen.return_value.__enter__.return_value = io.BytesIO(
+            _gzipped(payload))
+        Report.save_report("proj-c", "export_json", filepath=sink)
+    mock_request.assert_called_once()
+    mock_check.assert_not_called()
+    assert sink.getvalue() == payload
+
+
 def test_save_report_forwards_extra_params_to_request():
     payload = b"[]"
     ready = Report(status="READY", url="https://signed.example/report.gz")

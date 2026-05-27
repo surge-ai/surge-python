@@ -66,7 +66,7 @@ class Report(APIResource):
                               type=type,
                               api_key=api_key,
                               extra_params=extra_params)
-        if initial.status == "READY":
+        if initial.status in ("READY", "COMPLETED"):
             url = initial.url
         else:
             # Capture the initial CREATING job_id; check_status's IN_PROGRESS
