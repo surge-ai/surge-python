@@ -71,9 +71,7 @@ class Report(APIResource):
         state = {"job_id": getattr(initial, "job_id", None)}
 
         def _check():
-            r = cls.check_status(project_id,
-                                 state["job_id"],
-                                 api_key=api_key)
+            r = cls.check_status(project_id, state["job_id"], api_key=api_key)
             if getattr(r, "job_id", None):
                 state["job_id"] = r.job_id
             return vars(r)

@@ -63,7 +63,10 @@ def test_initial_status_is_consumed_in_place_of_first_check_call():
         check,
         poll_time=10,
         poll_interval=0,
-        initial_status={"status": "READY", "url": "from-initial"},
+        initial_status={
+            "status": "READY",
+            "url": "from-initial"
+        },
     )
     assert result == {"status": "READY", "url": "from-initial"}
     assert check_calls == []
