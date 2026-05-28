@@ -35,8 +35,9 @@ def poll_async_job(
 
     Arguments:
         check_status: zero-arg callable returning a dict with a ``status`` key.
-        poll_time: maximum seconds to wait before raising AsyncJobError
-            with the synthetic ``status="TIMEOUT"`` sentinel.
+        poll_time: seconds budgeted for waiting between polls; when exhausted,
+            AsyncJobError is raised with the synthetic ``status="TIMEOUT"``
+            sentinel.
         poll_interval: seconds to sleep between polls.
         initial_status: optional status dict consumed in place of the first
             ``check_status()`` call — useful when the caller already has the
