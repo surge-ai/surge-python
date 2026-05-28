@@ -62,21 +62,18 @@ class Report(APIResource):
             extra_params (dict, optional): Additional params merged into the
                 initial report request body. See ``request``.
         """
-        # job_id arrives on the first request and on RETRYING swaps;
-        # IN_PROGRESS responses omit it, so only update when present.
-        state = {"job_id": None, "first": True}
+        initial = cls.request(project_id=project_id,
+                              type=type,
+                              api_key=api_key,
+                              extra_params=extra_params)
+        # job_id swaps mid-poll on RETRYING; IN_PROGRESS responses
+        # omit it, so only update when present.
+        state = {"job_id": getattr(initial, "job_id", None)}
 
         def _check():
-            if state["first"]:
-                state["first"] = False
-                r = cls.request(project_id=project_id,
-                                type=type,
-                                api_key=api_key,
-                                extra_params=extra_params)
-            else:
-                r = cls.check_status(project_id,
-                                     state["job_id"],
-                                     api_key=api_key)
+            r = cls.check_status(project_id,
+                                 state["job_id"],
+                                 api_key=api_key)
             if getattr(r, "job_id", None):
                 state["job_id"] = r.job_id
             return vars(r)
@@ -86,6 +83,7 @@ class Report(APIResource):
                 _check,
                 poll_time=poll_time,
                 poll_interval=poll_interval,
+                initial_status=vars(initial),
                 in_progress_statuses=("IN_PROGRESS", "CREATING", "RETRYING"),
             )
         except AsyncJobError as e:

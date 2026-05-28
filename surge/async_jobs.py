@@ -26,6 +26,7 @@ def poll_async_job(
     *,
     poll_time,
     poll_interval,
+    initial_status=None,
     in_progress_statuses=DEFAULT_IN_PROGRESS_STATUSES,
     completed_statuses=DEFAULT_COMPLETED_STATUSES,
     error_statuses=DEFAULT_ERROR_STATUSES,
@@ -37,6 +38,9 @@ def poll_async_job(
         poll_time: maximum seconds to wait before raising AsyncJobError
             with the synthetic ``status="TIMEOUT"`` sentinel.
         poll_interval: seconds to sleep between polls.
+        initial_status: optional status dict consumed in place of the first
+            ``check_status()`` call — useful when the caller already has the
+            response from a kick-off endpoint.
         in_progress_statuses: status strings that mean "keep polling".
         completed_statuses: status strings that mean "return the status dict".
         error_statuses: status strings that mean "raise AsyncJobError".
@@ -48,8 +52,12 @@ def poll_async_job(
     error = set(error_statuses)
 
     deadline = time.monotonic() + poll_time
+    pending = initial_status
     while True:
-        status = check_status()
+        if pending is not None:
+            status, pending = pending, None
+        else:
+            status = check_status()
         value = status.get("status")
         if value in completed:
             return status

@@ -50,6 +50,38 @@ def test_accepts_creating_and_ready_status_vocabulary():
     assert result == {"status": "READY", "url": "u"}
 
 
+def test_initial_status_is_consumed_in_place_of_first_check_call():
+    """When given, initial_status acts as iter 1; check_status is invoked
+    starting from iter 2."""
+    check_calls = []
+
+    def check():
+        check_calls.append(True)
+        return {"status": "COMPLETED", "url": "u"}
+
+    result = poll_async_job(
+        check,
+        poll_time=10,
+        poll_interval=0,
+        initial_status={"status": "READY", "url": "from-initial"},
+    )
+    assert result == {"status": "READY", "url": "from-initial"}
+    assert check_calls == []
+
+
+def test_initial_status_falls_through_to_polling_when_in_progress():
+    """In-progress initial_status hands off to check_status from iter 2."""
+    statuses = iter([{"status": "COMPLETED", "url": "u"}])
+    with patch("time.sleep"):
+        result = poll_async_job(
+            lambda: next(statuses),
+            poll_time=10,
+            poll_interval=0,
+            initial_status={"status": "CREATING"},
+        )
+    assert result == {"status": "COMPLETED", "url": "u"}
+
+
 def test_raises_async_job_error_on_error_status():
     with pytest.raises(AsyncJobError, match="kaboom"):
         poll_async_job(
