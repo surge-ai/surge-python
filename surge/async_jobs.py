@@ -8,16 +8,17 @@ DEFAULT_ERROR_STATUSES = ("ERROR", "FAILED")
 
 
 class AsyncJobError(Exception):
-    """Raised when an async job returns a terminal error status."""
+    """Raised when an async job fails or times out.
+
+    The ``status`` dict carries the underlying error; timeouts use the
+    synthetic ``status="TIMEOUT"`` sentinel so callers can distinguish
+    them from server-side failures.
+    """
 
     def __init__(self, status):
         self.status = status
         error = status.get("error") or status.get("type") or "async job failed"
         super().__init__(error)
-
-
-class AsyncJobTimeoutError(Exception):
-    """Raised when an async job does not reach a terminal status in time."""
 
 
 def poll_async_job(
@@ -33,7 +34,8 @@ def poll_async_job(
 
     Arguments:
         check_status: zero-arg callable returning a dict with a ``status`` key.
-        poll_time: maximum seconds to wait before raising AsyncJobTimeoutError.
+        poll_time: maximum seconds to wait before raising AsyncJobError
+            with the synthetic ``status="TIMEOUT"`` sentinel.
         poll_interval: seconds to sleep between polls.
         in_progress_statuses: status strings that mean "keep polling".
         completed_statuses: status strings that mean "return the status dict".
@@ -46,12 +48,7 @@ def poll_async_job(
     error = set(error_statuses)
 
     deadline = time.monotonic() + poll_time
-    first_iteration = True
     while True:
-        if not first_iteration and time.monotonic() >= deadline:
-            raise AsyncJobTimeoutError(
-                f"async job did not complete within {poll_time} seconds")
-        first_iteration = False
         status = check_status()
         value = status.get("status")
         if value in completed:
@@ -59,10 +56,10 @@ def poll_async_job(
         if value in error:
             raise AsyncJobError(status)
         if value not in in_progress:
-            raise AsyncJobError({
-                **status, "error":
-                f"unexpected status {value!r}"
-            })
+            message = f"unexpected status {value!r}"
+            raise AsyncJobError({**status, "error": message})
         remaining = deadline - time.monotonic()
-        if remaining > 0:
-            time.sleep(min(poll_interval, remaining))
+        if remaining <= 0:
+            message = f"async job did not complete within {poll_time} seconds"
+            raise AsyncJobError({"status": "TIMEOUT", "error": message})
+        time.sleep(min(poll_interval, remaining))

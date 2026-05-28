@@ -107,7 +107,7 @@ def test_save_report_raises_on_unexpected_status():
             mock.patch.object(Report, "check_status", return_value=error),
             mock.patch("time.sleep"),
     ):
-        with pytest.raises(ValueError, match="ERROR"):
+        with pytest.raises(ValueError, match="Report generation error"):
             Report.save_report("proj-123",
                                "export_json",
                                filepath=io.BytesIO())
@@ -153,7 +153,7 @@ def test_save_report_raises_when_initial_request_returns_error():
             mock.patch.object(Report, "request", return_value=error),
             mock.patch.object(Report, "check_status") as mock_check,
     ):
-        with pytest.raises(ValueError, match="ERROR"):
+        with pytest.raises(ValueError, match="Report generation error"):
             Report.save_report("proj-e", "export_json", filepath=io.BytesIO())
     mock_check.assert_not_called()
 

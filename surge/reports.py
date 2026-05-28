@@ -7,7 +7,7 @@ import json
 import warnings
 
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
-from surge.async_jobs import AsyncJobError, AsyncJobTimeoutError, poll_async_job
+from surge.async_jobs import AsyncJobError, poll_async_job
 from surge.errors import SurgeRequestError
 
 
@@ -88,13 +88,8 @@ class Report(APIResource):
                 poll_interval=poll_interval,
                 in_progress_statuses=("IN_PROGRESS", "CREATING", "RETRYING"),
             )
-        except AsyncJobTimeoutError:
-            raise Exception(
-                "Report failed to generate within {poll_time} seconds".format(
-                    poll_time=poll_time))
         except AsyncJobError as e:
-            raise ValueError("Report failed to generate with status {}".format(
-                e.status.get("status")))
+            raise ValueError(f"Report failed to generate: {e}") from e
         url = terminal["url"]
 
         file_ext = "csv" if "csv" in type else "json"
