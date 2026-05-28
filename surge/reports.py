@@ -62,46 +62,40 @@ class Report(APIResource):
             extra_params (dict, optional): Additional params merged into the
                 initial report request body. See ``request``.
         """
-        initial = cls.request(project_id=project_id,
-                              type=type,
-                              api_key=api_key,
-                              extra_params=extra_params)
-        if initial.status in ("READY", "COMPLETED"):
-            url = initial.url
-        elif initial.status not in ("CREATING", "IN_PROGRESS", "RETRYING"):
-            raise ValueError("Report failed to generate with status {}".format(
-                initial.status))
-        else:
-            # Capture the initial CREATING job_id; check_status's IN_PROGRESS
-            # response does not include one. RETRYING updates job_id mid-poll
-            # (server kicked off a new underlying job).
-            state = {"job_id": getattr(initial, "job_id", None)}
+        # job_id arrives on the first request and on RETRYING swaps;
+        # IN_PROGRESS responses omit it, so only update when present.
+        state = {"job_id": None, "first": True}
 
-            def _check():
+        def _check():
+            if state["first"]:
+                state["first"] = False
+                r = cls.request(project_id=project_id,
+                                type=type,
+                                api_key=api_key,
+                                extra_params=extra_params)
+            else:
                 r = cls.check_status(project_id,
                                      state["job_id"],
                                      api_key=api_key)
-                if r.status == "RETRYING":
-                    state["job_id"] = r.job_id
-                return vars(r)
+            if getattr(r, "job_id", None):
+                state["job_id"] = r.job_id
+            return vars(r)
 
-            try:
-                terminal = poll_async_job(
-                    _check,
-                    poll_time=poll_time,
-                    poll_interval=poll_interval,
-                    in_progress_statuses=("IN_PROGRESS", "CREATING",
-                                          "RETRYING"),
-                )
-            except AsyncJobTimeoutError:
-                raise Exception(
-                    "Report failed to generate within {poll_time} seconds".
-                    format(poll_time=poll_time))
-            except AsyncJobError as e:
-                raise ValueError(
-                    "Report failed to generate with status {}".format(
-                        e.status.get("status")))
-            url = terminal["url"]
+        try:
+            terminal = poll_async_job(
+                _check,
+                poll_time=poll_time,
+                poll_interval=poll_interval,
+                in_progress_statuses=("IN_PROGRESS", "CREATING", "RETRYING"),
+            )
+        except AsyncJobTimeoutError:
+            raise Exception(
+                "Report failed to generate within {poll_time} seconds".format(
+                    poll_time=poll_time))
+        except AsyncJobError as e:
+            raise ValueError("Report failed to generate with status {}".format(
+                e.status.get("status")))
+        url = terminal["url"]
 
         file_ext = "csv" if "csv" in type else "json"
         default_file_name = "project_{project_id}_results.{file_ext}".format(

@@ -70,7 +70,7 @@ def test_save_report_polls_check_status_for_returned_job_id():
     assert mock_check.call_count == 2
     for call in mock_check.call_args_list:
         assert call.args[:2] == ("proj-123", "job-abc")
-    assert mock_sleep.call_count == 1
+    assert mock_sleep.call_count == 2
     assert sink.getvalue() == payload
 
 
