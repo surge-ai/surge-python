@@ -2,9 +2,9 @@
 
 import time
 
-DEFAULT_IN_PROGRESS_STATUSES = ("IN_PROGRESS", "CREATING")
-DEFAULT_COMPLETED_STATUSES = ("COMPLETED", "READY")
-DEFAULT_ERROR_STATUSES = ("ERROR", "FAILED")
+DEFAULT_IN_PROGRESS_STATUSES = frozenset({"IN_PROGRESS", "CREATING"})
+DEFAULT_COMPLETED_STATUSES = frozenset({"COMPLETED", "READY"})
+DEFAULT_ERROR_STATUSES = frozenset({"ERROR", "FAILED"})
 
 
 class AsyncJobError(Exception):
@@ -47,23 +47,15 @@ def poll_async_job(
 
     Returns the terminal status dict.
     """
-    in_progress = set(in_progress_statuses)
-    completed = set(completed_statuses)
-    error = set(error_statuses)
-
     deadline = time.monotonic() + poll_time
-    pending = initial_status
+    status = initial_status if initial_status is not None else check_status()
     while True:
-        if pending is not None:
-            status, pending = pending, None
-        else:
-            status = check_status()
         value = status.get("status")
-        if value in completed:
+        if value in completed_statuses:
             return status
-        if value in error:
+        if value in error_statuses:
             raise AsyncJobError(status)
-        if value not in in_progress:
+        if value not in in_progress_statuses:
             message = f"unexpected status {value!r}"
             raise AsyncJobError({**status, "error": message})
         remaining = deadline - time.monotonic()
@@ -71,3 +63,4 @@ def poll_async_job(
             message = f"async job did not complete within {poll_time} seconds"
             raise AsyncJobError({"status": "TIMEOUT", "error": message})
         time.sleep(min(poll_interval, remaining))
+        status = check_status()
