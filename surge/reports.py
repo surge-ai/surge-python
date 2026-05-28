@@ -1,5 +1,4 @@
 import gzip
-from time import sleep, monotonic
 import urllib
 import tempfile
 import shutil
@@ -8,6 +7,7 @@ import json
 import warnings
 
 from surge.api_resource import REPORTS_ENDPOINT, APIResource
+from surge.async_jobs import AsyncJobError, poll_async_job
 from surge.errors import SurgeRequestError
 
 
@@ -18,7 +18,7 @@ class Report(APIResource):
         self.__dict__.update(kwargs)
 
     def __str__(self):
-        return f"<surge.Report>"
+        return "<surge.Report>"
 
     def __repr__(self):
         return f"<surge.Report {self.attrs_repr()}>"
@@ -35,6 +35,8 @@ class Report(APIResource):
         poll_time=5 * 60,
         api_key: str = None,
         poll_interval: float = 2,
+        *,
+        extra_params: dict = None,
     ):
         """
         Request creation of a report, poll until the report is generated, and save the data to a file all in one call.
@@ -57,35 +59,40 @@ class Report(APIResource):
             filepath (string or IO or None): Location to save the results file. If not specified, will save to "project_{project_id}_results.{csv/json}
             poll_time (int): Maximum number of seconds to wait for the report to be generated
             poll_interval (int or float): Seconds to wait between status checks
+            extra_params (dict, optional): Additional params merged into the
+                initial report request body. See ``request``.
         """
-        response = cls.request(project_id=project_id,
-                               type=type,
-                               api_key=api_key)
-        # Capture the job_id from the initial CREATING response and
-        # reuse it across polls. check_status's IN_PROGRESS response
-        # does not include job_id; only RETRYING does (and means the
-        # server kicked off a new underlying job).
-        job_id = getattr(response, "job_id", None)
-        deadline = monotonic() + poll_time
-        while response.status in ("CREATING", "IN_PROGRESS", "RETRYING"):
-            if monotonic() >= deadline:
-                raise Exception(
-                    "Report failed to generate within {poll_time} seconds".
-                    format(poll_time=poll_time))
-            sleep(poll_interval)
-            response = cls.check_status(project_id, job_id, api_key=api_key)
-            if response.status == "RETRYING":
-                job_id = response.job_id
+        initial = cls.request(project_id=project_id,
+                              type=type,
+                              api_key=api_key,
+                              extra_params=extra_params)
+        # job_id swaps mid-poll on RETRYING; IN_PROGRESS responses
+        # omit it, so only update when present.
+        state = {"job_id": getattr(initial, "job_id", None)}
 
-        if response.status not in ("READY", "COMPLETED"):
-            raise ValueError("Report failed to generate with status {}".format(
-                response.status))
+        def _check():
+            r = cls.check_status(project_id, state["job_id"], api_key=api_key)
+            if getattr(r, "job_id", None):
+                state["job_id"] = r.job_id
+            return vars(r)
+
+        try:
+            terminal = poll_async_job(
+                _check,
+                poll_time=poll_time,
+                poll_interval=poll_interval,
+                initial_status=vars(initial),
+                in_progress_statuses=("IN_PROGRESS", "CREATING", "RETRYING"),
+            )
+        except AsyncJobError as e:
+            raise ValueError(f"Report failed to generate: {e}") from e
+        url = terminal["url"]
 
         file_ext = "csv" if "csv" in type else "json"
         default_file_name = "project_{project_id}_results.{file_ext}".format(
             project_id=project_id, file_ext=file_ext)
         target = filepath or default_file_name
-        with urllib.request.urlopen(response.url) as remote:
+        with urllib.request.urlopen(url) as remote:
             with tempfile.NamedTemporaryFile() as tmp_file:
                 shutil.copyfileobj(remote, tmp_file)
                 tmp_file.flush()
@@ -129,13 +136,28 @@ class Report(APIResource):
         return json.load(bytesio)
 
     @classmethod
-    def request(cls, project_id: str, type: str, api_key: str = None):
+    def request(
+        cls,
+        project_id: str,
+        type: str,
+        api_key: str = None,
+        *,
+        extra_params: dict = None,
+    ):
         """
-        Request creation of a report for the given type. Note that reports are generated
-        asychronously so the response may include a `job_id` which needs to be used with
-        the `status` method to get the job status. In the event that the report has is
-        already generated and current, the report URL will be returned. Note that the URL
-        is a presigned URL which is active for only a limited duration.
+        Request creation of a report for the given type.
+
+        Most callers want `save_report` instead — it kicks off the
+        request, polls the specific job, and saves the result to a
+        file in a single call. Use this raw method for fire-and-forget
+        batches or custom poll loops.
+
+        Reports are generated asychronously so the response may
+        include a `job_id` which needs to be used with `check_status`
+        to get the job status. In the event that the report has is
+        already generated and current, the report URL will be returned.
+        Note that the URL is a presigned URL which is active for only
+        a limited duration.
 
         Type may be one of these types:
           * `export_json`
@@ -164,12 +186,21 @@ class Report(APIResource):
         Arguments:
             project_id (str): ID of project.
             report_type (str): report type
+            extra_params (dict, optional): Additional params merged into the
+                report request body. Use for backend-supported params that
+                aren't first-class kwargs on this method; refer to the API
+                reference for valid keys.
 
         Returns:
             status: Report status object which includes report id
         """
+        extra = extra_params or {}
+        if "report_type" in extra:
+            raise ValueError(
+                "`report_type` is set via the `type` argument and cannot "
+                "be passed in `extra_params`")
         endpoint = f"{REPORTS_ENDPOINT}/{project_id}/report"
-        params = {"report_type": type}
+        params = {"report_type": type, **extra}
         response_json = cls.post(endpoint, params, api_key=api_key)
         if "error" in response_json:
             raise SurgeRequestError(response_json["error"])
@@ -221,7 +252,12 @@ class Report(APIResource):
     @classmethod
     def check_status(cls, project_id: str, job_id: str, api_key: str = None):
         """
-        Checks the status of a given report job. The response will be of one of these shapes:
+        Checks the status of a given report job.
+
+        Most callers want `save_report` instead — this method is for
+        custom poll loops over a `job_id` returned by the raw `request`.
+
+        The response will be of one of these shapes:
 
         1) Report is still being generated (HTTP 202):
 
