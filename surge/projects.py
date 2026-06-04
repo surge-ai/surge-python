@@ -505,3 +505,39 @@ class Project(APIResource):
         )
         put_response.raise_for_status()
         return response_json
+
+    @classmethod
+    def get_custom_results_url(cls, project_id: str, api_key: str = None):
+        """
+        Get a temporary presigned URL for a project's custom HTML results file.
+
+        Arguments:
+            project_id (str): UUID of the project.
+
+        Returns:
+            str: A presigned download URL (valid for a limited time).
+
+        Raises:
+            SurgeRequestError: If no custom results file exists (404).
+        """
+        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/custom_results"
+        response_json = cls.get(endpoint, api_key=api_key)
+        return response_json["download_url"]
+
+    @classmethod
+    def download_custom_results(cls, project_id: str, api_key: str = None):
+        """
+        Download the contents of a project's custom HTML results file.
+
+        Arguments:
+            project_id (str): UUID of the project.
+
+        Returns:
+            str: The HTML file contents.
+
+        Raises:
+            SurgeRequestError: If no custom results file exists (404).
+        """
+        url = cls.get_custom_results_url(project_id, api_key=api_key)
+        with urllib.request.urlopen(url) as remote:
+            return remote.read().decode("utf-8")

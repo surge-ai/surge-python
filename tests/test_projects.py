@@ -495,3 +495,25 @@ def test_upload_custom_results_reads_from_path(tmp_path):
     ):
         Project.upload_custom_results("proj-1", str(f))
     assert mock_put.call_args.kwargs["data"] == b"<html>file</html>"
+
+
+def test_get_custom_results_url_returns_download_url():
+    with mock.patch.object(
+        Project, "get",
+        return_value={"download_url": "https://s3.example/get", "download_url_expires_in": 900},
+    ) as mock_get:
+        url = Project.get_custom_results_url("proj-1")
+    mock_get.assert_called_once_with("projects/proj-1/custom_results", api_key=None)
+    assert url == "https://s3.example/get"
+
+
+def test_download_custom_results_fetches_html_content():
+    with (
+        mock.patch.object(
+            Project, "get", return_value={"download_url": "https://s3.example/get"},
+        ),
+        mock.patch("surge.projects.urllib.request.urlopen") as mock_urlopen,
+    ):
+        mock_urlopen.return_value.__enter__.return_value = io.BytesIO(b"<html>downloaded</html>")
+        content = Project.download_custom_results("proj-1")
+    assert content == "<html>downloaded</html>"
