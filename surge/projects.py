@@ -541,3 +541,17 @@ class Project(APIResource):
         url = cls.get_custom_results_url(project_id, api_key=api_key)
         with urllib.request.urlopen(url) as remote:
             return remote.read().decode("utf-8")
+
+    @classmethod
+    def delete_custom_results(cls, project_id: str, api_key: str = None):
+        """
+        Delete a project's custom HTML results file.
+
+        Arguments:
+            project_id (str): UUID of the project.
+
+        Returns:
+            dict: ``{"success": True}``
+        """
+        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/custom_results"
+        return cls.delete_request(endpoint, api_key=api_key)

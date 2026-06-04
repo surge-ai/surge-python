@@ -517,3 +517,12 @@ def test_download_custom_results_fetches_html_content():
         mock_urlopen.return_value.__enter__.return_value = io.BytesIO(b"<html>downloaded</html>")
         content = Project.download_custom_results("proj-1")
     assert content == "<html>downloaded</html>"
+
+
+def test_delete_custom_results_calls_delete_endpoint():
+    with mock.patch.object(
+        Project, "delete_request", return_value={"success": True},
+    ) as mock_delete:
+        result = Project.delete_custom_results("proj-1")
+    mock_delete.assert_called_once_with("projects/proj-1/custom_results", api_key=None)
+    assert result == {"success": True}
