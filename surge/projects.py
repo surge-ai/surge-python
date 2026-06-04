@@ -2,6 +2,8 @@ from typing import List
 import dateutil.parser
 import datetime
 import json
+import requests
+import urllib.request
 
 from surge.errors import (
     SurgeMissingIDError,
@@ -13,6 +15,8 @@ from surge.questions import Question
 from surge.reports import Report
 from surge.tasks import Task
 from surge import utils
+
+CUSTOM_RESULTS_CONTENT_TYPE = "text/html"
 
 
 class Project(APIResource):
@@ -469,3 +473,35 @@ class Project(APIResource):
         return self.Report.download_json(self.id,
                                          poll_time=poll_time,
                                          api_key=api_key)
+
+    @classmethod
+    def upload_custom_results(cls, project_id: str, file, api_key: str = None):
+        """
+        Upload a custom HTML results file for a project. The file is rendered
+        on the project's results page. Re-uploading overwrites the previous file.
+
+        Arguments:
+            project_id (str): UUID of the project.
+            file (str or IO): Path to a local HTML file, or a binary file-like
+                object opened for reading.
+
+        Returns:
+            dict: The endpoint response, including ``upload_url``.
+        """
+        endpoint = f"{PROJECTS_ENDPOINT}/{project_id}/custom_results"
+        response_json = cls.post(endpoint, api_key=api_key)
+        upload_url = response_json["upload_url"]
+
+        if isinstance(file, str):
+            with open(file, "rb") as f:
+                data = f.read()
+        else:
+            data = file.read()
+
+        put_response = requests.put(
+            upload_url,
+            data=data,
+            headers={"Content-Type": CUSTOM_RESULTS_CONTENT_TYPE},
+        )
+        put_response.raise_for_status()
+        return response_json

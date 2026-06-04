@@ -1,3 +1,4 @@
+import io
 from unittest import mock
 from unittest.mock import MagicMock, patch
 from datetime import datetime
@@ -459,3 +460,38 @@ def test_update_with_fields_template():
             {"fields_text": "ABC"},
             api_key=None,
         )
+
+
+def test_upload_custom_results_posts_then_puts_html():
+    put_resp = mock.Mock()
+    with (
+        mock.patch.object(
+            Project, "post",
+            return_value={"upload_url": "https://s3.example/put", "upload_url_expires_in": 900},
+        ) as mock_post,
+        mock.patch("surge.projects.requests.put", return_value=put_resp) as mock_put,
+    ):
+        result = Project.upload_custom_results("proj-1", io.BytesIO(b"<html>hi</html>"))
+
+    mock_post.assert_called_once_with("projects/proj-1/custom_results", api_key=None)
+    args, kwargs = mock_put.call_args
+    assert args[0] == "https://s3.example/put"
+    assert kwargs["data"] == b"<html>hi</html>"
+    assert kwargs["headers"]["Content-Type"] == "text/html"
+    put_resp.raise_for_status.assert_called_once()
+    assert result["upload_url"] == "https://s3.example/put"
+
+
+def test_upload_custom_results_reads_from_path(tmp_path):
+    f = tmp_path / "report.html"
+    f.write_bytes(b"<html>file</html>")
+    put_resp = mock.Mock()
+    with (
+        mock.patch.object(
+            Project, "post",
+            return_value={"upload_url": "https://s3.example/put"},
+        ),
+        mock.patch("surge.projects.requests.put", return_value=put_resp) as mock_put,
+    ):
+        Project.upload_custom_results("proj-1", str(f))
+    assert mock_put.call_args.kwargs["data"] == b"<html>file</html>"
