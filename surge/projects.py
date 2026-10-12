@@ -82,7 +82,6 @@ class Project(APIResource):
         cls,
         name: str,
         payment_per_response: float = None,
-        private_workforce: bool = False,
         instructions: str = None,
         questions: list = None,
         qualifications_required: list = None,
@@ -105,8 +104,6 @@ class Project(APIResource):
             name (str): Name of the project.
             payment_per_response (float, optional):
                 How much a worker is paid (in US dollars) for an individual response.
-            private_workforce (bool, optional):
-                Indicates if the project's tasks will be done by a private workforce.
             instructions (str, optional): Instructions shown to workers describing how they should complete the task.
             questions (list, optional): An array of question objects describing the questions to be answered.
             qualifications_required (list, optional): Deprecated in favor of teams_required.
@@ -148,7 +145,6 @@ class Project(APIResource):
 
         params = {
             "name": name,
-            "private_workforce": private_workforce,
             "instructions": instructions,
             "questions": questions_json,
             "qualifications_required": teams_required,
@@ -262,8 +258,6 @@ class Project(APIResource):
     def launch(self, api_key: str = None):
         """
         Launches a project.
-        If work is being completed by the Surge workforce, you will be charged when the project launches
-        and your accounts neeeds to have sufficient funds before launching.
 
         Returns:
             project: new Project object with updated status

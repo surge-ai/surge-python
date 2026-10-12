@@ -79,8 +79,6 @@ def test_init_complete():
         "interrater_agreement": {
             "What is this video?": 0.859154078549849
         },
-        "private_workforce":
-        False,
         "num_tasks_in_progress":
         0,
         "payment_per_response":
