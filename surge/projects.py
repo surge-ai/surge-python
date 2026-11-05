@@ -303,8 +303,8 @@ class Project(APIResource):
         Returns:
             {"success": True}
         """
-        endpoint = f"{PROJECTS_ENDPOINT}/{self.id}/delete"
-        return self.get(endpoint, api_key=api_key)
+        endpoint = f"{PROJECTS_ENDPOINT}/{self.id}"
+        return self.delete_request(endpoint, api_key=api_key)
 
     def list_tasks(self,
                    page: int = 1,

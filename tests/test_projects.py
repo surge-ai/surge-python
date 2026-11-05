@@ -444,6 +444,19 @@ def test_update_with_arbitrary_parameters():
         )
 
 
+def test_delete():
+    project = Project(id="DELETE_ID", name="Project to delete")
+
+    with patch.object(Project, "delete_request") as mock_delete:
+        mock_delete.return_value = {"success": True}
+        result = project.delete()
+        mock_delete.assert_called_once_with(
+            f"{PROJECTS_ENDPOINT}/{project.id}",
+            api_key=None,
+        )
+        assert result == {"success": True}
+
+
 def test_update_with_fields_template():
     project = Project(id="UPDATE_FIELDS_TEMPLATE", name="Project to update")
 
