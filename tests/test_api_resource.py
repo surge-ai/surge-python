@@ -4,6 +4,7 @@ import pytest
 import requests
 
 import surge
+from surge._version import __version__
 from surge.api_resource import APIResource
 from surge.errors import SurgeRequestError, SurgeMissingAPIKeyError
 
@@ -35,6 +36,7 @@ def test_passed_in_api_key():
         mock_request.assert_called_once_with(
             "https://app.surgehq.ai/api/projects",
             auth=("passed_api_key", ""),
+            headers={"User-Agent": f"surge-python/{__version__}"},
             params=None,
         )
 
@@ -52,6 +54,7 @@ def test_passed_in_file():
         mock_request.assert_called_once_with(
             "https://app.surgehq.ai/api/projects",
             auth=("passed_api_key", ""),
+            headers={"User-Agent": f"surge-python/{__version__}"},
             files=files,
             json=None,
         )
@@ -85,5 +88,6 @@ def test_delete_request_forwards_params():
         mock_request.assert_called_once_with(
             "https://app.surgehq.ai/api/projects",
             auth=("passed_api_key", ""),
+            headers={"User-Agent": f"surge-python/{__version__}"},
             params={"foo": "bar"},
         )

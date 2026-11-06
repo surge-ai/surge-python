@@ -1,6 +1,7 @@
 import requests
 
 import surge
+from surge._version import __version__
 from surge.errors import SurgeRequestError, SurgeMissingAPIKeyError
 
 PROJECTS_ENDPOINT = "projects"
@@ -37,9 +38,10 @@ class APIResource(object):
 
         try:
             url = f"{surge.base_url}/{api_endpoint}"
-            header_kwargs = {}
-            if surge.default_headers:
-                header_kwargs["headers"] = dict(surge.default_headers)
+            headers = requests.structures.CaseInsensitiveDict(
+                {"User-Agent": f"surge-python/{__version__}"})
+            headers.update(surge.default_headers or {})
+            header_kwargs = {"headers": headers}
 
             # GET request
             if method == "get":
