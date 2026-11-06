@@ -1,3 +1,4 @@
+from platform import python_version
 from unittest.mock import Mock, patch
 
 import pytest
@@ -32,7 +33,8 @@ def test_prepared_request_identifies_sdk(method, params, files, monkeypatch):
                                   files=files,
                                   api_key="test-key")
     request = send.call_args.args[0]
-    assert request.headers["User-Agent"] == f"surge-python/{__version__}"
+    assert request.headers[
+        "User-Agent"] == f"surge-python/{__version__} Python/{python_version()}"
 
 
 @pytest.mark.parametrize("header", ["User-Agent", "user-agent", "USER-AGENT"])

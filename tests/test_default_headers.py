@@ -1,3 +1,4 @@
+from platform import python_version
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -26,7 +27,8 @@ class TestDefaultHeaders(unittest.TestCase):
 
         call_kwargs = mock_get.call_args
         assert call_kwargs.kwargs["headers"] == {
-            "User-Agent": f"surge-python/{__version__}"
+            "User-Agent":
+            f"surge-python/{__version__} Python/{python_version()}"
         }
 
     @patch("requests.get")
@@ -43,7 +45,8 @@ class TestDefaultHeaders(unittest.TestCase):
 
         call_kwargs = mock_get.call_args
         assert call_kwargs.kwargs["headers"] == {
-            "User-Agent": f"surge-python/{__version__}",
+            "User-Agent":
+            f"surge-python/{__version__} Python/{python_version()}",
             "X-Actor-Type": "agent",
         }
 
@@ -64,7 +67,8 @@ class TestDefaultHeaders(unittest.TestCase):
 
         sent_headers = mock_get.call_args.kwargs["headers"]
         assert sent_headers == {
-            "User-Agent": f"surge-python/{__version__}",
+            "User-Agent":
+            f"surge-python/{__version__} Python/{python_version()}",
             "X-Actor-Type": "agent",
         }
 

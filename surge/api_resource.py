@@ -1,3 +1,5 @@
+from platform import python_version
+
 import requests
 
 import surge
@@ -38,8 +40,10 @@ class APIResource(object):
 
         try:
             url = f"{surge.base_url}/{api_endpoint}"
-            headers = requests.structures.CaseInsensitiveDict(
-                {"User-Agent": f"surge-python/{__version__}"})
+            headers = requests.structures.CaseInsensitiveDict({
+                "User-Agent":
+                f"surge-python/{__version__} Python/{python_version()}"
+            })
             headers.update(surge.default_headers or {})
             header_kwargs = {"headers": headers}
 
