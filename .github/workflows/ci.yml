@@ -2,27 +2,75 @@ name: CI
 
 on: [pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
 jobs:
   build-and-test:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.14"]
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        timeout-minutes: 5
         with:
-          python-version: "3.14"
-          cache: pip
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        timeout-minutes: 5
+        with:
+          version: "0.13.6"
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements.txt
+            pyproject.toml
+            .github/workflows/ci.yml
 
       - name: Install dependencies
-        run: pip install 'setuptools>=78.1.1' -r requirements.txt
+        run: |
+          uv venv --managed-python "$RUNNER_TEMP/test-venv"
+          echo "$RUNNER_TEMP/test-venv/bin" >> "$GITHUB_PATH"
+          uv pip install --python "$RUNNER_TEMP/test-venv/bin/python" -r requirements.txt twine==7.0.0 yapf==0.43.0
 
       - name: Check formatting
-        run: |
-          pip install yapf==0.43.0
-          yapf -d -r -e '.cci_pycache/**' .
+        run: yapf --diff -r -e '.cci_pycache/**' .
 
       - name: Run tests
-        run: pytest
+        run: python -m pytest
+
+      - name: Build source distribution and wheel
+        run: uv build
+
+      - name: Validate distributions
+        run: python -m twine check --strict dist/*
+
+      - name: Check installed wheel
+        run: |
+          uv venv --managed-python "$RUNNER_TEMP/wheel-venv"
+          uv pip install --python "$RUNNER_TEMP/wheel-venv/bin/python" dist/*.whl
+          uv pip check --python "$RUNNER_TEMP/wheel-venv/bin/python"
+          "$RUNNER_TEMP/wheel-venv/bin/python" -I - <<'PY'
+          from importlib.metadata import version
+          from platform import python_version
+          from unittest.mock import Mock, patch
+
+          from surge._version import __version__
+          from surge.api_resource import APIResource
+
+          assert __version__ == version("surge-api")
+          response = Mock()
+          response.json.return_value = {}
+          with patch("requests.sessions.Session.send", return_value=response) as send:
+              APIResource._base_request("get", "projects", api_key="test-key")
+          user_agent = send.call_args.args[0].headers["User-Agent"]
+          assert user_agent == f"surge-python/{__version__} Python/{python_version()}"
+          print(f"Installed wheel verified: {user_agent}")
+          PY

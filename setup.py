@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
+from runpy import run_path
 
-VERSION = "1.5.26"
+VERSION = run_path("surge/_version.py")["__version__"]
 
 with open("requirements.txt") as f:
     requirements = f.read().splitlines()

@@ -1,7 +1,9 @@
+from platform import python_version
 import unittest
 from unittest.mock import patch, MagicMock
 
 import surge
+from surge._version import __version__
 
 
 class TestDefaultHeaders(unittest.TestCase):
@@ -24,7 +26,10 @@ class TestDefaultHeaders(unittest.TestCase):
         APIResource._base_request("get", "projects/123")
 
         call_kwargs = mock_get.call_args
-        assert "headers" not in call_kwargs.kwargs
+        assert call_kwargs.kwargs["headers"] == {
+            "User-Agent":
+            f"surge-python/{__version__} Python/{python_version()}"
+        }
 
     @patch("requests.get")
     def test_actor_type_header_injected(self, mock_get):
@@ -39,7 +44,11 @@ class TestDefaultHeaders(unittest.TestCase):
         APIResource._base_request("get", "projects/123")
 
         call_kwargs = mock_get.call_args
-        assert call_kwargs.kwargs["headers"] == {"X-Actor-Type": "agent"}
+        assert call_kwargs.kwargs["headers"] == {
+            "User-Agent":
+            f"surge-python/{__version__} Python/{python_version()}",
+            "X-Actor-Type": "agent",
+        }
 
     @patch("requests.get")
     def test_default_headers_are_copied(self, mock_get):
@@ -57,7 +66,11 @@ class TestDefaultHeaders(unittest.TestCase):
         surge.default_headers["X-Extra"] = "oops"
 
         sent_headers = mock_get.call_args.kwargs["headers"]
-        assert sent_headers == {"X-Actor-Type": "agent"}
+        assert sent_headers == {
+            "User-Agent":
+            f"surge-python/{__version__} Python/{python_version()}",
+            "X-Actor-Type": "agent",
+        }
 
 
 if __name__ == "__main__":
