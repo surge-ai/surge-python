@@ -110,11 +110,6 @@ tasks = project.create_tasks_from_csv(file_path)
 ```
 
 
-## User agent
-
-Requests identify the SDK with `User-Agent: surge-python/<version>`.
-To override it, set `surge.default_headers["User-Agent"]` to your own value.
-
 ## Development
 
 The test suite depends on `pytest`, which you can install using pip:
