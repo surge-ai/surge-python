@@ -138,3 +138,6 @@ dmypy.json
 
 # local notebooks
 local_notebooks/
+
+# Claude Code local settings can contain approved commands and embedded credentials.
+**/.claude/settings.local.json
