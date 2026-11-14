@@ -2,7 +2,7 @@ certifi==2026.10.19
 charset-normalizer==3.4.7
 idna==3.20
 iniconfig==2.3.0
-packaging==26.1
+packaging==26.3
 pluggy==1.6.0
 pytest==9.0.3
 python-dateutil==2.9.0.post0
