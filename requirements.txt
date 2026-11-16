@@ -1,5 +1,5 @@
 certifi==2026.10.19
-charset-normalizer==3.4.7
+charset-normalizer==3.5.2
 idna==3.20
 iniconfig==2.3.0
 packaging==26.1
