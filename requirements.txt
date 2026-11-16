@@ -4,7 +4,7 @@ idna==3.20
 iniconfig==2.3.0
 packaging==26.1
 pluggy==1.6.0
-pytest==9.0.3
+pytest==9.2.0
 python-dateutil==2.9.0.post0
 requests==2.33.1
 six==1.17.0
